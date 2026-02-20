@@ -4,7 +4,8 @@ import type { NextRequest } from 'next/server';
 const APP_SUBDOMAIN = 'app.awebo.wtf';
 const APP_PATH_PREFIX = '/app';
 
-const APP_ROOT_PATHS = ['/', '/activity', '/launch', '/merch', '/profile'] as const;
+// Paths that get rewritten to /app/* on app subdomain. Exclude /launch so it always serves the wizard.
+const APP_ROOT_PATHS = ['/', '/activity', '/merch', '/profile'] as const;
 
 function isAppSubdomain(host: string): boolean {
   try {

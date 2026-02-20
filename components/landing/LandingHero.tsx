@@ -2,9 +2,8 @@
 
 import Link from 'next/link';
 import { useRef, useState, useCallback } from 'react';
+import { ArrowRight } from 'lucide-react';
 import HeroRevealWaveVideo from './HeroRevealWaveVideo';
-
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.awebo.wtf';
 
 export default function LandingHero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -80,24 +79,11 @@ export default function LandingHero() {
 
           <div className="flex flex-wrap gap-4 pt-2">
             <Link
-              href={APP_URL}
+              href="/launch"
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-air-force-blue text-white font-semibold px-6 py-3 hover:bg-air-force-blue/90 transition-colors"
             >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                />
-              </svg>
               Launch Brand
+              <ArrowRight className="w-4 h-4" aria-hidden />
             </Link>
             <Link
               href="#ecosystem"

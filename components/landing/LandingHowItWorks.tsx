@@ -1,85 +1,69 @@
-const STEPS = [
+'use client';
+
+import React from 'react';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import { ArrowUpRight, User, Coins, Layers, Rocket } from 'lucide-react';
+
+interface ProcessCardProps {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  className?: string;
+}
+
+const ProcessCard: React.FC<ProcessCardProps> = ({
+  icon: Icon,
+  title,
+  description,
+  className,
+}) => (
+  <div
+    className={cn(
+      'group relative w-full rounded-lg border border-gray-200 bg-white p-6 transition-all duration-300 hover:border-air-force-blue/60 hover:shadow-lg',
+      className
+    )}
+  >
+    {/* Decorative line - visible on larger screens */}
+    <div className="absolute -left-[1px] top-1/2 hidden h-1/2 w-px -translate-y-1/2 bg-gray-200 transition-colors group-hover:bg-air-force-blue/60 md:block" />
+    <div className="absolute left-1/2 top-0 h-px w-1/2 -translate-x-1/2 bg-gray-200 transition-colors group-hover:bg-air-force-blue/60 md:hidden" />
+
+    {/* Icon container */}
+    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg border border-gray-200 bg-gray-50 text-air-force-blue shadow-sm transition-colors duration-300 group-hover:bg-air-force-blue group-hover:text-white">
+      <Icon className="h-6 w-6" />
+    </div>
+
+    <div className="flex flex-col">
+      <h3 className="mb-1 text-lg font-semibold text-gray-900">{title}</h3>
+      <p className="text-sm text-gray-600">{description}</p>
+    </div>
+  </div>
+);
+
+const PROCESS_ITEMS: ProcessCardProps[] = [
   {
-    icon: (
-      <svg
-        className="w-8 h-8"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-        />
-      </svg>
-    ),
-    title: 'Design.',
+    icon: User,
+    title: 'Profile & brand',
     description:
-      'Design your brand and products using our creator toolkit.',
-    color: 'text-air-force-blue',
+      'Set up your creator profile and brand identity in AWEBO Creator Studio. Add banner, avatar, tagline, and social links.',
   },
   {
-    icon: (
-      <svg
-        className="w-8 h-8"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-        />
-      </svg>
-    ),
-    title: 'Tokenize.',
-    description: 'Mint your products as NFTs to establish ownership and provenance.',
-    color: 'text-purple-500',
-  },
-  {
-    icon: (
-      <svg
-        className="w-8 h-8"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M13 10V3L4 14h7v7l9-11h-7z"
-        />
-      </svg>
-    ),
-    title: 'Drop.',
-    description: 'Launch to your community with our curated drop mechanics.',
-    color: 'text-emerald-600',
-  },
-  {
-    icon: (
-      <svg
-        className="w-8 h-8"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-        />
-      </svg>
-    ),
-    title: 'Fulfill.',
+    icon: Coins,
+    title: 'Token',
     description:
-      'We handle the high-end production and global logistics.',
-    color: 'text-air-force-blue',
+      'Configure your brand token: choose network, token purpose, total supply, and allocation. All pricing in ETH.',
+  },
+  {
+    icon: Layers,
+    title: 'NFT & merch',
+    description:
+      'Build your digital collectibles and link phygital merch. Set mint price in ETH, upload artwork, and enable token-gated access for holders.',
+  },
+  {
+    icon: Rocket,
+    title: 'Launch',
+    description:
+      'Review and deploy. AWEBO handles smart contract deployment, drop mechanics, and global fulfillment for physical orders.',
   },
 ];
 
@@ -87,31 +71,36 @@ export default function LandingHowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16"
+      className="w-full bg-white py-16 md:py-24"
       aria-label="How it works"
     >
-      <h2 className="text-3xl font-bold text-gray-900">
-        How It <span className="text-air-force-blue">Works</span>
-      </h2>
+      <div className="container mx-auto grid grid-cols-1 gap-12 px-4 md:grid-cols-3 md:gap-8 lg:gap-16 max-w-6xl">
+        {/* Left content */}
+        <div className="flex flex-col items-start justify-center text-center md:col-span-1 md:text-left">
+          <span className="mb-2 text-sm font-medium uppercase tracking-widest text-air-force-blue">
+            How it works
+          </span>
+          <h2 className="mb-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
+            Launch token, NFT & merch in one flow
+          </h2>
+          <p className="mb-6 text-base text-gray-600">
+            From creator profile to live drop: configure your token economics, build your NFT collection, add phygital merch, and launch. All in ETH.
+          </p>
+          <Link
+            href="/launch"
+            className="inline-flex items-center justify-center rounded-lg bg-air-force-blue px-6 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:bg-air-force-blue/90"
+          >
+            Start with AWEBO
+            <ArrowUpRight className="ml-2 h-5 w-5" />
+          </Link>
+        </div>
 
-      <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative">
-        {/* Connector line (desktop) */}
-        <div
-          className="hidden lg:block absolute top-12 left-0 right-0 h-0.5 bg-gray-200"
-          style={{ top: '4.5rem' }}
-          aria-hidden
-        />
-        {STEPS.map((step, i) => (
-          <div key={step.title} className="relative flex flex-col items-start">
-            <div
-              className={`${step.color} flex-shrink-0 w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center border-2 border-white shadow-sm relative z-10`}
-            >
-              {step.icon}
-            </div>
-            <h3 className="mt-4 font-bold text-gray-900">{step.title}</h3>
-            <p className="mt-2 text-gray-600 text-sm">{step.description}</p>
-          </div>
-        ))}
+        {/* Right content - grid of process cards */}
+        <div className="grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 md:col-span-2">
+          {PROCESS_ITEMS.map((item, index) => (
+            <ProcessCard key={index} {...item} />
+          ))}
+        </div>
       </div>
     </section>
   );

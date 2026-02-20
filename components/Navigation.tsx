@@ -89,7 +89,7 @@ export default function Navigation({ variant = 'app' }: { variant?: NavVariant }
             <Link href={appPath(pathname, 'activity')} className={linkClassApp}>
               Activity
             </Link>
-            <Link href={appPath(pathname, 'launch')} className={linkClassApp}>
+            <Link href="/launch" className={linkClassApp}>
               Launch
             </Link>
             <Link href={appPath(pathname, 'merch')} className={linkClassApp}>

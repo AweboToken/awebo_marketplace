@@ -1,55 +1,107 @@
 import Link from 'next/link';
-import UnicornStudioEmbed from '@/components/UnicornStudioEmbed';
+import {
+  Share2,
+  MessageCircle,
+  Link as LinkIcon,
+  Globe,
+  Send,
+  Feather,
+} from 'lucide-react';
 
-const LANDING_FOOTER_LINKS = [
-  { label: 'PRIVACY', href: '/privacy' },
-  { label: 'TERMS', href: '/terms' },
-  { label: 'TWITTER', href: 'https://twitter.com/awebo' },
-  { label: 'DISCORD', href: 'https://discord.gg/awebo' },
+const LANDING_LINKS = [
+  { title: 'Explore', href: '/explore' },
+  { title: 'Drops', href: '/drops' },
+  { title: 'Ecosystem', href: '/ecosystem' },
+  { title: 'About', href: '/about' },
+  { title: 'Privacy', href: '/privacy' },
+  { title: 'Terms', href: '/terms' },
+];
+
+const SOCIAL_LINKS = [
+  { href: 'https://twitter.com/awebo', label: 'Twitter', icon: Share2 },
+  { href: 'https://discord.gg/awebo', label: 'Discord', icon: MessageCircle },
+  { href: '#', label: 'Link', icon: LinkIcon },
+  { href: 'https://awebo.wtf', label: 'Website', icon: Globe },
+  { href: '#', label: 'Send', icon: Send },
+  { href: '#', label: 'Feed', icon: Feather },
 ];
 
 type FooterVariant = 'app' | 'landing';
 
+function FooterLinksBlock({ dark = false, showCopyright = true }: { dark?: boolean; showCopyright?: boolean }) {
+  const linkClass = dark
+    ? 'text-white/80 hover:text-white block duration-150'
+    : 'text-gray-500 hover:text-air-force-blue block duration-150';
+  const iconClass = dark ? 'text-white/80 hover:text-white' : 'text-gray-500 hover:text-air-force-blue';
+  const copyClass = dark ? 'text-white/70' : 'text-gray-500';
+
+  return (
+    <div className={dark ? 'py-12 md:py-16' : 'py-16 md:py-32'}>
+      <div className="mx-auto max-w-5xl px-6">
+        <div className="flex flex-wrap justify-center gap-6 text-sm">
+          {LANDING_LINKS.map((link) => (
+            <Link key={link.href} href={link.href} className={linkClass}>
+              <span>{link.title}</span>
+            </Link>
+          ))}
+        </div>
+
+        <div className="my-8 flex flex-wrap justify-center gap-6 text-sm">
+          {SOCIAL_LINKS.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              target={link.href.startsWith('http') ? '_blank' : undefined}
+              rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+              aria-label={link.label}
+              className={iconClass + ' block duration-150'}
+            >
+              <link.icon className="size-6" />
+            </Link>
+          ))}
+        </div>
+
+        {showCopyright && (
+          <span className={'block text-center text-sm ' + copyClass}>
+            © {new Date().getFullYear()} AWEBO Labs. All rights reserved.
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function Footer({ variant = 'app' }: { variant?: FooterVariant }) {
   if (variant === 'landing') {
     return (
-      <footer role="contentinfo" className="w-full bg-white border-t border-gray-200">
-        <UnicornStudioEmbed />
+      <footer role="contentinfo" className="w-full border-t border-black bg-black">
+        {/* Links above the big title (no copyright here) */}
+        <div className="relative z-10 bg-black">
+          <FooterLinksBlock dark showCopyright={false} />
+        </div>
+
+        {/* Big AWEBO title */}
+        <div className="relative flex min-h-[50vh] flex-col items-center justify-end overflow-hidden bg-black pb-8 pt-4">
+          <div className="absolute inset-0 cta-dither-overlay pointer-events-none" aria-hidden />
+          <p
+            className="footer-ascii-text relative z-10 font-rapid-response select-none leading-none text-white"
+            aria-hidden
+          >
+            AWEBO
+          </p>
+        </div>
+
+        {/* Copyright in bottom gap above border */}
+        <div className="bg-black py-6 text-center text-sm text-white/70">
+          © {new Date().getFullYear()} AWEBO Labs. All rights reserved.
+        </div>
       </footer>
     );
   }
 
   return (
-    <footer className="w-full bg-white border-t border-gray-200 mt-auto">
-      <div className="w-screen overflow-hidden py-4">
-        <div className="flex justify-between items-center px-4 md:px-8 lg:px-12">
-          <span className="font-rapid-response text-[12rem] md:text-[16rem] lg:text-[18rem] text-accent leading-none">A</span>
-          <span className="font-rapid-response text-[12rem] md:text-[16rem] lg:text-[18rem] text-accent leading-none">W</span>
-          <span className="font-rapid-response text-[12rem] md:text-[16rem] lg:text-[18rem] text-accent leading-none">E</span>
-          <span className="font-rapid-response text-[12rem] md:text-[16rem] lg:text-[18rem] text-accent leading-none">B</span>
-          <span className="font-rapid-response text-[12rem] md:text-[16rem] lg:text-[18rem] text-accent leading-none">O</span>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-4 h-4 rounded-full border border-gray-300" />
-            <div className="w-4 h-4 border border-gray-300 flex items-center justify-center">
-              <span className="text-xs text-gray-400">×</span>
-            </div>
-          </div>
-          <div className="text-accent text-sm">
-            © 2025 Awebo.wtf. All rights reserved.
-          </div>
-          <Link
-            href="/terms"
-            className="text-accent hover:opacity-80 text-sm transition-colors"
-          >
-            Terms & Conditions
-          </Link>
-        </div>
-      </div>
+    <footer className="mt-auto w-full border-t border-gray-200 bg-white">
+      <FooterLinksBlock />
     </footer>
   );
 }

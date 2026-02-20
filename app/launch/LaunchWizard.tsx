@@ -163,7 +163,7 @@ function ProfileStep({ onNext, onCancel }: { onNext: () => void; onCancel: () =>
           CANCEL SETUP
         </button>
         <button type="button" onClick={onNext} className="rounded-lg bg-air-force-blue text-white font-semibold px-6 py-3 flex items-center gap-2 hover:bg-air-force-blue/90">
-          Continue to Launch <span>→</span>
+          Continue <span>→</span>
         </button>
       </div>
     </>
@@ -189,7 +189,7 @@ function BrandStep({ onNext, onPrev }: { onNext: () => void; onPrev: () => void 
 
       <div className="flex items-center justify-between mt-12 max-w-2xl">
         <button type="button" onClick={onPrev} className="text-gray-600 hover:text-gray-900 font-medium">← Back</button>
-        <button type="button" onClick={onNext} className="rounded-lg bg-air-force-blue text-white font-semibold px-6 py-3">Next</button>
+        <button type="button" onClick={onNext} className="rounded-lg bg-air-force-blue text-white font-semibold px-6 py-3">Continue</button>
       </div>
     </>
   );
@@ -269,7 +269,7 @@ function TokenStep({ onNext, onPrev }: { onNext: () => void; onPrev: () => void 
 
       <div className="flex items-center justify-between mt-12 max-w-2xl">
         <button type="button" onClick={onPrev} className="text-gray-600 hover:text-gray-900 font-medium">← Back</button>
-        <button type="button" onClick={onNext} className="rounded-lg bg-air-force-blue text-white font-semibold px-6 py-3">Next: Create Collectibles →</button>
+        <button type="button" onClick={onNext} className="rounded-lg bg-air-force-blue text-white font-semibold px-6 py-3">Continue</button>
       </div>
     </>
   );
@@ -327,7 +327,7 @@ function NftStep({ onNext, onPrev }: { onNext: () => void; onPrev: () => void })
 
       <div className="flex items-center justify-between mt-12 max-w-2xl">
         <button type="button" onClick={onPrev} className="text-gray-600 hover:text-gray-900 font-medium">← Back</button>
-        <button type="button" onClick={onNext} className="rounded-lg bg-air-force-blue text-white font-semibold px-6 py-3">Next: Merch Setup →</button>
+        <button type="button" onClick={onNext} className="rounded-lg bg-air-force-blue text-white font-semibold px-6 py-3">Continue</button>
       </div>
     </>
   );
@@ -380,7 +380,6 @@ function MerchStep({ onNext, onPrev }: { onNext: () => void; onPrev: () => void 
           </div>
           <div className="flex gap-3">
             <button type="button" className="rounded-lg border border-gray-300 px-4 py-2 font-medium text-gray-700 hover:bg-gray-50">SAVE DRAFT</button>
-            <button type="button" onClick={onNext} className="rounded-lg bg-air-force-blue text-white font-semibold px-6 py-3">Next: Review →</button>
           </div>
         </div>
         <div className="flex-1 max-w-md">
@@ -398,8 +397,9 @@ function MerchStep({ onNext, onPrev }: { onNext: () => void; onPrev: () => void 
         </div>
       </div>
 
-      <div className="flex justify-start mt-12 max-w-2xl">
+      <div className="flex items-center justify-between mt-12 max-w-2xl">
         <button type="button" onClick={onPrev} className="text-gray-600 hover:text-gray-900 font-medium">← Back</button>
+        <button type="button" onClick={onNext} className="rounded-lg bg-air-force-blue text-white font-semibold px-6 py-3">Continue</button>
       </div>
     </>
   );
