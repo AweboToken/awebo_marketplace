@@ -49,6 +49,9 @@ export const metadata = {
     'AWEBO is a launchpad for culture-backed brands: tokens, merchandise, and global logistics. Design once, launch globally.',
 };
 
+/** Revalidate so deployed landing stays in sync with Sanity (design + content) */
+export const revalidate = 60;
+
 export default async function LandingPage() {
   let homePage: unknown = null;
   let topCreators: unknown = null;

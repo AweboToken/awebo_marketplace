@@ -13,8 +13,11 @@ export type TopCreator = {
   stats?: { label: string; value: string };
 };
 
+/** Placeholder when CMS returns no image URL – keeps layout consistent with main branch */
+const PLACEHOLDER_CREATOR_IMAGE = 'https://images.unsplash.com/photo-1620321023374-d1a68fbc720d?w=528&q=80';
+
 const DEFAULT_TOP_CREATORS: TopCreator[] = [
-  { id: '1', slug: 'genesis-cyber', name: 'Genesis Cyber', tagline: 'Streetwear × Digital', imageUrl: 'https://images.unsplash.com/photo-1620321023374-d1a68fbc720d?w=528&q=80', stats: { label: 'Volume', value: '12.4 ETH' } },
+  { id: '1', slug: 'genesis-cyber', name: 'Genesis Cyber', tagline: 'Streetwear × Digital', imageUrl: PLACEHOLDER_CREATOR_IMAGE, stats: { label: 'Volume', value: '12.4 ETH' } },
   { id: '2', slug: 'street-protocol', name: 'Street Protocol', tagline: 'Culture-backed tokens', imageUrl: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=528&q=80', stats: { label: 'Volume', value: '8.2 ETH' } },
   { id: '3', slug: 'phygital-labs', name: 'Phygital Labs', tagline: 'Physical meets digital', imageUrl: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=528&q=80', stats: { label: 'Volume', value: '6.1 ETH' } },
   { id: '4', slug: 'culture-coin', name: 'Culture Coin', tagline: 'Community first', imageUrl: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=528&q=80', stats: { label: 'Volume', value: '5.8 ETH' } },
@@ -69,7 +72,7 @@ function cmsToTopCreator(c: TopCreatorFromCMS): TopCreator {
     slug: c.slug || c._id,
     name: c.name || 'Creator',
     tagline: c.tagline ?? undefined,
-    imageUrl: c.imageUrl || '',
+    imageUrl: c.imageUrl?.trim() || PLACEHOLDER_CREATOR_IMAGE,
     stats: c.statsLabel && c.statsValue ? { label: c.statsLabel, value: c.statsValue } : undefined,
   };
 }

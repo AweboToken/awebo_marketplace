@@ -5,8 +5,11 @@ import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { CardSlide, type Card } from '@/components/ui/hero-preview-walls';
 
+/** Placeholder when CMS returns no image – keeps design consistent with main branch */
+const PLACEHOLDER_HOW_IT_WORKS_IMAGE = 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80';
+
 const DEFAULT_CARDS: Card[] = [
-  { id: 0, name: 'Profile & brand', designation: 'Your creator identity', content: <p>Set up your creator profile and brand identity in AWEBO Creator Studio. Add banner, avatar, tagline, and social links so your community recognizes you everywhere.</p>, image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80' },
+  { id: 0, name: 'Profile & brand', designation: 'Your creator identity', content: <p>Set up your creator profile and brand identity in AWEBO Creator Studio. Add banner, avatar, tagline, and social links so your community recognizes you everywhere.</p>, image: PLACEHOLDER_HOW_IT_WORKS_IMAGE },
   { id: 1, name: 'Token', designation: 'Brand token in ETH', content: <p>Configure your brand token: choose network, token purpose, total supply, and allocation. All pricing in ETH, with clear economics from day one.</p>, image: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&q=80' },
   { id: 2, name: 'NFT & merch', designation: 'Digital collectibles & phygital', content: <p>Build your digital collectibles and link phygital merch. Set mint price in ETH, upload artwork, and enable token-gated access for holders.</p>, image: 'https://images.unsplash.com/photo-1644361566691-2f023f2d3436?w=800&q=80' },
   { id: 3, name: 'Launch', designation: 'Deploy and fulfill globally', content: <p>Review and deploy. AWEBO handles smart contract deployment, drop mechanics, and global fulfillment for physical orders — one flow, all in ETH.</p>, image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80' },
@@ -26,7 +29,7 @@ function cmsToCard(c: HowItWorksCardFromCMS, index: number): Card {
     name: c.name || 'Step',
     designation: c.designation ?? '',
     content: <p>{c.content || ''}</p>,
-    image: c.imageUrl || '',
+    image: c.imageUrl?.trim() || PLACEHOLDER_HOW_IT_WORKS_IMAGE,
   };
 }
 

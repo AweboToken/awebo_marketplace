@@ -34,11 +34,12 @@ function wrap(index: number, length: number) {
 
 function buildSlides(slides?: Array<HeroSlide> | null) {
   if (!slides?.length) return DEFAULT_CAROUSEL_SLIDES;
-  return slides.map((s, i) => ({
+  const built = slides.map((s, i) => ({
     id: `slide-${i}`,
     type: (s.mediaType === 'video' ? 'video' : 'image') as 'video' | 'image',
-    src: s.url || '',
+    src: s.url?.trim() || '',
   })).filter((s) => s.src);
+  return built.length > 0 ? built : DEFAULT_CAROUSEL_SLIDES;
 }
 
 export default function LandingHero({ badge, headline, subtext, slides }: LandingHeroProps) {
