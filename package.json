@@ -1,38 +1,25 @@
 {
-  "name": "awebo",
-  "version": "0.1.0",
+  "name": "awebo-monorepo",
   "private": true,
+  "description": "AWEBO monorepo: Next.js app + EverShop (drops/merch)",
+  "workspaces": [
+    "awebo",
+    "evershop-dev"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@sanity/image-url": "^1.0.2",
-    "@privy-io/react-auth": "^3.15.0",
-    "viem": "^2.21.0",
-    "@radix-ui/react-slot": "^1.2.4",
-    "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^8.18.0",
-    "class-variance-authority": "^0.7.1",
-    "framer-motion": "^11.11.0",
-    "geist": "^1.7.0",
-    "lucide-react": "^0.454.0",
-    "next": "14.2.5",
-    "next-sanity": "^9.4.11",
-    "sanity": "^3.49.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "three": "^0.182.0"
+    "dev": "concurrently -n next,evershop -c blue,magenta \"npm run dev:web\" \"npm run dev:drops\"",
+    "dev:web": "npm run dev --workspace=awebo",
+    "dev:drops": "npm run dev --workspace=evershop-dev",
+    "build": "npm run build --workspace=awebo",
+    "build:drops": "npm run build --workspace=evershop-dev",
+    "start": "npm run start --workspace=awebo",
+    "start:drops": "npm run start --workspace=evershop-dev",
+    "setup:drops": "npm run setup --workspace=evershop-dev"
   },
   "devDependencies": {
-    "@types/node": "^20.14.12",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "autoprefixer": "^10.4.19",
-    "postcss": "^8.4.40",
-    "tailwindcss": "^3.4.7",
-    "typescript": "5.9.3"
+    "concurrently": "^9.1.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

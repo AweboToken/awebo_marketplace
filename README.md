@@ -1,144 +1,58 @@
-# Awebo.wtf
+# AWEBO monorepo
 
-A modern web application for launching and trading tokens on the L1X chain.
+Next.js app (marketing + app) and EverShop (drops/merch) on one domain.
 
-## Features
+- **`awebo/`** – Next.js app (port 3000). Landing, app home, launch, etc.
+- **`evershop-dev/`** – EverShop store (port 3001). Served at `/drops` via proxy.
 
-This application implements 8 key designs from Figma:
-
-1. **Home Page** - Welcome page with hot tokens display and welcome modal
-2. **Launch Page** - Token creation and launch interface
-3. **Activity Page** - Latest alerts and activity tracking
-4. **Profile - Balances** - User token holdings view
-5. **Profile - Gains** - Performance metrics and gains tracking
-6. **Profile - Coins** - Created coins management
-7. **Profile - Referrals** - Referral system interface
-8. **Profile - Settings** - User profile settings
-
-## Tech Stack
-
-- **Next.js 14** - React framework with App Router
-- **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first styling
-- **React** - UI library
-
-## Getting Started
-
-### Installation
+## Quick start
 
 ```bash
 npm install
+npm run dev          # runs Next.js + EverShop
+# Or: npm run dev:web (Next only), npm run dev:drops (EverShop only)
 ```
 
-### Development
+- **Main site:** http://localhost:3000  
+- **Drops (EverShop):** http://localhost:3000/drops  
+- **EverShop admin:** http://localhost:3000/drops/admin  
 
-Run the development server:
+See [docs/drops-evershop-setup.md](awebo/docs/drops-evershop-setup.md) for full EverShop setup (PostgreSQL, compile, setup, build).
 
-```bash
-npm run dev
+---
+
+## Sanity Studio CMS
+
+Landing and app home content is managed in **Sanity Studio**, embedded at `/studio`.
+
+### 1. Configure env
+
+In **`awebo/.env.local`** add:
+
+```env
+NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
+NEXT_PUBLIC_SANITY_DATASET=production
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+Get the project ID from [sanity.io/manage](https://sanity.io/manage).
 
-### Build
+### 2. Open the Studio
 
-Build the application for production:
+- **URL:** http://localhost:3000/studio (with the Next.js dev server running)
+- Or use the **“Content (Studio)”** link in the site footer.
 
-```bash
-npm run build
-```
+If the env vars are missing, `/studio` shows a short setup message instead of the Studio UI.
 
-### Start Production Server
+### 3. What you can edit
 
-```bash
-npm start
-```
+| In Studio | Used on the site |
+|-----------|-------------------|
+| **Home Page** (singleton) | Landing `/`: hero, how it works, ecosystem, CTA |
+| **App Page** (singleton) | App home `/app`: hero, projects grid, banner, featured |
+| **Top Creators** | Landing “Top creators” section |
+| **Trusted by partners** | Landing “Trusted by” logos |
+| **Phygital items** | Landing phygital section |
+| **How it works cards** | Landing “How it works” |
+| **Projects** | App home projects grid |
 
-## Project Structure
-
-```
-awebo/
-├── app/                    # Next.js app directory
-│   ├── page.tsx           # Home page
-│   ├── launch/            # Launch page
-│   ├── activity/          # Activity page
-│   ├── profile/           # Profile page with tabs
-│   ├── layout.tsx         # Root layout
-│   └── globals.css        # Global styles
-├── components/            # Reusable components
-│   ├── Navigation.tsx     # Top navigation bar
-│   ├── Footer.tsx         # Footer component
-│   ├── DashboardCard.tsx  # User dashboard card
-│   └── WelcomeModal.tsx   # Welcome modal
-├── package.json
-├── tsconfig.json
-└── tailwind.config.ts
-```
-
-## Design Implementation
-
-All designs have been implemented to match the Figma specifications:
-
-- Dark theme with black background (#000000)
-- Teal accent color for active states (#00D9FF)
-- Orange accent color for primary actions (#FF6B35)
-- Brown color for claim buttons (#D2691E)
-- Responsive layout with proper spacing and typography
-- Interactive elements with hover states
-
-## Pages
-
-### Home (`/`)
-
-- Hero section with logo and welcome message
-- Hot tokens grid display
-- Welcome modal (shown on first visit)
-
-### Launch (`/launch`)
-
-- Token creation form
-- Launch settings configuration
-- Real-time preview
-- Publish process indicator
-
-### Activity (`/activity`)
-
-- Latest alerts display
-- Activity tracking information
-- Alert count badge
-
-### Profile (`/profile`)
-
-- Dashboard card with user metrics
-- Tabbed interface for:
-  - **Balances**: Token holdings with filter
-  - **Gains**: Performance metrics and claim functionality
-  - **Coins**: Created coins search and management
-  - **Referrals**: Referrer setup and referral tracking
-  - **Settings**: Profile settings and public link
-
-## Customization
-
-### Colors
-
-Colors can be customized in `tailwind.config.ts`:
-
-```typescript
-colors: {
-  teal: {
-    DEFAULT: "#00D9FF",
-    dark: "#00B8D4",
-  },
-  orange: {
-    DEFAULT: "#FF6B35",
-    dark: "#E55A2B",
-  },
-  brown: {
-    DEFAULT: "#D2691E",
-  },
-}
-```
-
-## License
-
-© 2026 Awebo.wtf. All rights reserved.
+Create the **Home Page** and **App Page** documents in Studio and set their document IDs to `homePage` and `appPage` (singletons). More detail: [awebo/docs/sanity-setup.md](awebo/docs/sanity-setup.md).

@@ -1,0 +1,9 @@
+{
+  "shop": {
+    "homeUrl": "http://localhost:3000/drops",
+    "currency": "USD",
+    "language": "en",
+    "weightUnit": "kg",
+    "timezone": "UTC"
+  }
+}
