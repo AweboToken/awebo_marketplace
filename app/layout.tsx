@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { GeistPixelSquare } from "geist/font/pixel";
 import "./globals.css";
+import PrivyProviderWrapper from "@/components/PrivyProviderWrapper";
 
 export const metadata: Metadata = {
   title: "Awebo.wtf",
@@ -14,7 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={GeistPixelSquare.variable}>
-      <body>{children}</body>
+      <body>
+        <PrivyProviderWrapper>{children}</PrivyProviderWrapper>
+      </body>
     </html>
   );
 }

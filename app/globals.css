@@ -14,6 +14,21 @@
   --accent: #6FA7C5;
   --background: #FFFFFF;
   --foreground: #1A1A1A;
+  --seashell: #FFF4EB;
+  /* Semantic tokens for shadcn-style UI (card, button, etc.) */
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 199 89% 48%;
+  --primary: 199 89% 48%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 96%;
+  --secondary-foreground: 0 0% 9%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 45%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 9%;
 }
 
 body {
@@ -83,7 +98,7 @@ body {
   opacity: 0.4;
 }
 
-/* Footer hero: large AWEBO text above logo (~50vh) */
+/* Footer hero: large AWEBO text – reduced width, fits container with no side margin */
 .footer-ascii-text {
-  font-size: clamp(3rem, 48vh, 28rem);
+  font-size: clamp(2rem, 32vh, 14rem);
 }

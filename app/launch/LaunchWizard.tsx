@@ -7,7 +7,6 @@ const STEPS = [
   { id: 'profile', label: 'PROFILE', description: 'Tell the world who you are. This information will be public on your creator profile.' },
   { id: 'brand', label: 'BRAND', description: 'Define your brand identity and visual presence.' },
   { id: 'token', label: 'TOKEN', description: 'Define the engine of your brand economy. All prices in ETH.' },
-  { id: 'nft', label: 'NFT', description: 'Set up your digital collectibles and deploy to the blockchain.' },
   { id: 'merch', label: 'MERCH', description: 'Select base silhouettes and customize your phygital line.' },
   { id: 'review', label: 'REVIEW', description: 'Review and launch your brand.' },
 ] as const;
@@ -90,12 +89,9 @@ export default function LaunchWizard() {
             <TokenStep onNext={goNext} onPrev={goPrev} />
           )}
           {stepIndex === 3 && (
-            <NftStep onNext={goNext} onPrev={goPrev} />
-          )}
-          {stepIndex === 4 && (
             <MerchStep onNext={goNext} onPrev={goPrev} />
           )}
-          {stepIndex === 5 && (
+          {stepIndex === 4 && (
             <ReviewStep onPrev={goPrev} />
           )}
         </main>
@@ -275,66 +271,20 @@ function TokenStep({ onNext, onPrev }: { onNext: () => void; onPrev: () => void 
   );
 }
 
-function NftStep({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) {
-  return (
-    <>
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">NFT Collection Builder</h1>
-      <p className="text-gray-600 mb-8">Set up your digital collectibles and deploy to the blockchain. Mint price in ETH.</p>
-
-      <div className="flex flex-col lg:flex-row gap-8">
-        <div className="space-y-6 flex-1 max-w-xl">
-          <div>
-            <label className="block text-xs font-medium uppercase text-gray-500 mb-2">Collection name</label>
-            <input type="text" placeholder="e.g. Genesis Cyber-Shell" className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400" />
-          </div>
-          <div>
-            <label className="block text-xs font-medium uppercase text-gray-500 mb-2">Symbol</label>
-            <input type="text" placeholder="e.g. GCS" className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400" />
-          </div>
-          <div>
-            <label className="block text-xs font-medium uppercase text-gray-500 mb-2">Royalty %</label>
-            <input type="text" defaultValue="5.00" className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900" />
-          </div>
-          <div>
-            <label className="block text-xs font-medium uppercase text-gray-500 mb-2">Mint price</label>
-            <input type="text" defaultValue="0.05" className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-900" />
-            <span className="ml-2 text-gray-600">ETH</span>
-          </div>
-          <div>
-            <label className="block text-xs font-medium uppercase text-gray-500 mb-2">Artwork uploader</label>
-            <div className="border-2 border-dashed border-gray-300 rounded-xl h-48 flex flex-col items-center justify-center gap-2 text-gray-500">
-              <span className="text-3xl">☁️</span>
-              <span>DRAG & DROP ARTWORK</span>
-              <span className="text-xs">PNG, JPG, GIF (MAX 50MB)</span>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <button type="button" className="rounded-lg border border-gray-300 px-4 py-2 font-medium text-gray-700 hover:bg-gray-50">SAVE DRAFT</button>
-            <button type="button" className="rounded-lg bg-air-force-blue text-white font-semibold px-4 py-2">DEPLOY COLLECTION</button>
-          </div>
-        </div>
-        <div className="flex-1 max-w-md">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">LIVE PREVIEW</h3>
-          <div className="border border-gray-200 rounded-xl p-4 bg-gray-50">
-            <p className="text-xs text-gray-500 mb-2">ETHEREUM MAINNET</p>
-            <div className="aspect-square bg-gray-200 rounded-lg mb-3" />
-            <p className="text-sm font-medium text-gray-900">GENESIS PASS #001</p>
-            <p className="text-sm text-gray-600">0.05 ETH</p>
-            <button type="button" className="mt-3 w-full rounded-lg bg-air-force-blue text-white py-2 text-sm font-medium">BUY NOW</button>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between mt-12 max-w-2xl">
-        <button type="button" onClick={onPrev} className="text-gray-600 hover:text-gray-900 font-medium">← Back</button>
-        <button type="button" onClick={onNext} className="rounded-lg bg-air-force-blue text-white font-semibold px-6 py-3">Continue</button>
-      </div>
-    </>
-  );
-}
-
 function MerchStep({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) {
   const [apparel, setApparel] = useState<'hoodie' | 'tee' | 'cap'>('hoodie');
+  const [kickstarterMinUsdt, setKickstarterMinUsdt] = useState('');
+  const [kickstarterError, setKickstarterError] = useState('');
+  const numMin = kickstarterMinUsdt.trim() === '' ? NaN : Number(kickstarterMinUsdt);
+  const isValidMin = !Number.isNaN(numMin) && numMin > 0;
+  const handleNext = () => {
+    if (!isValidMin) {
+      setKickstarterError(kickstarterMinUsdt.trim() === '' ? 'Required' : 'Enter a valid amount greater than 0');
+      return;
+    }
+    setKickstarterError('');
+    onNext();
+  };
   return (
     <>
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Merch Setup</h1>
@@ -368,11 +318,35 @@ function MerchStep({ onNext, onPrev }: { onNext: () => void; onPrev: () => void 
               ))}
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <input type="checkbox" id="link-nft" defaultChecked className="rounded border-gray-300" />
-            <label htmlFor="link-nft" className="text-sm text-gray-700">
-              Link merch to NFT? NFT holders get exclusive early access to physical orders via token-gating.
-            </label>
+          <div>
+            <h2 className="text-sm font-semibold uppercase text-gray-700 mb-3">Kickstarter minimum (USDT)</h2>
+            <p className="text-sm text-gray-600 mb-2">Minimum amount in USDT that must be raised before printing starts.</p>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                inputMode="decimal"
+                min={0}
+                step={1}
+                placeholder="e.g. 5000"
+                value={kickstarterMinUsdt}
+                onChange={(e) => {
+                  setKickstarterMinUsdt(e.target.value);
+                  setKickstarterError('');
+                }}
+                className={`flex-1 rounded-lg border px-4 py-2.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-air-force-blue focus:border-transparent ${
+                  kickstarterError ? 'border-red-500' : 'border-gray-300'
+                }`}
+                aria-label="Kickstarter minimum in USDT"
+                aria-invalid={!!kickstarterError}
+                aria-describedby={kickstarterError ? 'kickstarter-min-error' : undefined}
+              />
+              <span className="text-gray-500 font-medium shrink-0">USDT</span>
+            </div>
+            {kickstarterError && (
+              <p id="kickstarter-min-error" className="mt-1.5 text-sm text-red-600" role="alert">
+                {kickstarterError}
+              </p>
+            )}
           </div>
           <div className="flex gap-4 text-sm">
             <p><span className="text-gray-500">Base cost:</span> <span className="font-medium">0.012 ETH / unit</span></p>
@@ -399,7 +373,7 @@ function MerchStep({ onNext, onPrev }: { onNext: () => void; onPrev: () => void 
 
       <div className="flex items-center justify-between mt-12 max-w-2xl">
         <button type="button" onClick={onPrev} className="text-gray-600 hover:text-gray-900 font-medium">← Back</button>
-        <button type="button" onClick={onNext} className="rounded-lg bg-air-force-blue text-white font-semibold px-6 py-3">Continue</button>
+        <button type="button" onClick={handleNext} className="rounded-lg bg-air-force-blue text-white font-semibold px-6 py-3">Continue</button>
       </div>
     </>
   );
@@ -409,7 +383,7 @@ function ReviewStep({ onPrev }: { onPrev: () => void }) {
   return (
     <>
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Review & Launch</h1>
-      <p className="text-gray-600 mb-8">Review your creator profile, token, NFT collection, and merch. All values in ETH.</p>
+      <p className="text-gray-600 mb-8">Review your creator profile, token, and merch. All values in ETH.</p>
 
       <div className="max-w-2xl space-y-6 rounded-xl border border-gray-200 p-6">
         <section>
@@ -421,12 +395,8 @@ function ReviewStep({ onPrev }: { onPrev: () => void }) {
           <p className="text-gray-700">Base network · Community Token · 10,000,000 BRND · 60% / 40% allocation.</p>
         </section>
         <section>
-          <h2 className="text-sm font-semibold uppercase text-gray-500 mb-2">NFT</h2>
-          <p className="text-gray-700">Genesis collection · 0.05 ETH mint.</p>
-        </section>
-        <section>
           <h2 className="text-sm font-semibold uppercase text-gray-500 mb-2">Merch</h2>
-          <p className="text-gray-700">Oversized Hoodie · 0.012 ETH/unit · Linked to NFT.</p>
+          <p className="text-gray-700">Oversized Hoodie · 0.012 ETH/unit.</p>
         </section>
       </div>
 

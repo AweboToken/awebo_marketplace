@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { appPath } from '@/lib/app-path';
+import UserMenu from '@/components/UserMenu';
+import LaunchBrandLogin from '@/components/LaunchBrandLogin';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.awebo.wtf';
 
@@ -58,18 +60,9 @@ export default function Navigation({ variant = 'app' }: { variant?: NavVariant }
           </nav>
 
           <div className="flex items-center justify-end gap-4 pr-4 sm:pr-6 min-w-0 shrink-0">
-            <Link
-              href="/login"
-              className="!text-white hover:!text-white/90 text-sm font-medium transition-colors no-underline"
-            >
-              LOG IN
-            </Link>
-            <Link
-              href="/launch"
-              className="inline-flex items-center justify-center rounded-lg bg-air-force-blue !text-white font-semibold px-5 py-2.5 text-sm hover:bg-air-force-blue/90 transition-colors no-underline"
-            >
+            <LaunchBrandLogin className="inline-flex items-center justify-center rounded-lg bg-air-force-blue !text-white font-semibold px-5 py-2.5 text-sm hover:bg-air-force-blue/90 transition-colors no-underline">
               LAUNCH BRAND
-            </Link>
+            </LaunchBrandLogin>
           </div>
         </div>
       </header>
@@ -101,12 +94,7 @@ export default function Navigation({ variant = 'app' }: { variant?: NavVariant }
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <div
-                key={`right-${index}`}
-                className="bg-gray-800 rounded-lg h-6 w-12 sm:w-16"
-              />
-            ))}
+            <UserMenu />
           </div>
         </div>
 

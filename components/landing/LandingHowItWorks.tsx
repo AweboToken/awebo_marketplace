@@ -2,104 +2,89 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import { ArrowUpRight, User, Coins, Layers, Rocket } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
+import { CardSlide, type Card } from '@/components/ui/hero-preview-walls';
 
-interface ProcessCardProps {
-  icon: React.ElementType;
-  title: string;
-  description: string;
-  className?: string;
-}
-
-const ProcessCard: React.FC<ProcessCardProps> = ({
-  icon: Icon,
-  title,
-  description,
-  className,
-}) => (
-  <div
-    className={cn(
-      'group relative w-full rounded-lg border border-gray-200 bg-white p-6 transition-all duration-300 hover:border-air-force-blue/60 hover:shadow-lg',
-      className
-    )}
-  >
-    {/* Decorative line - visible on larger screens */}
-    <div className="absolute -left-[1px] top-1/2 hidden h-1/2 w-px -translate-y-1/2 bg-gray-200 transition-colors group-hover:bg-air-force-blue/60 md:block" />
-    <div className="absolute left-1/2 top-0 h-px w-1/2 -translate-x-1/2 bg-gray-200 transition-colors group-hover:bg-air-force-blue/60 md:hidden" />
-
-    {/* Icon container */}
-    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg border border-gray-200 bg-gray-50 text-air-force-blue shadow-sm transition-colors duration-300 group-hover:bg-air-force-blue group-hover:text-white">
-      <Icon className="h-6 w-6" />
-    </div>
-
-    <div className="flex flex-col">
-      <h3 className="mb-1 text-lg font-semibold text-gray-900">{title}</h3>
-      <p className="text-sm text-gray-600">{description}</p>
-    </div>
-  </div>
-);
-
-const PROCESS_ITEMS: ProcessCardProps[] = [
-  {
-    icon: User,
-    title: 'Profile & brand',
-    description:
-      'Set up your creator profile and brand identity in AWEBO Creator Studio. Add banner, avatar, tagline, and social links.',
-  },
-  {
-    icon: Coins,
-    title: 'Token',
-    description:
-      'Configure your brand token: choose network, token purpose, total supply, and allocation. All pricing in ETH.',
-  },
-  {
-    icon: Layers,
-    title: 'NFT & merch',
-    description:
-      'Build your digital collectibles and link phygital merch. Set mint price in ETH, upload artwork, and enable token-gated access for holders.',
-  },
-  {
-    icon: Rocket,
-    title: 'Launch',
-    description:
-      'Review and deploy. AWEBO handles smart contract deployment, drop mechanics, and global fulfillment for physical orders.',
-  },
+const DEFAULT_CARDS: Card[] = [
+  { id: 0, name: 'Profile & brand', designation: 'Your creator identity', content: <p>Set up your creator profile and brand identity in AWEBO Creator Studio. Add banner, avatar, tagline, and social links so your community recognizes you everywhere.</p>, image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80' },
+  { id: 1, name: 'Token', designation: 'Brand token in ETH', content: <p>Configure your brand token: choose network, token purpose, total supply, and allocation. All pricing in ETH, with clear economics from day one.</p>, image: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&q=80' },
+  { id: 2, name: 'NFT & merch', designation: 'Digital collectibles & phygital', content: <p>Build your digital collectibles and link phygital merch. Set mint price in ETH, upload artwork, and enable token-gated access for holders.</p>, image: 'https://images.unsplash.com/photo-1644361566691-2f023f2d3436?w=800&q=80' },
+  { id: 3, name: 'Launch', designation: 'Deploy and fulfill globally', content: <p>Review and deploy. AWEBO handles smart contract deployment, drop mechanics, and global fulfillment for physical orders — one flow, all in ETH.</p>, image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80' },
 ];
 
-export default function LandingHowItWorks() {
+export type HowItWorksCardFromCMS = {
+  _id: string;
+  name?: string | null;
+  designation?: string | null;
+  content?: string | null;
+  imageUrl?: string | null;
+};
+
+function cmsToCard(c: HowItWorksCardFromCMS, index: number): Card {
+  return {
+    id: index,
+    name: c.name || 'Step',
+    designation: c.designation ?? '',
+    content: <p>{c.content || ''}</p>,
+    image: c.imageUrl || '',
+  };
+}
+
+export interface LandingHowItWorksProps {
+  sectionLabel?: string | null;
+  title?: string | null;
+  description?: string | null;
+  ctaText?: string | null;
+  ctaLink?: string | null;
+  cards?: HowItWorksCardFromCMS[] | null;
+}
+
+export default function LandingHowItWorks({
+  sectionLabel,
+  title,
+  description,
+  ctaText,
+  ctaLink,
+  cards,
+}: LandingHowItWorksProps) {
+  const cardList = cards?.length ? cards.map((c, i) => cmsToCard(c, i)) : DEFAULT_CARDS;
+  const label = sectionLabel ?? 'How it works';
+  const sectionTitle = title ?? 'Launch token, NFT & merch in one flow';
+  const sectionDescription = description ?? 'From creator profile to live drop: configure your token economics, build your NFT collection, add phygital merch, and launch. All in ETH.';
+  const cta = { text: ctaText ?? 'Start with AWEBO', link: ctaLink ?? '/launch' };
+
   return (
     <section
       id="how-it-works"
-      className="w-full bg-white py-16 md:py-24"
+      className="relative w-full overflow-hidden bg-white py-16 text-gray-900 dark:bg-neutral-950 dark:text-white md:py-24"
       aria-label="How it works"
     >
-      <div className="container mx-auto grid grid-cols-1 gap-12 px-4 md:grid-cols-3 md:gap-8 lg:gap-16 max-w-6xl">
-        {/* Left content */}
+      <div className="container mx-auto grid max-w-6xl grid-cols-1 gap-12 px-4 md:grid-cols-3 md:gap-8 lg:gap-16">
         <div className="flex flex-col items-start justify-center text-center md:col-span-1 md:text-left">
           <span className="mb-2 text-sm font-medium uppercase tracking-widest text-air-force-blue">
-            How it works
+            {label}
           </span>
-          <h2 className="mb-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
-            Launch token, NFT & merch in one flow
+          <h2 className="mb-4 text-3xl font-bold tracking-tight text-gray-900 dark:text-white md:text-4xl">
+            {sectionTitle}
           </h2>
-          <p className="mb-6 text-base text-gray-600">
-            From creator profile to live drop: configure your token economics, build your NFT collection, add phygital merch, and launch. All in ETH.
+          <p className="mb-6 text-base text-gray-600 dark:text-neutral-400">
+            {sectionDescription}
           </p>
           <Link
-            href="/launch"
+            href={cta.link}
             className="inline-flex items-center justify-center rounded-lg bg-air-force-blue px-6 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:bg-air-force-blue/90"
           >
-            Start with AWEBO
+            {cta.text}
             <ArrowUpRight className="ml-2 h-5 w-5" />
           </Link>
         </div>
-
-        {/* Right content - grid of process cards */}
-        <div className="grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 md:col-span-2">
-          {PROCESS_ITEMS.map((item, index) => (
-            <ProcessCard key={index} {...item} />
-          ))}
+        <div className="flex justify-center md:col-span-2">
+          <CardSlide
+            items={cardList}
+            offset={22}
+            scaleFactor={0.06}
+            intervalDuration={3200}
+          />
         </div>
       </div>
     </section>

@@ -105,6 +105,20 @@ The goal is to deliver a **polished, trust‑building, conversion‑oriented int
 
 ## 7. todo.md
 
+### Done so far (brief)
+
+- **Foundation:** Next.js + Tailwind set up; base layout (Navigation, Footer); design tokens in Tailwind (e.g. `air-force-blue`); UI primitives (button, card, badge, backgrounds).
+- **Landing & discovery:** Landing hero (LandingHero, LandingAboveFold); value/trust (LandingTrustedBy, LandingTopCreators, LandingPhygital, LandingHowItWorks, LandingEcosystem, LandingCtaBanner); launch feed (LaunchFeed); explore/drops pages.
+- **Launch detail:** Creator page route `creator/[slug]`; launch layout and launch page with feed.
+- **Merch / phygital:** Phygital section on landing; merch step in Launch Wizard; shirt-parallax-card and merch-related UI.
+- **Wallet & network (UI only):** ConnectWalletModal, UserMenu, PrivyProviderWrapper (Privy).
+- **User profile (frontend):** App profile page with tabs (Balances, Gains, Coins, Referrals, Settings) and DashboardCard.
+- **Launch creator (UI only):** Launch creation stepper (LaunchWizard + launch-steps: Profile → Brand → Token → Merch → Review); LaunchWizardModal; Sanity-backed studio route `studio/[[...tool]]`.
+- **Content & CMS:** Sanity config, schemas (homePage, project, phygitalItem, topCreator, etc.), queries, and docs (sanity-setup, referral-and-shipping).
+- **System polish:** Reusable UI (animated-pattern-cloud, procedural-ground-background, hero-preview-walls); responsive structure in place.
+
+---
+
 ```md
 # AWEBO Launchpad – UI TODO
 

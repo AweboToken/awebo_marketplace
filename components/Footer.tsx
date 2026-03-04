@@ -13,6 +13,7 @@ const LANDING_LINKS = [
   { title: 'Drops', href: '/drops' },
   { title: 'Ecosystem', href: '/ecosystem' },
   { title: 'About', href: '/about' },
+  { title: 'Content (Studio)', href: '/studio' },
   { title: 'Privacy', href: '/privacy' },
   { title: 'Terms', href: '/terms' },
 ];
@@ -80,11 +81,11 @@ export default function Footer({ variant = 'app' }: { variant?: FooterVariant })
           <FooterLinksBlock dark showCopyright={false} />
         </div>
 
-        {/* Big AWEBO title */}
-        <div className="relative flex min-h-[50vh] flex-col items-center justify-end overflow-hidden bg-black pb-8 pt-4">
+        {/* Big AWEBO title – full-bleed container, no horizontal margin */}
+        <div className="relative flex min-h-[50vh] w-full max-w-full flex-col items-center justify-end overflow-hidden bg-black pb-8 pt-4 mx-0 px-0">
           <div className="absolute inset-0 cta-dither-overlay pointer-events-none" aria-hidden />
           <p
-            className="footer-ascii-text relative z-10 font-rapid-response select-none leading-none text-white"
+            className="footer-ascii-text relative z-10 font-rapid-response select-none leading-none text-white text-center"
             aria-hidden
           >
             AWEBO

@@ -1,4 +1,7 @@
+export { default as LandingAboveFold } from './LandingAboveFold';
 export { default as LandingHero } from './LandingHero';
+export { default as LandingTrustedBy } from './LandingTrustedBy';
+export { default as LandingTopCreators } from './LandingTopCreators';
 export { default as MidsectionAscii } from './MidsectionAscii';
 export { default as LandingPhygital } from './LandingPhygital';
 export { default as LandingHowItWorks } from './LandingHowItWorks';
