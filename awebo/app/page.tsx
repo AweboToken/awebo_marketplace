@@ -59,7 +59,7 @@ export default async function LandingPage() {
   let phygitalItems: unknown = null;
   let howItWorksCards: unknown = null;
 
-  if (isSanityConfigured) {
+  if (isSanityConfigured && client) {
     try {
       [homePage, topCreators, trustedByPartners, phygitalItems, howItWorksCards] =
         await Promise.all([

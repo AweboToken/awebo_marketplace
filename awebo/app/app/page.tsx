@@ -26,7 +26,7 @@ export default async function AppHome() {
     ctaButtonText?: string | null;
     ctaLink?: string | null;
   } | null = null;
-  if (isSanityConfigured) {
+  if (isSanityConfigured && client) {
     try {
       appPage = await client.fetch(appPageQuery);
     } catch {
