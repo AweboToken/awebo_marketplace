@@ -179,6 +179,16 @@ function VideoPlane({
     }
   }, [aspectRatio]);
 
+  const shaderMaterial = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms,
+      }),
+    [uniforms]
+  );
+
   useFrame((state) => {
     if (meshRef.current) {
       const material = meshRef.current.material as THREE.ShaderMaterial;
@@ -210,11 +220,7 @@ function VideoPlane({
   return (
     <mesh ref={meshRef} scale={scale}>
       <planeGeometry args={[2, 2]} />
-      <shaderMaterial
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-        uniforms={uniforms}
-      />
+      <primitive object={shaderMaterial} attach="material" />
     </mesh>
   );
 }

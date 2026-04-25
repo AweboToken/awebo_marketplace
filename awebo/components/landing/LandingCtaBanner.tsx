@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import LaunchBrandLogin from '@/components/LaunchBrandLogin';
@@ -16,30 +15,6 @@ export interface LandingCtaBannerProps {
   secondaryButtonText?: string | null;
   secondaryButtonLink?: string | null;
 }
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-      delayChildren: 0.1,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      type: 'spring',
-      stiffness: 100,
-      damping: 12,
-    },
-  },
-};
 
 export default function LandingCtaBanner({
   title,
@@ -75,32 +50,19 @@ export default function LandingCtaBanner({
         <div className="absolute inset-0 bg-black/60" />
         <div className="absolute inset-0 pointer-events-none cta-dither-overlay" aria-hidden />
 
-        <motion.div
+        <div
           className="relative z-10 flex flex-col items-center justify-center gap-8 p-8 text-center md:p-12 lg:p-16"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-50px' }}
         >
           <div className="flex flex-col items-center text-center text-white max-w-2xl">
-            <motion.h2
-              className="text-3xl font-extrabold tracking-tight md:text-4xl lg:text-5xl"
-              variants={itemVariants}
-            >
+            <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl lg:text-5xl">
               {heading}
-            </motion.h2>
-            <motion.p
-              className="mt-4 text-lg text-neutral-200"
-              variants={itemVariants}
-            >
+            </h2>
+            <p className="mt-4 text-lg text-neutral-200">
               {body}
-            </motion.p>
+            </p>
           </div>
 
-          <motion.div
-            className="flex flex-wrap items-center justify-center gap-4"
-            variants={itemVariants}
-          >
+          <div className="flex flex-wrap items-center justify-center gap-4">
             <LaunchBrandLogin className="inline-flex h-12 items-center justify-center rounded-md bg-white px-6 font-semibold text-black hover:bg-neutral-200 transition-colors shrink-0">
               {primaryText}
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -111,8 +73,8 @@ export default function LandingCtaBanner({
             >
               {secondaryText}
             </Link>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

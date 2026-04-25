@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { ChevronLeft, ChevronRight, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -24,35 +23,10 @@ interface FocusRailProps {
   className?: string;
 }
 
-/**
- * Helper to wrap indices (e.g., -1 becomes length-1)
- */
 function wrap(min: number, max: number, v: number) {
   const rangeSize = max - min;
   return ((((v - min) % rangeSize) + rangeSize) % rangeSize) + min;
 }
-
-/**
- * Physics Configuration
- * Base spring for spatial movement (x/z)
- */
-const BASE_SPRING = {
-  type: "spring",
-  stiffness: 300,
-  damping: 30,
-  mass: 1,
-};
-
-/**
- * Scale Spring
- * Bouncier spring specifically for the visual "Click/Tap" feedback on the center card
- */
-const TAP_SPRING = {
-  type: "spring",
-  stiffness: 450,
-  damping: 18, // Lower damping = subtle overshoot/wobble "tap"
-  mass: 1,
-};
 
 export function FocusRail({
   items,
@@ -118,24 +92,6 @@ export function FocusRail({
     if (e.key === "ArrowRight") handleNext();
   };
 
-  // --- SWIPE / DRAG LOGIC ---
-  const swipeConfidenceThreshold = 10000;
-  const swipePower = (offset: number, velocity: number) => {
-    return Math.abs(offset) * velocity;
-  };
-
-  const onDragEnd = (e: MouseEvent | TouchEvent | PointerEvent, { offset, velocity }: PanInfo) => {
-    const swipe = swipePower(offset.x, velocity.x);
-
-    if (swipe < -swipeConfidenceThreshold) {
-      handleNext();
-    } else if (swipe > swipeConfidenceThreshold) {
-      handlePrev();
-    }
-  };
-
-  const visibleIndices = [-2, -1, 0, 1, 2];
-
   return (
     <div
       className={cn(
@@ -148,126 +104,70 @@ export function FocusRail({
       onKeyDown={onKeyDown}
       onWheel={onWheel}
     >
-      {/* Background Ambience */}
+      {/* Background (static, no animated blur) */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <AnimatePresence mode="popLayout">
-          <motion.div
-            key={`bg-${activeItem.id}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.4 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="absolute inset-0"
-          >
-            <img
-              src={activeItem.imageSrc}
-              alt=""
-              className="h-full w-full object-cover blur-3xl saturate-200"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/50 to-transparent" />
-          </motion.div>
-        </AnimatePresence>
+        <div className="absolute inset-0 bg-gradient-to-b from-neutral-950 via-neutral-950/80 to-neutral-950" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_20%,rgba(111,167,197,0.18),transparent_60%)]" />
       </div>
 
       {/* Main Stage */}
       <div className="relative z-10 flex flex-1 flex-col justify-center px-4 md:px-8">
-        {/* DRAGGABLE RAIL CONTAINER */}
-        <motion.div
-          className="relative mx-auto flex h-[360px] w-full max-w-6xl items-center justify-center perspective-[1200px] cursor-grab active:cursor-grabbing"
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.2}
-          onDragEnd={onDragEnd}
-        >
-          {visibleIndices.map((offset) => {
-            const absIndex = active + offset;
-            const index = wrap(0, count, absIndex);
-            const item = items[index];
-
-            if (!loop && (absIndex < 0 || absIndex >= count)) return null;
-
-            const isCenter = offset === 0;
-            const dist = Math.abs(offset);
-
-            // Dynamic transforms
-            const xOffset = offset * 320;
-            const zOffset = -dist * 180;
-            const scale = isCenter ? 1 : 0.85;
-            const rotateY = offset * -20;
-
-            const opacity = isCenter ? 1 : Math.max(0.1, 1 - dist * 0.5);
-            const blur = isCenter ? 0 : dist * 6;
-            const brightness = isCenter ? 1 : 0.5;
-
-            return (
-              <motion.div
-                key={absIndex}
+        {/* Simple gallery (no 3D, no blur, no motion) */}
+        <div className="mx-auto w-full max-w-6xl">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {items.map((item, i) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActive(i)}
                 className={cn(
-                  "absolute aspect-[3/4] w-[260px] md:w-[300px] rounded-2xl border-t border-white/20 bg-neutral-900 shadow-2xl transition-shadow duration-300",
-                  isCenter ? "z-20 shadow-white/10" : "z-10"
+                  "group w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 text-left shadow-lg transition-colors hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-air-force-blue focus:ring-offset-2 focus:ring-offset-neutral-950",
+                  i === activeIndex ? "ring-1 ring-white/20" : ""
                 )}
-                initial={false}
-                animate={{
-                  x: xOffset,
-                  z: zOffset,
-                  scale: scale, // Trigger "tap" via TAP_SPRING when this changes
-                  rotateY: rotateY,
-                  opacity: opacity,
-                  filter: `blur(${blur}px) brightness(${brightness})`,
-                }}
-                transition={(key: string) => {
-                    // Use bouncier spring for scale to create the "Tap" effect
-                    if (key === "scale") return TAP_SPRING;
-                    return BASE_SPRING;
-                }}
-                style={{
-                  transformStyle: "preserve-3d",
-                }}
-                onClick={() => {
-                  if (offset !== 0) setActive((p) => p + offset);
-                }}
               >
-                <img
-                  src={item.imageSrc}
-                  alt={item.title}
-                  className="h-full w-full rounded-2xl object-cover pointer-events-none"
-                />
-
-                {/* Lighting layers */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
-                <div className="absolute inset-0 rounded-2xl bg-black/10 pointer-events-none mix-blend-multiply" />
-              </motion.div>
-            );
-          })}
-        </motion.div>
+                <div className="relative aspect-[4/3] w-full overflow-hidden">
+                  <img
+                    src={item.imageSrc}
+                    alt={item.title}
+                    className="h-full w-full object-cover"
+                    loading={i === 0 ? "eager" : "lazy"}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
+                </div>
+                <div className="p-4">
+                  {item.meta && (
+                    <div className="text-xs font-medium uppercase tracking-wider text-emerald-400">
+                      {item.meta}
+                    </div>
+                  )}
+                  <div className="mt-1 text-lg font-semibold text-white">{item.title}</div>
+                  {item.description && (
+                    <p className="mt-1 text-sm text-white/70">{item.description}</p>
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Info & Controls */}
         <div className="mx-auto mt-12 flex w-full max-w-4xl flex-col items-center justify-between gap-6 md:flex-row pointer-events-auto">
           <div className="flex flex-1 flex-col items-center text-center md:items-start md:text-left h-32 justify-center">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeItem.id}
-                initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
-                transition={{ duration: 0.3 }}
-                className="space-y-2"
-              >
-                {activeItem.meta && (
-                  <span className="text-xs font-medium uppercase tracking-wider text-emerald-400">
-                    {activeItem.meta}
-                  </span>
-                )}
-                <h2 className="text-3xl font-bold tracking-tight md:text-4xl text-white">
-                  {activeItem.title}
-                </h2>
-                {activeItem.description && (
-                  <p className="max-w-md text-neutral-400">
-                    {activeItem.description}
-                  </p>
-                )}
-              </motion.div>
-            </AnimatePresence>
+            <div key={activeItem.id} className="space-y-2">
+              {activeItem.meta && (
+                <span className="text-xs font-medium uppercase tracking-wider text-emerald-400">
+                  {activeItem.meta}
+                </span>
+              )}
+              <h2 className="text-3xl font-bold tracking-tight md:text-4xl text-white">
+                {activeItem.title}
+              </h2>
+              {activeItem.description && (
+                <p className="max-w-md text-neutral-400">
+                  {activeItem.description}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-4">

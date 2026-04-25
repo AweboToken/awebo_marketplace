@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
-import { CardSlide, type Card } from '@/components/ui/hero-preview-walls';
+import type { Card } from '@/components/ui/hero-preview-walls';
 
 /** Placeholder when CMS returns no image – keeps design consistent with main branch */
 const PLACEHOLDER_HOW_IT_WORKS_IMAGE = 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80';
@@ -81,13 +81,35 @@ export default function LandingHowItWorks({
             <ArrowUpRight className="ml-2 h-5 w-5" />
           </Link>
         </div>
-        <div className="flex justify-center md:col-span-2">
-          <CardSlide
-            items={cardList}
-            offset={22}
-            scaleFactor={0.06}
-            intervalDuration={3200}
-          />
+        <div className="md:col-span-2">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            {cardList.map((card) => (
+              <div
+                key={card.id}
+                className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-lg dark:border-white/[0.08] dark:bg-neutral-900"
+              >
+                <div className="text-lg font-semibold text-neutral-800 dark:text-neutral-100">
+                  {card.name}
+                </div>
+                <div className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+                  {card.content}
+                </div>
+                <div className="mt-4">
+                  <img
+                    src={card.image}
+                    alt={card.name}
+                    className="h-44 w-full rounded-lg border border-neutral-200 object-cover shadow-sm dark:border-neutral-800"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="mt-4 border-t border-neutral-200 pt-3 dark:border-neutral-800">
+                  <p className="text-sm font-medium text-neutral-700 dark:text-white">
+                    {card.designation}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
