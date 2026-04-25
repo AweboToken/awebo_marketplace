@@ -9,7 +9,7 @@ import LaunchBrandLogin from '@/components/LaunchBrandLogin';
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.awebo.wtf';
 
 const LANDING_NAV_LINKS = [
-  { label: 'EXPLORE', href: '/explore' },
+  { label: 'MARKETPLACE', href: '/marketplace' },
   { label: 'DROPS', href: '/drops' },
   { label: 'ECOSYSTEM', href: '/ecosystem' },
   { label: 'ABOUT', href: '/about' },
@@ -38,7 +38,7 @@ export default function Navigation({ variant = 'app' }: { variant?: NavVariant }
               >
                 A
               </span>
-              <span className="text-white font-semibold tracking-tight text-lg">
+              <span className="text-black font-semibold tracking-tight text-lg">
                 AWEBO
               </span>
             </Link>
@@ -52,7 +52,7 @@ export default function Navigation({ variant = 'app' }: { variant?: NavVariant }
               <Link
                 key={href}
                 href={href}
-                className="!text-white hover:!text-white/90 text-sm font-medium uppercase tracking-wide transition-colors no-underline"
+                className="!text-black hover:!text-black/70 text-sm font-medium uppercase tracking-wide transition-colors no-underline"
               >
                 {label}
               </Link>
@@ -60,7 +60,7 @@ export default function Navigation({ variant = 'app' }: { variant?: NavVariant }
           </nav>
 
           <div className="flex items-center justify-end gap-4 pr-4 sm:pr-6 min-w-0 shrink-0">
-            <LaunchBrandLogin className="inline-flex items-center justify-center rounded-lg bg-air-force-blue !text-white font-semibold px-5 py-2.5 text-sm hover:bg-air-force-blue/90 transition-colors no-underline">
+            <LaunchBrandLogin className="inline-flex items-center justify-center rounded-lg bg-air-force-blue !text-black font-semibold px-5 py-2.5 text-sm hover:bg-air-force-blue/90 transition-colors no-underline">
               LAUNCH BRAND
             </LaunchBrandLogin>
           </div>

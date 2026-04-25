@@ -4,11 +4,10 @@ import { useState } from 'react';
 import Link from 'next/link';
 import {
   STEPS,
-  ProfileStep,
-  BrandStep,
-  TokenStep,
-  MerchStep,
-  ReviewStep,
+  BrandSetupStep,
+  CatalogProductsStep,
+  BrandContractStep,
+  ReviewPublishStep,
 } from './launch-steps';
 
 type LaunchWizardModalProps = {
@@ -44,29 +43,29 @@ export default function LaunchWizardModal({ isOpen, onClose }: LaunchWizardModal
         className="relative bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-2xl my-8 max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Modal header: step indicator + close */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 shrink-0">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <Link href="/" className="flex items-center gap-2 no-underline shrink-0">
               <span className="w-8 h-8 flex items-center justify-center rounded bg-air-force-blue text-white font-bold text-sm">A</span>
               <span className="text-air-force-blue font-semibold text-lg">AWEBO</span>
             </Link>
-            <span className="text-gray-400">·</span>
-            <h1 id="launch-wizard-title" className="text-sm font-medium text-gray-700">
+            <span className="text-gray-400 shrink-0">·</span>
+            <h1 id="launch-wizard-title" className="text-sm font-medium text-gray-700 truncate">
               Step {stepIndex + 1} of {STEPS.length}: {currentStep.label}
             </h1>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-800 p-1 rounded-lg hover:bg-gray-100"
+            className="text-gray-500 hover:text-gray-800 p-1 rounded-lg hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-air-force-blue shrink-0"
             aria-label="Close"
           >
-            <span className="text-xl leading-none">×</span>
+            <span className="text-xl leading-none" aria-hidden>
+              ×
+            </span>
           </button>
         </div>
 
-        {/* Step progress bar */}
         <div className="px-6 pt-2 shrink-0">
           <div className="flex gap-1">
             {STEPS.map((_, i) => (
@@ -81,15 +80,19 @@ export default function LaunchWizardModal({ isOpen, onClose }: LaunchWizardModal
           </div>
         </div>
 
-        {/* Step content - scrollable */}
-        <div className="px-6 py-6 overflow-y-auto shrink min-h-0">
+        <div className="px-6 py-6 overflow-y-auto shrink min-h-0 overscroll-contain">
           {stepIndex === 0 && (
-            <ProfileStep onNext={goNext} onCancel={() => { onClose(); window.location.href = '/'; }} />
+            <BrandSetupStep
+              onNext={goNext}
+              onCancel={() => {
+                onClose();
+                window.location.href = '/';
+              }}
+            />
           )}
-          {stepIndex === 1 && <BrandStep onNext={goNext} onPrev={goPrev} />}
-          {stepIndex === 2 && <TokenStep onNext={goNext} onPrev={goPrev} />}
-          {stepIndex === 3 && <MerchStep onNext={goNext} onPrev={goPrev} />}
-          {stepIndex === 4 && <ReviewStep onPrev={goPrev} />}
+          {stepIndex === 1 && <CatalogProductsStep onNext={goNext} onPrev={goPrev} />}
+          {stepIndex === 2 && <BrandContractStep onNext={goNext} onPrev={goPrev} />}
+          {stepIndex === 3 && <ReviewPublishStep onPrev={goPrev} />}
         </div>
       </div>
     </div>

@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 
 const LANDING_LINKS = [
-  { title: 'Explore', href: '/explore' },
+  { title: 'Marketplace', href: '/marketplace' },
   { title: 'Drops', href: '/drops' },
   { title: 'Ecosystem', href: '/ecosystem' },
   { title: 'About', href: '/about' },
