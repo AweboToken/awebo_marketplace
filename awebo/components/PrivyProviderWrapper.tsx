@@ -1,25 +1,28 @@
 'use client';
 
 import { PrivyProvider as Privy } from '@privy-io/react-auth';
-
-const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
-
-if (!appId && typeof window !== 'undefined') {
-  console.warn('NEXT_PUBLIC_PRIVY_APP_ID is not set. Privy login will not work.');
-}
+import { isPrivyConfigured, privyAppId } from '@/lib/privy-env';
 
 /**
- * Enable in Privy Dashboard: Email, Google (Gmail), Passkey, and Wallet
- * so users can log in with Gmail, passkeys, or connect an external wallet.
+ * When `NEXT_PUBLIC_PRIVY_APP_ID` is missing (e.g. Vercel preview without env),
+ * skip Privy entirely so static generation does not throw. Use `UserMenu` /
+ * `LaunchBrandLogin` fallbacks for UX without auth.
  */
 export default function PrivyProviderWrapper({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  if (!isPrivyConfigured) {
+    if (typeof window !== 'undefined') {
+      console.warn('NEXT_PUBLIC_PRIVY_APP_ID is not set. Privy login is disabled.');
+    }
+    return <>{children}</>;
+  }
+
   return (
     <Privy
-      appId={appId ?? ''}
+      appId={privyAppId}
       config={{
         appearance: {
           theme: 'light',
