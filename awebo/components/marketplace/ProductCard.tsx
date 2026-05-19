@@ -27,10 +27,7 @@ export default function ProductCard({
   return (
     <article className="group flex flex-col rounded-xl border border-silver/60 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow min-w-0">
       <Link href={to} className="block no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-air-force-blue focus-visible:ring-offset-2 rounded-t-xl">
-        <div
-          className={`aspect-[4/5] bg-gradient-to-br ${imageTone} relative`}
-          aria-hidden
-        />
+        <div className={`aspect-[4/5] bg-gradient-to-br ${imageTone} relative`} aria-hidden />
         <div className="p-4 pb-2 min-w-0">
           <h2 className="text-sm font-semibold text-gray-900 line-clamp-2 text-balance group-hover:text-air-force-blue transition-colors">
             {name}

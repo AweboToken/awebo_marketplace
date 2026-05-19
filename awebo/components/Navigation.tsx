@@ -1,10 +1,13 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { appPath } from '@/lib/app-path';
 import UserMenu from '@/components/UserMenu';
 import LaunchBrandLogin from '@/components/LaunchBrandLogin';
+
+const AWEBO_NAV_ICON = '/awebo_icon.png';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.awebo.wtf';
 
@@ -20,25 +23,37 @@ const linkClassApp =
 
 type NavVariant = 'app' | 'landing';
 
-export default function Navigation({ variant = 'app' }: { variant?: NavVariant }) {
+export default function Navigation({
+  variant = 'app',
+  landingChromeVisible = true,
+}: {
+  variant?: NavVariant;
+  /** Landing only: hide nav until headline band / intro progress catches up (smooth scrub can lag scroll). */
+  landingChromeVisible?: boolean;
+}) {
   const pathname = usePathname() ?? '';
 
   if (variant === 'landing') {
+    if (!landingChromeVisible) {
+      return null;
+    }
     return (
       <header
-        className="fixed top-0 left-0 right-0 z-50 w-full bg-transparent"
+        className="pointer-events-none absolute inset-x-0 top-0 z-30 w-full bg-transparent"
         role="banner"
       >
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center h-14 md:h-16 w-full min-w-0">
-          <div className="pl-4 sm:pl-6 min-w-0 flex items-center gap-2">
-            <Link href="/" className="flex items-center gap-2 shrink-0 no-underline">
-              <span
-                className="w-8 h-8 flex items-center justify-center rounded bg-air-force-blue text-white font-bold text-sm"
-                aria-hidden
-              >
-                A
-              </span>
-              <span className="text-black font-semibold tracking-tight text-lg">
+        <div className="pointer-events-auto grid min-h-0 w-full min-w-0 grid-cols-[1fr_auto_1fr] items-center bg-transparent py-3 md:py-4">
+          <div className="flex min-w-0 items-center gap-2 pl-4 sm:pl-6">
+            <Link href="/" className="flex shrink-0 items-center gap-2.5 no-underline">
+              <Image
+                src={AWEBO_NAV_ICON}
+                alt=""
+                width={32}
+                height={32}
+                className="h-8 w-8 shrink-0 object-contain"
+                priority
+              />
+              <span className="text-lg font-semibold tracking-tight text-white drop-shadow-md">
                 AWEBO
               </span>
             </Link>
@@ -46,21 +61,21 @@ export default function Navigation({ variant = 'app' }: { variant?: NavVariant }
 
           <nav
             aria-label="Main"
-            className="hidden md:flex items-center justify-center gap-6 shrink-0"
+            className="hidden shrink-0 items-center justify-center gap-6 md:flex"
           >
             {LANDING_NAV_LINKS.map(({ label, href }) => (
               <Link
                 key={href}
                 href={href}
-                className="!text-black hover:!text-black/70 text-sm font-medium uppercase tracking-wide transition-colors no-underline"
+                className="!text-white/90 hover:!text-white text-sm font-medium uppercase tracking-wide drop-shadow-sm transition-colors no-underline"
               >
                 {label}
               </Link>
             ))}
           </nav>
 
-          <div className="flex items-center justify-end gap-4 pr-4 sm:pr-6 min-w-0 shrink-0">
-            <LaunchBrandLogin className="inline-flex items-center justify-center rounded-lg bg-air-force-blue !text-black font-semibold px-5 py-2.5 text-sm hover:bg-air-force-blue/90 transition-colors no-underline">
+          <div className="flex min-w-0 shrink-0 items-center justify-end gap-4 pr-4 sm:pr-6">
+            <LaunchBrandLogin className="inline-flex items-center justify-center rounded-lg bg-air-force-blue px-5 py-2.5 text-sm font-semibold !text-black transition-colors no-underline hover:bg-air-force-blue/90">
               LAUNCH BRAND
             </LaunchBrandLogin>
           </div>

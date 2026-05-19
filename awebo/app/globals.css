@@ -102,3 +102,41 @@ body {
 .footer-ascii-text {
   font-size: clamp(2rem, 32vh, 14rem);
 }
+
+/* AWEBO marketplace showcase (components/marketplace) */
+@layer utilities {
+  .gradient-hero {
+    background: linear-gradient(145deg, #4a3d8f 0%, #6e5dcb 42%, #a855c4 78%, #c471ed 100%);
+  }
+
+  .gradient-purple {
+    background: linear-gradient(90deg, #3d3366 0%, #5b4bb8 35%, #6e5dcb 70%, #8b5bc8 100%);
+  }
+
+  .btn-cyan {
+    background: linear-gradient(180deg, #c5faf3 0%, #7ee8dc 40%, #5eead4 100%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  }
+
+  .btn-cyan:hover {
+    filter: brightness(1.03);
+  }
+
+  .card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
