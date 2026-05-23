@@ -34,9 +34,7 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 /* Hide Unicorn Studio "made with" / branding tag in our ASCII scene */
@@ -139,4 +137,20 @@ body {
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+}
+
+/* Landing hero — tight purple ring around plus hotspot */
+.hero-hotspot-orb {
+  background: radial-gradient(
+    circle,
+    transparent 46%,
+    rgba(139, 92, 246, 0.98) 52%,
+    rgba(124, 58, 237, 0.95) 58%,
+    transparent 64%
+  );
+  box-shadow: 0 0 6px 1px rgba(168, 85, 247, 0.65);
+}
+
+.hero-hotspot:hover .hero-hotspot-orb {
+  box-shadow: 0 0 8px 2px rgba(192, 132, 252, 0.8);
 }

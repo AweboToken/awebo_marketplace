@@ -1,6 +1,7 @@
 'use client';
 
 import { PrivyProvider as Privy } from '@privy-io/react-auth';
+import { AuthModalProvider } from '@/components/auth/AuthModalContext';
 import { isPrivyConfigured, privyAppId } from '@/lib/privy-env';
 
 /**
@@ -33,7 +34,7 @@ export default function PrivyProviderWrapper({
         },
       }}
     >
-      {children}
+      <AuthModalProvider>{children}</AuthModalProvider>
     </Privy>
   );
 }

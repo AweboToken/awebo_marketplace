@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={GeistPixelSquare.variable}>
+    <html lang="en" className={`${GeistPixelSquare.variable} font-sans`}>
       <body>
         <PrivyProviderWrapper>
           <RouteBackgroundCrossfade />

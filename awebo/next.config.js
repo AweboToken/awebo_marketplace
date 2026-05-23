@@ -9,6 +9,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**' },
       { protocol: 'https', hostname: 'ik.imagekit.io', pathname: '/**' },
       { protocol: 'https', hostname: 'cdn.sanity.io', pathname: '/**' },
+      { protocol: 'https', hostname: 'ext.same-assets.com', pathname: '/**' },
     ],
   },
   async rewrites() {

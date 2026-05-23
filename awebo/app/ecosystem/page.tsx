@@ -1,5 +1,6 @@
 import Navigation from '@/components/Navigation';
 import EcosystemGallery from '@/components/ecosystem/EcosystemGallery';
+import EcosystemReturnHome from '@/components/ecosystem/EcosystemReturnHome';
 
 export const metadata = {
   title: 'Ecosystem — AWEBO',
@@ -9,7 +10,8 @@ export const metadata = {
 export default function EcosystemPage() {
   return (
     <div className="relative min-h-screen w-full bg-[#0a0a0a]">
-      <Navigation variant="landing" landingChromeVisible />
+      <EcosystemReturnHome />
+      <Navigation variant="landing" landingTheme="overlay" landingChromeVisible />
       <main className="w-full pt-[72px] md:pt-[80px]">
         <EcosystemGallery />
       </main>

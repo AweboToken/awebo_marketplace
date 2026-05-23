@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
 
 function normalizeParams(searchParams: { [key: string]: string | string[] | undefined }) {
   return Object.entries(searchParams).filter(([, v]) => v !== undefined && v !== '');
@@ -19,18 +21,9 @@ export function DiscoveryListingPageLayout({
   const pairs = normalizeParams(searchParams);
 
   return (
-    <div className="min-h-screen bg-[#f1f5f5] text-gray-900">
-      <header className="border-b border-gray-200/80 bg-white/90 backdrop-blur">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-4">
-          <Link
-            href="/awebo-marketplace"
-            className="text-sm font-medium text-air-force-blue no-underline hover:underline underline-offset-2"
-          >
-            ← Marketplace preview
-          </Link>
-        </div>
-      </header>
-      <main className="mx-auto max-w-3xl px-4 py-10">
+    <div className="flex min-h-screen flex-col bg-[#f1f5f5] font-sans text-gray-900">
+      <Navigation variant="landing" landingTheme="surface" />
+      <main className="mx-auto max-w-3xl flex-1 px-4 py-10">
         <h1 className="text-2xl font-bold tracking-tight text-gray-900">{title}</h1>
         <div className="mt-2 text-sm text-gray-600">{description}</div>
         {pairs.length > 0 ? (
@@ -52,7 +45,14 @@ export function DiscoveryListingPageLayout({
         ) : (
           <p className="mt-6 text-sm text-gray-500">{emptyMessage}</p>
         )}
+        <Link
+          href="/marketplace"
+          className="mt-8 inline-block text-sm font-medium text-air-force-blue no-underline hover:underline underline-offset-2"
+        >
+          ← Back to marketplace
+        </Link>
       </main>
+      <Footer variant="landing" />
     </div>
   );
 }

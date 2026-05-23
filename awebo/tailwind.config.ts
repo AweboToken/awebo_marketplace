@@ -45,7 +45,9 @@ const config: Config = {
         },
       },
       fontFamily: {
+        sans: ['Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
         'rapid-response': ['RapidResponse', 'sans-serif'],
+        helvetica: ['Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
       },
     },
   },

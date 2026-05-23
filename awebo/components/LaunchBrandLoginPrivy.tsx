@@ -1,36 +1,33 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useLogin, usePrivy } from '@privy-io/react-auth';
+import { usePrivy } from '@privy-io/react-auth';
+import { useAuthModal } from '@/components/auth/AuthModalContext';
+import { DEFAULT_POST_LOGIN_PATH } from '@/lib/auth-redirect';
 
 /**
- * Privy-backed login. Only mount when `NEXT_PUBLIC_PRIVY_APP_ID` is set (see `LaunchBrandLogin.tsx`).
+ * Opens the custom AWEBO login modal when Privy is configured.
  */
 export default function LaunchBrandLoginPrivy({
   children,
   className,
+  redirectPath = DEFAULT_POST_LOGIN_PATH,
 }: {
   children: React.ReactNode;
   className?: string;
+  redirectPath?: string;
 }) {
   const router = useRouter();
   const { ready, authenticated } = usePrivy();
-  const { login } = useLogin({
-    onComplete: () => {
-      router.push('/app');
-    },
-    onError: (error) => {
-      console.error('Login failed', error);
-    },
-  });
+  const { openAuthModal } = useAuthModal();
 
   const handleClick = () => {
     if (!ready) return;
     if (authenticated) {
-      router.push('/app');
+      router.replace(redirectPath);
       return;
     }
-    login();
+    openAuthModal({ redirectPath });
   };
 
   return (

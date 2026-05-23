@@ -27,6 +27,128 @@ export const TOPIC_RAILS = [
   { id: 'trending', title: 'Trending now' },
 ] as const;
 
+export const MARKETPLACE_FILTERS = [
+  'NEW',
+  'Memes',
+  'Live',
+  'Market Cap',
+  'Last Sale',
+  'Trendy',
+] as const;
+
+export type MarketplaceFilter = (typeof MARKETPLACE_FILTERS)[number];
+
+export type ExploreBrand = {
+  slug: string;
+  name: string;
+  description: string;
+  category: string;
+  itemCount: number;
+  rating: number;
+  reviews: number;
+  image: string;
+  cardTone: string;
+  featured?: boolean;
+  favorited?: boolean;
+};
+
+export const MOCK_EXPLORE_BRANDS: ExploreBrand[] = [
+  {
+    slug: 'viking-pepe',
+    name: 'Viking Pepe',
+    description: 'Humor nórdico para leyendas del meme.',
+    category: 'Memes',
+    itemCount: 24,
+    rating: 4.0,
+    reviews: 128,
+    image: 'https://ext.same-assets.com/1892170632/415736903.png',
+    cardTone: 'bg-[#f3e8ef]',
+    featured: true,
+    favorited: true,
+  },
+  {
+    slug: 'pingus',
+    name: 'Pingus',
+    description: 'Comunidad azul con bivra meme y pop.',
+    category: 'Memes',
+    itemCount: 24,
+    rating: 4.8,
+    reviews: 96,
+    image: 'https://ext.same-assets.com/1892170632/436887372.png',
+    cardTone: 'bg-[#e3edf8]',
+    favorited: true,
+  },
+  {
+    slug: 'broken-heart-society',
+    name: 'Broken Heart Society',
+    description: 'Humor nórdico para leyendas del meme.',
+    category: 'Memes',
+    itemCount: 24,
+    rating: 4.0,
+    reviews: 128,
+    image: 'https://ext.same-assets.com/1892170632/1506333983.png',
+    cardTone: 'bg-[#e2f0ea]',
+  },
+  {
+    slug: 'palta-club',
+    name: 'Palta Club',
+    description: 'Comunidad azul con bivra meme y pop.',
+    category: 'Memes',
+    itemCount: 24,
+    rating: 4.8,
+    reviews: 96,
+    image: 'https://ext.same-assets.com/1892170632/3584261708.png',
+    cardTone: 'bg-[#f0ece3]',
+    favorited: true,
+  },
+  {
+    slug: 'pixel-life',
+    name: 'Pixel Life',
+    description: 'Comunidad azul con bivra meme y pop.',
+    category: 'Memes',
+    itemCount: 24,
+    rating: 4.8,
+    reviews: 96,
+    image: 'https://ext.same-assets.com/1892170632/3667010705.png',
+    cardTone: 'bg-[#e8edf8]',
+  },
+  {
+    slug: 'viking-pepe-2',
+    name: 'Viking Pepe',
+    description: 'Humor nórdico para leyendas del meme.',
+    category: 'Memes',
+    itemCount: 24,
+    rating: 4.0,
+    reviews: 128,
+    image: 'https://ext.same-assets.com/1892170632/415736903.png',
+    cardTone: 'bg-[#f3e8ef]',
+    featured: true,
+  },
+  {
+    slug: 'pingus-2',
+    name: 'Pingus',
+    description: 'Comunidad azul con bivra meme y pop.',
+    category: 'Memes',
+    itemCount: 24,
+    rating: 4.8,
+    reviews: 96,
+    image: 'https://ext.same-assets.com/1892170632/436887372.png',
+    cardTone: 'bg-[#e3edf8]',
+  },
+  {
+    slug: 'palta-club-2',
+    name: 'Palta Club',
+    description: 'Comunidad azul con bivra meme y pop.',
+    category: 'Memes',
+    itemCount: 24,
+    rating: 4.8,
+    reviews: 96,
+    image: 'https://ext.same-assets.com/1892170632/3584261708.png',
+    cardTone: 'bg-[#f0ece3]',
+    favorited: true,
+  },
+];
+
 export type MockProduct = {
   id: string;
   name: string;

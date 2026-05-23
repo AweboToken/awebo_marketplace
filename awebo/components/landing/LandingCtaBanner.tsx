@@ -63,7 +63,7 @@ export default function LandingCtaBanner({
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <LaunchBrandLogin className="inline-flex h-12 items-center justify-center rounded-md bg-white px-6 font-semibold text-black hover:bg-neutral-200 transition-colors shrink-0">
+            <LaunchBrandLogin className="inline-flex h-12 items-center justify-center rounded-md bg-[#6e5dcb] px-6 font-semibold text-white hover:bg-[#5e4db8] transition-colors shrink-0">
               {primaryText}
               <ArrowRight className="ml-2 h-4 w-4" />
             </LaunchBrandLogin>

@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   aweboGalleryCells,
   type AweboGalleryCell,
@@ -36,7 +37,10 @@ function clampCardPosition(
 
 function EcosystemProductCard({ product }: { product: AweboGalleryCell }) {
   return (
-    <div className="w-[220px] overflow-hidden rounded-xl border border-white/15 bg-neutral-950/95 shadow-2xl backdrop-blur-md">
+    <Link
+      href={product.productHref}
+      className="block w-[220px] overflow-hidden rounded-xl border border-white/15 bg-neutral-950/95 shadow-2xl backdrop-blur-md no-underline transition-colors hover:border-white/25"
+    >
       <div className="relative aspect-square w-full bg-neutral-900">
         <Image
           src={product.image}
@@ -49,18 +53,16 @@ function EcosystemProductCard({ product }: { product: AweboGalleryCell }) {
       <div className="space-y-2 p-3">
         <p className="text-sm font-semibold leading-tight text-white">{product.title}</p>
         <p className="text-xs font-medium text-white/70">{product.price} USD</p>
-        <Link
-          href="/marketplace"
-          className="inline-flex w-full items-center justify-center rounded-lg bg-air-force-blue py-2 text-center text-xs font-semibold text-black no-underline transition-colors hover:bg-air-force-blue/90"
-        >
+        <span className="inline-flex w-full items-center justify-center rounded-lg bg-air-force-blue py-2 text-center text-xs font-semibold text-black">
           Buy now
-        </Link>
+        </span>
       </div>
-    </div>
+    </Link>
   );
 }
 
 export default function EcosystemGallery() {
+  const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const hideTimeoutRef = useRef<number>(0);
   const cardPinnedRef = useRef(false);
@@ -130,6 +132,13 @@ export default function EcosystemGallery() {
               if (activeCell?.id === cell.id) updateCardPosition(e.clientX, e.clientY);
             }}
             onMouseLeave={scheduleHideCard}
+            onClick={() => router.push(cell.productHref)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                router.push(cell.productHref);
+              }
+            }}
             onFocus={(e) => {
               const rect = e.currentTarget.getBoundingClientRect();
               showCard(

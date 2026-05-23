@@ -2,17 +2,20 @@
 
 import Link from 'next/link';
 import { isPrivyConfigured } from '@/lib/privy-env';
+import { DEFAULT_POST_LOGIN_PATH } from '@/lib/auth-redirect';
 import LaunchBrandLoginPrivy from '@/components/LaunchBrandLoginPrivy';
 
 /**
- * Opens Privy login when configured; otherwise links to Brand Studio (`/launch`) so builds work without env.
+ * Opens the AWEBO login modal when Privy is configured; otherwise links to Brand Studio (`/launch`).
  */
 export default function LaunchBrandLogin({
   children,
   className,
+  redirectPath = DEFAULT_POST_LOGIN_PATH,
 }: {
   children: React.ReactNode;
   className?: string;
+  redirectPath?: string;
 }) {
   if (!isPrivyConfigured) {
     return (
@@ -21,5 +24,9 @@ export default function LaunchBrandLogin({
       </Link>
     );
   }
-  return <LaunchBrandLoginPrivy className={className}>{children}</LaunchBrandLoginPrivy>;
+  return (
+    <LaunchBrandLoginPrivy className={className} redirectPath={redirectPath}>
+      {children}
+    </LaunchBrandLoginPrivy>
+  );
 }

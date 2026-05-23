@@ -17,9 +17,9 @@ export default async function CreatorPage({ params }: Props) {
   const { slug } = await params;
 
   return (
-    <div className="min-h-screen flex flex-col bg-seashell">
-      <Navigation variant="landing" />
-      <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div className="flex min-h-screen flex-col bg-seashell font-sans">
+      <Navigation variant="landing" landingTheme="surface" />
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
         <Link
           href="/"
           className="text-air-force-blue font-medium text-sm hover:underline mb-8 inline-block"

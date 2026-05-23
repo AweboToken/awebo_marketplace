@@ -1,8 +1,5 @@
-import {
-  LandingAboveFold,
-  LandingFloorSection,
-  LandingSnowSection,
-} from '@/components/landing';
+import { LandingAboveFold } from '@/components/landing';
+import Footer from '@/components/Footer';
 import { client } from '@/sanity/lib/client';
 import { isSanityConfigured } from '@/sanity/env';
 import { homePageQuery } from '@/sanity/lib/queries';
@@ -41,8 +38,7 @@ export default async function LandingPage() {
         heroHeadline={home?.heroHeadline}
         heroSubtext={home?.heroSubtext}
       />
-      <LandingFloorSection />
-      <LandingSnowSection />
+      <Footer variant="landing" />
     </>
   );
 }

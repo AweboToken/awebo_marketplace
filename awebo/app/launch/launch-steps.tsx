@@ -1,7 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
+import type {
+  LaunchWizardValues,
+  LaunchWizardValuesPatch,
+} from '@/lib/launch-wizard-types';
+
+export type LaunchStepProps = {
+  values: LaunchWizardValues;
+  onChange: (patch: LaunchWizardValuesPatch) => void;
+};
 
 export const STEPS = [
   {
@@ -26,92 +35,129 @@ export const STEPS = [
   },
 ] as const;
 
-export function BrandSetupStep({ onNext, onCancel }: { onNext: () => void; onCancel: () => void }) {
-  const [story, setStory] = useState('');
+function uploadPreview(
+  e: ChangeEvent<HTMLInputElement>,
+  key: 'bannerUrl' | 'logoUrl',
+  onChange: (patch: LaunchWizardValuesPatch) => void
+) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  onChange({ [key]: URL.createObjectURL(file) });
+}
+
+export function BrandSetupStep({
+  values,
+  onChange,
+  onNext,
+  onCancel,
+}: LaunchStepProps & { onNext: () => void; onCancel: () => void }) {
   return (
     <>
-      <div className="flex items-center justify-between gap-2 mb-2">
-        <span className="text-xs font-semibold uppercase text-air-force-blue">Step 1 of 4</span>
-        <span className="text-xs text-gray-500">Brand setup</span>
-      </div>
       <h2 className="text-xl font-bold text-gray-900 mb-2">Visual identity and story</h2>
       <p className="text-gray-600 mb-6 text-sm text-pretty">
-        Set brand name, uploads, symbol, narrative, and socials. Live preview mirrors your public storefront.
+        Set brand name, uploads, symbol, narrative, and socials. Your preview updates on the right.
       </p>
-      <div className="grid lg:grid-cols-2 gap-8">
-        <div className="space-y-4 max-w-xl">
-          <div>
-            <label htmlFor="bs-name" className="block text-xs font-medium uppercase text-gray-500 mb-1">
-              Brand name
-            </label>
-            <input
-              id="bs-name"
-              name="brandName"
-              type="text"
-              placeholder="Your brand name…"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder:text-gray-400 text-sm"
-            />
-          </div>
-          <div>
-            <span className="block text-xs font-medium uppercase text-gray-500 mb-1">Banner</span>
-            <div className="border-2 border-dashed border-gray-300 rounded-xl h-28 flex items-center justify-center text-gray-500 text-sm">
-              Upload banner (recommended wide ratio)
-            </div>
-          </div>
-          <div>
-            <span className="block text-xs font-medium uppercase text-gray-500 mb-1">Logo</span>
-            <div className="border-2 border-dashed border-gray-300 rounded-xl h-24 flex items-center justify-center text-gray-500 text-sm">
-              Upload logo
-            </div>
-          </div>
-          <div>
-            <label htmlFor="bs-symbol" className="block text-xs font-medium uppercase text-gray-500 mb-1">
-              Brand symbol / ticker
-            </label>
-            <input
-              id="bs-symbol"
-              name="symbol"
-              type="text"
-              placeholder="e.g. BRND…"
-              maxLength={10}
-              spellCheck={false}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 text-sm uppercase"
-            />
-          </div>
-          <div>
-            <label htmlFor="bs-story" className="block text-xs font-medium uppercase text-gray-500 mb-1">
-              Narrative / story
-            </label>
-            <textarea
-              id="bs-story"
-              name="story"
-              placeholder="Tell your story…"
-              value={story}
-              onChange={(e) => setStory(e.target.value)}
-              rows={4}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder:text-gray-400 resize-none text-sm"
-            />
-            <p className="text-xs text-gray-500 mt-1">{story.length} characters</p>
-          </div>
-          <div>
-            <span className="block text-xs font-medium uppercase text-gray-500 mb-2">Social links</span>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <input type="url" name="twitter" placeholder="X / Twitter URL…" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-              <input type="url" name="instagram" placeholder="Instagram URL…" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-            </div>
-          </div>
+      <div className="space-y-4 max-w-xl">
+        <div>
+          <label htmlFor="bs-name" className="block text-xs font-medium uppercase text-gray-500 mb-1">
+            Brand name
+          </label>
+          <input
+            id="bs-name"
+            name="brandName"
+            type="text"
+            placeholder="Your brand name…"
+            value={values.brandName}
+            onChange={(e) => onChange({ brandName: e.target.value })}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder:text-gray-400 text-sm"
+          />
         </div>
         <div>
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">Live preview</h3>
-          <div className="rounded-xl border border-gray-200 overflow-hidden bg-gray-50 shadow-sm">
-            <div className="h-24 bg-gradient-to-r from-air-force-blue/40 to-steel-blue/50" aria-hidden />
-            <div className="p-4 flex gap-3">
-              <div className="h-14 w-14 rounded-full border-2 border-white bg-white shadow shrink-0" aria-hidden />
-              <div className="min-w-0">
-                <p className="font-semibold text-gray-900 truncate">Brand preview</p>
-                <p className="text-xs text-gray-600 line-clamp-3 mt-1">{story || 'Your narrative appears here…'}</p>
-              </div>
-            </div>
+          <label htmlFor="bs-banner" className="block text-xs font-medium uppercase text-gray-500 mb-1">
+            Banner
+          </label>
+          <label
+            htmlFor="bs-banner"
+            className="border-2 border-dashed border-gray-300 rounded-xl h-28 flex items-center justify-center text-gray-500 text-sm cursor-pointer hover:border-air-force-blue/50 hover:bg-gray-50"
+          >
+            {values.bannerUrl ? 'Banner uploaded — click to replace' : 'Upload banner (recommended wide ratio)'}
+          </label>
+          <input
+            id="bs-banner"
+            type="file"
+            accept="image/*"
+            className="sr-only"
+            onChange={(e) => uploadPreview(e, 'bannerUrl', onChange)}
+          />
+        </div>
+        <div>
+          <label htmlFor="bs-logo" className="block text-xs font-medium uppercase text-gray-500 mb-1">
+            Logo
+          </label>
+          <label
+            htmlFor="bs-logo"
+            className="border-2 border-dashed border-gray-300 rounded-xl h-24 flex items-center justify-center text-gray-500 text-sm cursor-pointer hover:border-air-force-blue/50 hover:bg-gray-50"
+          >
+            {values.logoUrl ? 'Logo uploaded — click to replace' : 'Upload logo'}
+          </label>
+          <input
+            id="bs-logo"
+            type="file"
+            accept="image/*"
+            className="sr-only"
+            onChange={(e) => uploadPreview(e, 'logoUrl', onChange)}
+          />
+        </div>
+        <div>
+          <label htmlFor="bs-symbol" className="block text-xs font-medium uppercase text-gray-500 mb-1">
+            Brand symbol / ticker
+          </label>
+          <input
+            id="bs-symbol"
+            name="symbol"
+            type="text"
+            placeholder="e.g. BRND…"
+            maxLength={10}
+            spellCheck={false}
+            value={values.symbol}
+            onChange={(e) => onChange({ symbol: e.target.value.toUpperCase() })}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 text-sm uppercase"
+          />
+        </div>
+        <div>
+          <label htmlFor="bs-story" className="block text-xs font-medium uppercase text-gray-500 mb-1">
+            Narrative / story
+          </label>
+          <textarea
+            id="bs-story"
+            name="story"
+            placeholder="Tell your story…"
+            value={values.story}
+            onChange={(e) => onChange({ story: e.target.value })}
+            rows={4}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder:text-gray-400 resize-none text-sm"
+          />
+          <p className="text-xs text-gray-500 mt-1">{values.story.length} characters</p>
+        </div>
+        <div>
+          <span className="block text-xs font-medium uppercase text-gray-500 mb-2">Social links</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input
+              type="url"
+              name="twitter"
+              placeholder="X / Twitter URL…"
+              value={values.twitter}
+              onChange={(e) => onChange({ twitter: e.target.value })}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+            />
+            <input
+              type="url"
+              name="instagram"
+              placeholder="Instagram URL…"
+              value={values.instagram}
+              onChange={(e) => onChange({ instagram: e.target.value })}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+            />
           </div>
         </div>
       </div>
@@ -131,14 +177,15 @@ export function BrandSetupStep({ onNext, onCancel }: { onNext: () => void; onCan
   );
 }
 
-export function CatalogProductsStep({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) {
+export function CatalogProductsStep({
+  values,
+  onChange: _onChange,
+  onNext,
+  onPrev,
+}: LaunchStepProps & { onNext: () => void; onPrev: () => void }) {
   const [editorOpen, setEditorOpen] = useState(false);
   return (
     <>
-      <div className="flex items-center justify-between gap-2 mb-2">
-        <span className="text-xs font-semibold uppercase text-air-force-blue">Step 2 of 4</span>
-        <span className="text-xs text-gray-500">Catalog and products</span>
-      </div>
       <h2 className="text-xl font-bold text-gray-900 mb-2">Catalog and products</h2>
       <p className="text-gray-600 mb-6 text-sm">
         Mega categories, listing, filters, PDP with base cost, then product editor overlay.
@@ -229,18 +276,27 @@ export function CatalogProductsStep({ onNext, onPrev }: { onNext: () => void; on
             </tr>
           </thead>
           <tbody>
-            <tr className="border-b border-gray-50">
-              <td className="px-4 py-3">Oversized hoodie</td>
-              <td className="px-4 py-3">
-                <span className="rounded-full bg-amber-100 text-amber-900 px-2 py-0.5 text-xs font-medium">Draft</span>
-              </td>
-            </tr>
-            <tr>
-              <td className="px-4 py-3">Boxy tee</td>
-              <td className="px-4 py-3">
-                <span className="rounded-full bg-sky-100 text-sky-900 px-2 py-0.5 text-xs font-medium">Pricing</span>
-              </td>
-            </tr>
+            {values.products.map((product, index) => (
+              <tr
+                key={product.id}
+                className={index < values.products.length - 1 ? 'border-b border-gray-50' : undefined}
+              >
+                <td className="px-4 py-3">{product.name}</td>
+                <td className="px-4 py-3">
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                      product.status === 'Draft'
+                        ? 'bg-amber-100 text-amber-900'
+                        : product.status === 'Pricing'
+                          ? 'bg-sky-100 text-sky-900'
+                          : 'bg-green-100 text-green-900'
+                    }`}
+                  >
+                    {product.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -257,16 +313,15 @@ export function CatalogProductsStep({ onNext, onPrev }: { onNext: () => void; on
   );
 }
 
-export function BrandContractStep({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) {
-  const [mode, setMode] = useState<'self' | 'crowdfund'>('self');
-  const [ownerPct, setOwnerPct] = useState(80);
-  const communityPct = 100 - ownerPct;
+export function BrandContractStep({
+  values,
+  onChange,
+  onNext,
+  onPrev,
+}: LaunchStepProps & { onNext: () => void; onPrev: () => void }) {
+  const communityPct = 100 - values.ownerPct;
   return (
     <>
-      <div className="flex items-center justify-between gap-2 mb-2">
-        <span className="text-xs font-semibold uppercase text-air-force-blue">Step 3 of 4</span>
-        <span className="text-xs text-gray-500">Brand contract</span>
-      </div>
       <h2 className="text-xl font-bold text-gray-900 mb-2">Brand contract</h2>
       <p className="text-gray-600 mb-6 text-sm text-pretty">
         Self-funded: no shares, no whitelist, no crowdfunding. Community path: holder mechanics, optional whitelist, max per wallet, then wallet sign.
@@ -275,14 +330,14 @@ export function BrandContractStep({ onNext, onPrev }: { onNext: () => void; onPr
       <fieldset className="space-y-3 mb-6">
         <legend className="text-sm font-semibold text-gray-800 mb-2">Launch mode</legend>
         <label className="flex gap-3 rounded-xl border-2 border-gray-200 p-4 cursor-pointer has-[:checked]:border-air-force-blue has-[:checked]:bg-air-force-blue/5">
-          <input type="radio" name="launchMode" checked={mode === 'self'} onChange={() => setMode('self')} className="mt-1" />
+          <input type="radio" name="launchMode" checked={values.launchMode === 'self'} onChange={() => onChange({ launchMode: 'self' })} className="mt-1" />
           <span>
             <span className="font-medium text-gray-900">Sell directly to marketplace</span>
             <span className="block text-xs text-gray-600 mt-1">Self-funded — not required: shares, whitelist, or crowdfunding.</span>
           </span>
         </label>
         <label className="flex gap-3 rounded-xl border-2 border-gray-200 p-4 cursor-pointer has-[:checked]:border-air-force-blue has-[:checked]:bg-air-force-blue/5">
-          <input type="radio" name="launchMode" checked={mode === 'crowdfund'} onChange={() => setMode('crowdfund')} className="mt-1" />
+          <input type="radio" name="launchMode" checked={values.launchMode === 'crowdfund'} onChange={() => onChange({ launchMode: 'crowdfund' })} className="mt-1" />
           <span>
             <span className="font-medium text-gray-900">Launch with community funding</span>
             <span className="block text-xs text-gray-600 mt-1">Crowdfunding path with progress, supporters, and share mechanics.</span>
@@ -298,8 +353,11 @@ export function BrandContractStep({ onNext, onPrev }: { onNext: () => void; onPr
               <button
                 key={c}
                 type="button"
+                onClick={() => onChange({ chain: c })}
                 className={`rounded-lg border-2 py-2 text-xs font-medium ${
-                  c === 'Base' ? 'border-air-force-blue bg-air-force-blue/5' : 'border-gray-200 text-gray-600'
+                  c === values.chain
+                    ? 'border-air-force-blue bg-air-force-blue/5 text-gray-900'
+                    : 'border-gray-200 text-gray-600'
                 }`}
               >
                 {c}
@@ -311,14 +369,21 @@ export function BrandContractStep({ onNext, onPrev }: { onNext: () => void; onPr
           <label htmlFor="supply" className="block text-xs font-semibold uppercase text-gray-700 mb-1">
             Fixed supply
           </label>
-          <input id="supply" type="text" defaultValue="100" readOnly className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm bg-gray-50 text-gray-700" />
+          <input id="supply" type="text" value={values.supply} readOnly className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm bg-gray-50 text-gray-700" />
         </div>
         <div>
           <div className="flex justify-between text-sm mb-1">
             <span className="text-gray-600">Owner %</span>
-            <span className="font-medium tabular-nums">{ownerPct}%</span>
+            <span className="font-medium tabular-nums">{values.ownerPct}%</span>
           </div>
-          <input type="range" min={0} max={100} value={ownerPct} onChange={(e) => setOwnerPct(Number(e.target.value))} className="w-full" />
+          <input
+            type="range"
+            min={0}
+            max={100}
+            value={values.ownerPct}
+            onChange={(e) => onChange({ ownerPct: Number(e.target.value) })}
+            className="w-full"
+          />
           <div className="flex justify-between text-sm mt-2 text-gray-600">
             <span>Community %</span>
             <span className="font-medium tabular-nums">{communityPct}%</span>
@@ -328,11 +393,25 @@ export function BrandContractStep({ onNext, onPrev }: { onNext: () => void; onPr
           <label htmlFor="max-wallet" className="block text-xs font-semibold uppercase text-gray-700 mb-1">
             Max % per wallet
           </label>
-          <input id="max-wallet" type="number" defaultValue={5} min={1} max={100} className="w-32 rounded-lg border border-gray-300 px-3 py-2 text-sm tabular-nums" />
+          <input
+            id="max-wallet"
+            type="number"
+            value={values.maxWalletPct}
+            min={1}
+            max={100}
+            onChange={(e) => onChange({ maxWalletPct: Number(e.target.value) || 0 })}
+            className="w-32 rounded-lg border border-gray-300 px-3 py-2 text-sm tabular-nums"
+          />
         </div>
-        {mode === 'crowdfund' && (
+        {values.launchMode === 'crowdfund' && (
           <label className="flex items-center gap-2 text-sm text-gray-800">
-            <input type="checkbox" name="whitelist" className="rounded border-gray-300" />
+            <input
+              type="checkbox"
+              name="whitelist"
+              checked={values.whitelist}
+              onChange={(e) => onChange({ whitelist: e.target.checked })}
+              className="rounded border-gray-300"
+            />
             Enable whitelist option
           </label>
         )}
@@ -358,17 +437,16 @@ export function BrandContractStep({ onNext, onPrev }: { onNext: () => void; onPr
   );
 }
 
-export function ReviewPublishStep({ onPrev }: { onPrev: () => void }) {
+export function ReviewPublishStep({
+  values,
+  onPrev,
+}: LaunchStepProps & { onPrev: () => void }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [published, setPublished] = useState(false);
-  const [fundraising, setFundraising] = useState(false);
+  const fundraising = values.launchMode === 'crowdfund';
 
   return (
     <>
-      <div className="flex items-center justify-between gap-2 mb-2">
-        <span className="text-xs font-semibold uppercase text-air-force-blue">Step 4 of 4</span>
-        <span className="text-xs text-gray-500">Review and publish</span>
-      </div>
       <h2 className="text-xl font-bold text-gray-900 mb-2">Review and publish</h2>
       <p className="text-gray-600 mb-6 text-sm">Checklist, mandatory final sale price for every product, optional sample order (does not block publish).</p>
 
@@ -400,18 +478,22 @@ export function ReviewPublishStep({ onPrev }: { onPrev: () => void }) {
             </tr>
           </thead>
           <tbody>
-            <tr className="border-b border-gray-100">
-              <td className="px-4 py-2">Oversized hoodie</td>
-              <td className="px-4 py-2">
-                <input type="number" placeholder="USD…" className="w-28 rounded border border-gray-300 px-2 py-1 text-sm tabular-nums" aria-label="Final price hoodie" />
-              </td>
-            </tr>
-            <tr>
-              <td className="px-4 py-2">Boxy tee</td>
-              <td className="px-4 py-2">
-                <input type="number" placeholder="USD…" className="w-28 rounded border border-gray-300 px-2 py-1 text-sm tabular-nums" aria-label="Final price tee" />
-              </td>
-            </tr>
+            {values.products.map((product, index) => (
+              <tr
+                key={product.id}
+                className={index < values.products.length - 1 ? 'border-b border-gray-100' : undefined}
+              >
+                <td className="px-4 py-2">{product.name}</td>
+                <td className="px-4 py-2">
+                  <input
+                    type="number"
+                    placeholder="USD…"
+                    className="w-28 rounded border border-gray-300 px-2 py-1 text-sm tabular-nums"
+                    aria-label={`Final price ${product.name}`}
+                  />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -452,11 +534,6 @@ export function ReviewPublishStep({ onPrev }: { onPrev: () => void }) {
             Publish
           </button>
         )}
-      </div>
-
-      <div className="mt-6 flex items-center gap-2 text-xs text-gray-600">
-        <input type="checkbox" id="sim-fund" checked={fundraising} onChange={(e) => setFundraising(e.target.checked)} className="rounded border-gray-300" />
-        <label htmlFor="sim-fund">Simulate post-publish redirect: fundraising vs marketplace</label>
       </div>
 
       {modalOpen && (
