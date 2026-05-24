@@ -2,6 +2,12 @@
 
 import Link from 'next/link';
 import { useState, type ChangeEvent } from 'react';
+import {
+  LAUNCH_FORM_ROOT,
+  LAUNCH_GLASS_BUTTON_PRIMARY,
+  LAUNCH_GLASS_BUTTON_SECONDARY,
+  LF,
+} from '@/lib/launch-wizard-ui';
 import type {
   LaunchWizardValues,
   LaunchWizardValuesPatch,
@@ -52,14 +58,14 @@ export function BrandSetupStep({
   onCancel,
 }: LaunchStepProps & { onNext: () => void; onCancel: () => void }) {
   return (
-    <>
-      <h2 className="text-xl font-bold text-gray-900 mb-2">Visual identity and story</h2>
-      <p className="text-gray-600 mb-6 text-sm text-pretty">
+    <div className={LAUNCH_FORM_ROOT}>
+      <h2 className={LF.heading}>Visual identity and story</h2>
+      <p className={LF.lead}>
         Set brand name, uploads, symbol, narrative, and socials. Your preview updates on the right.
       </p>
       <div className="space-y-4 max-w-xl">
         <div>
-          <label htmlFor="bs-name" className="block text-xs font-medium uppercase text-gray-500 mb-1">
+          <label htmlFor="bs-name" className={LF.label}>
             Brand name
           </label>
           <input
@@ -69,17 +75,14 @@ export function BrandSetupStep({
             placeholder="Your brand name…"
             value={values.brandName}
             onChange={(e) => onChange({ brandName: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder:text-gray-400 text-sm"
+            className={LF.input}
           />
         </div>
         <div>
-          <label htmlFor="bs-banner" className="block text-xs font-medium uppercase text-gray-500 mb-1">
+          <label htmlFor="bs-banner" className={LF.label}>
             Banner
           </label>
-          <label
-            htmlFor="bs-banner"
-            className="border-2 border-dashed border-gray-300 rounded-xl h-28 flex items-center justify-center text-gray-500 text-sm cursor-pointer hover:border-air-force-blue/50 hover:bg-gray-50"
-          >
+          <label htmlFor="bs-banner" className={LF.uploadZone}>
             {values.bannerUrl ? 'Banner uploaded — click to replace' : 'Upload banner (recommended wide ratio)'}
           </label>
           <input
@@ -91,13 +94,10 @@ export function BrandSetupStep({
           />
         </div>
         <div>
-          <label htmlFor="bs-logo" className="block text-xs font-medium uppercase text-gray-500 mb-1">
+          <label htmlFor="bs-logo" className={LF.label}>
             Logo
           </label>
-          <label
-            htmlFor="bs-logo"
-            className="border-2 border-dashed border-gray-300 rounded-xl h-24 flex items-center justify-center text-gray-500 text-sm cursor-pointer hover:border-air-force-blue/50 hover:bg-gray-50"
-          >
+          <label htmlFor="bs-logo" className={LF.uploadZoneSm}>
             {values.logoUrl ? 'Logo uploaded — click to replace' : 'Upload logo'}
           </label>
           <input
@@ -109,7 +109,7 @@ export function BrandSetupStep({
           />
         </div>
         <div>
-          <label htmlFor="bs-symbol" className="block text-xs font-medium uppercase text-gray-500 mb-1">
+          <label htmlFor="bs-symbol" className={LF.label}>
             Brand symbol / ticker
           </label>
           <input
@@ -121,11 +121,11 @@ export function BrandSetupStep({
             spellCheck={false}
             value={values.symbol}
             onChange={(e) => onChange({ symbol: e.target.value.toUpperCase() })}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 text-sm uppercase"
+            className={`${LF.input} uppercase`}
           />
         </div>
         <div>
-          <label htmlFor="bs-story" className="block text-xs font-medium uppercase text-gray-500 mb-1">
+          <label htmlFor="bs-story" className={LF.label}>
             Narrative / story
           </label>
           <textarea
@@ -135,12 +135,12 @@ export function BrandSetupStep({
             value={values.story}
             onChange={(e) => onChange({ story: e.target.value })}
             rows={4}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 placeholder:text-gray-400 resize-none text-sm"
+            className={LF.textarea}
           />
-          <p className="text-xs text-gray-500 mt-1">{values.story.length} characters</p>
+          <p className={`${LF.muted} mt-1`}>{values.story.length} characters</p>
         </div>
         <div>
-          <span className="block text-xs font-medium uppercase text-gray-500 mb-2">Social links</span>
+          <span className={LF.labelBlock}>Social links</span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <input
               type="url"
@@ -148,7 +148,7 @@ export function BrandSetupStep({
               placeholder="X / Twitter URL…"
               value={values.twitter}
               onChange={(e) => onChange({ twitter: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              className={LF.inputSm}
             />
             <input
               type="url"
@@ -156,24 +156,20 @@ export function BrandSetupStep({
               placeholder="Instagram URL…"
               value={values.instagram}
               onChange={(e) => onChange({ instagram: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              className={LF.inputSm}
             />
           </div>
         </div>
       </div>
       <div className="flex items-center justify-between mt-8 max-w-xl">
-        <button type="button" onClick={onCancel} className="text-gray-600 hover:text-gray-900 font-medium text-sm">
+        <button type="button" onClick={onCancel} className={LF.btnGhost}>
           Cancel
         </button>
-        <button
-          type="button"
-          onClick={onNext}
-          className="rounded-lg bg-air-force-blue text-white font-semibold px-5 py-2.5 text-sm hover:bg-air-force-blue/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-air-force-blue"
-        >
+        <button type="button" onClick={onNext} className={LAUNCH_GLASS_BUTTON_PRIMARY}>
           Continue
         </button>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -184,45 +180,100 @@ export function CatalogProductsStep({
   onPrev,
 }: LaunchStepProps & { onNext: () => void; onPrev: () => void }) {
   const [editorOpen, setEditorOpen] = useState(false);
+
   return (
     <>
-      <h2 className="text-xl font-bold text-gray-900 mb-2">Catalog and products</h2>
-      <p className="text-gray-600 mb-6 text-sm">
-        Mega categories, listing, filters, PDP with base cost, then product editor overlay.
-      </p>
+      <div className={LAUNCH_FORM_ROOT}>
+        <h2 className={LF.heading}>Catalog and products</h2>
+        <p className={`${LF.lead} text-pretty`}>
+          Mega categories, listing, filters, PDP with base cost, then product editor overlay.
+        </p>
 
-      <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 mb-6">
-        <p className="text-xs font-semibold uppercase text-gray-500 mb-2">Catalog home (mock)</p>
-        <label htmlFor="cat-search" className="sr-only">
-          Search catalog
-        </label>
-        <input
-          id="cat-search"
-          type="search"
-          placeholder="Search bases…"
-          className="w-full max-w-md rounded-lg border border-gray-300 px-3 py-2 text-sm mb-3"
-        />
-        <div className="flex flex-wrap gap-2">
-          {['Men', 'Women', 'Kids', 'Home', 'Misc'].map((c) => (
-            <span key={c} className="rounded-full bg-white border border-gray-200 px-3 py-1 text-xs font-medium text-gray-700">
-              {c}
-            </span>
-          ))}
+        <div className={`${LF.panel} mb-6`}>
+          <p className={LF.panelTitle}>Catalog home (mock)</p>
+          <label htmlFor="cat-search" className="sr-only">
+            Search catalog
+          </label>
+          <input
+            id="cat-search"
+            type="search"
+            placeholder="Search bases…"
+            className={`${LF.inputSm} mb-3 max-w-md`}
+          />
+          <div className="flex flex-wrap gap-2">
+            {['Men', 'Women', 'Kids', 'Home', 'Misc'].map((c) => (
+              <span key={c} className={LF.chip}>
+                {c}
+              </span>
+            ))}
+          </div>
+          <p className={`${LF.muted} mt-3`}>
+            Topics: Bestsellers, New arrivals, Seasonal (rotating 6–8).
+          </p>
         </div>
-        <p className="text-xs text-gray-500 mt-3">Topics: Bestsellers, New arrivals, Seasonal (rotating 6–8).</p>
-      </div>
 
-      <div className="flex flex-wrap gap-3 mb-6">
-        <button
-          type="button"
-          onClick={() => setEditorOpen(true)}
-          className="rounded-lg bg-gray-900 text-white px-4 py-2 text-sm font-semibold hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-air-force-blue"
-        >
-          Start designing (overlay)
-        </button>
-        <Link href="/marketplace/category/ropa-zapatos" className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-800 no-underline hover:bg-white">
-          Open marketplace category (reference)
-        </Link>
+        <div className="flex flex-wrap gap-3 mb-6">
+          <button
+            type="button"
+            onClick={() => setEditorOpen(true)}
+            className={LAUNCH_GLASS_BUTTON_PRIMARY}
+          >
+            Start designing (overlay)
+          </button>
+          <Link
+            href="/marketplace/category/ropa-zapatos"
+            className={`${LAUNCH_GLASS_BUTTON_SECONDARY} no-underline`}
+          >
+            Open marketplace category (reference)
+          </Link>
+        </div>
+
+        <div className={LF.tableWrap}>
+          <div className="border-b border-white/15 bg-white/5 px-4 py-3">
+            <p className="text-sm font-semibold text-white">My products / collections</p>
+            <p className={LF.muted}>Statuses: Draft · Pricing · Ready</p>
+          </div>
+          <table className="w-full text-sm">
+            <thead>
+              <tr className={LF.tableHead}>
+                <th className="px-4 py-2 font-medium">Product</th>
+                <th className="px-4 py-2 font-medium">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {values.products.map((product, index) => (
+                <tr
+                  key={product.id}
+                  className={index < values.products.length - 1 ? LF.tableRowBorder : undefined}
+                >
+                  <td className="px-4 py-3">{product.name}</td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={
+                        product.status === 'Draft'
+                          ? LF.statusDraft
+                          : product.status === 'Pricing'
+                            ? LF.statusPricing
+                            : LF.statusReady
+                      }
+                    >
+                      {product.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="flex items-center justify-between mt-8">
+          <button type="button" onClick={onPrev} className={LF.btnGhost}>
+            ← Back
+          </button>
+          <button type="button" onClick={onNext} className={LAUNCH_GLASS_BUTTON_PRIMARY}>
+            Continue
+          </button>
+        </div>
       </div>
 
       {editorOpen && (
@@ -236,19 +287,29 @@ export function CatalogProductsStep({
             <h3 id="editor-title" className="text-lg font-bold text-gray-900 mb-2">
               Product editor
             </h3>
-            <p className="text-sm text-gray-600 mb-4">Upload artwork · Front / Back / Label · Colors / sizes · Mockups · Save or discard.</p>
+            <p className="text-sm text-gray-600 mb-4">
+              Upload artwork · Front / Back / Label · Colors / sizes · Mockups · Save or discard.
+            </p>
             <div className="border-2 border-dashed border-gray-300 rounded-xl h-32 flex items-center justify-center text-sm text-gray-500 mb-4">
               Artwork upload area
             </div>
             <div className="flex gap-2 mb-4">
               {['Front', 'Back', 'Label'].map((v) => (
-                <button key={v} type="button" className="flex-1 rounded-lg border border-gray-300 py-2 text-xs font-semibold hover:bg-gray-50">
+                <button
+                  key={v}
+                  type="button"
+                  className="flex-1 rounded-lg border border-gray-300 py-2 text-xs font-semibold hover:bg-gray-50"
+                >
                   {v}
                 </button>
               ))}
             </div>
             <div className="flex justify-end gap-2">
-              <button type="button" onClick={() => setEditorOpen(false)} className="px-4 py-2 text-sm font-medium text-gray-700">
+              <button
+                type="button"
+                onClick={() => setEditorOpen(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700"
+              >
                 Discard
               </button>
               <button
@@ -262,53 +323,6 @@ export function CatalogProductsStep({
           </div>
         </div>
       )}
-
-      <div className="rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
-          <p className="text-sm font-semibold text-gray-900">My products / collections</p>
-          <p className="text-xs text-gray-500">Statuses: Draft · Pricing · Ready</p>
-        </div>
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-xs uppercase text-gray-500 border-b border-gray-100">
-              <th className="px-4 py-2 font-medium">Product</th>
-              <th className="px-4 py-2 font-medium">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {values.products.map((product, index) => (
-              <tr
-                key={product.id}
-                className={index < values.products.length - 1 ? 'border-b border-gray-50' : undefined}
-              >
-                <td className="px-4 py-3">{product.name}</td>
-                <td className="px-4 py-3">
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                      product.status === 'Draft'
-                        ? 'bg-amber-100 text-amber-900'
-                        : product.status === 'Pricing'
-                          ? 'bg-sky-100 text-sky-900'
-                          : 'bg-green-100 text-green-900'
-                    }`}
-                  >
-                    {product.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex items-center justify-between mt-8">
-        <button type="button" onClick={onPrev} className="text-gray-600 hover:text-gray-900 font-medium text-sm">
-          ← Back
-        </button>
-        <button type="button" onClick={onNext} className="rounded-lg bg-air-force-blue text-white font-semibold px-5 py-2.5 text-sm">
-          Continue
-        </button>
-      </div>
     </>
   );
 }
@@ -320,45 +334,59 @@ export function BrandContractStep({
   onPrev,
 }: LaunchStepProps & { onNext: () => void; onPrev: () => void }) {
   const communityPct = 100 - values.ownerPct;
+
   return (
-    <>
-      <h2 className="text-xl font-bold text-gray-900 mb-2">Brand contract</h2>
-      <p className="text-gray-600 mb-6 text-sm text-pretty">
-        Self-funded: no shares, no whitelist, no crowdfunding. Community path: holder mechanics, optional whitelist, max per wallet, then wallet sign.
+    <div className={LAUNCH_FORM_ROOT}>
+      <h2 className={LF.heading}>Brand contract</h2>
+      <p className={LF.lead}>
+        Self-funded: no shares, no whitelist, no crowdfunding. Community path: holder mechanics,
+        optional whitelist, max per wallet, then wallet sign.
       </p>
 
       <fieldset className="space-y-3 mb-6">
-        <legend className="text-sm font-semibold text-gray-800 mb-2">Launch mode</legend>
-        <label className="flex gap-3 rounded-xl border-2 border-gray-200 p-4 cursor-pointer has-[:checked]:border-air-force-blue has-[:checked]:bg-air-force-blue/5">
-          <input type="radio" name="launchMode" checked={values.launchMode === 'self'} onChange={() => onChange({ launchMode: 'self' })} className="mt-1" />
+        <legend className="text-sm font-semibold text-white/90 mb-2">Launch mode</legend>
+        <label className={LF.radioCard}>
+          <input
+            type="radio"
+            name="launchMode"
+            checked={values.launchMode === 'self'}
+            onChange={() => onChange({ launchMode: 'self' })}
+            className="mt-1"
+          />
           <span>
-            <span className="font-medium text-gray-900">Sell directly to marketplace</span>
-            <span className="block text-xs text-gray-600 mt-1">Self-funded — not required: shares, whitelist, or crowdfunding.</span>
+            <span className="block font-medium text-white">Sell directly to marketplace</span>
+            <span className="block text-xs text-white/70 mt-1">
+              Self-funded — not required: shares, whitelist, or crowdfunding.
+            </span>
           </span>
         </label>
-        <label className="flex gap-3 rounded-xl border-2 border-gray-200 p-4 cursor-pointer has-[:checked]:border-air-force-blue has-[:checked]:bg-air-force-blue/5">
-          <input type="radio" name="launchMode" checked={values.launchMode === 'crowdfund'} onChange={() => onChange({ launchMode: 'crowdfund' })} className="mt-1" />
+        <label className={LF.radioCard}>
+          <input
+            type="radio"
+            name="launchMode"
+            checked={values.launchMode === 'crowdfund'}
+            onChange={() => onChange({ launchMode: 'crowdfund' })}
+            className="mt-1"
+          />
           <span>
-            <span className="font-medium text-gray-900">Launch with community funding</span>
-            <span className="block text-xs text-gray-600 mt-1">Crowdfunding path with progress, supporters, and share mechanics.</span>
+            <span className="block font-medium text-white">Launch with community funding</span>
+            <span className="block text-xs text-white/70 mt-1">
+              Crowdfunding path with progress, supporters, and share mechanics.
+            </span>
           </span>
         </label>
       </fieldset>
 
       <div className="space-y-4 max-w-xl mb-6">
         <div>
-          <span className="block text-xs font-semibold uppercase text-gray-700 mb-2">Chain</span>
+          <span className="block text-xs font-semibold uppercase text-white/70 mb-2">Chain</span>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {['Base', 'Ethereum', 'Polygon', 'Arbitrum'].map((c) => (
               <button
                 key={c}
                 type="button"
                 onClick={() => onChange({ chain: c })}
-                className={`rounded-lg border-2 py-2 text-xs font-medium ${
-                  c === values.chain
-                    ? 'border-air-force-blue bg-air-force-blue/5 text-gray-900'
-                    : 'border-gray-200 text-gray-600'
-                }`}
+                className={c === values.chain ? LF.chainBtnActive : LF.chainBtn}
               >
                 {c}
               </button>
@@ -366,15 +394,21 @@ export function BrandContractStep({
           </div>
         </div>
         <div>
-          <label htmlFor="supply" className="block text-xs font-semibold uppercase text-gray-700 mb-1">
+          <label htmlFor="supply" className={LF.label}>
             Fixed supply
           </label>
-          <input id="supply" type="text" value={values.supply} readOnly className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm bg-gray-50 text-gray-700" />
+          <input
+            id="supply"
+            type="text"
+            value={values.supply}
+            readOnly
+            className={LF.readOnlyInput}
+          />
         </div>
         <div>
-          <div className="flex justify-between text-sm mb-1">
-            <span className="text-gray-600">Owner %</span>
-            <span className="font-medium tabular-nums">{values.ownerPct}%</span>
+          <div className="flex justify-between text-sm mb-1 text-white/70">
+            <span>Owner %</span>
+            <span className="font-medium tabular-nums text-white">{values.ownerPct}%</span>
           </div>
           <input
             type="range"
@@ -382,15 +416,15 @@ export function BrandContractStep({
             max={100}
             value={values.ownerPct}
             onChange={(e) => onChange({ ownerPct: Number(e.target.value) })}
-            className="w-full"
+            className="w-full accent-air-force-blue"
           />
-          <div className="flex justify-between text-sm mt-2 text-gray-600">
+          <div className="flex justify-between text-sm mt-2 text-white/70">
             <span>Community %</span>
-            <span className="font-medium tabular-nums">{communityPct}%</span>
+            <span className="font-medium tabular-nums text-white">{communityPct}%</span>
           </div>
         </div>
         <div>
-          <label htmlFor="max-wallet" className="block text-xs font-semibold uppercase text-gray-700 mb-1">
+          <label htmlFor="max-wallet" className={LF.label}>
             Max % per wallet
           </label>
           <input
@@ -400,164 +434,280 @@ export function BrandContractStep({
             min={1}
             max={100}
             onChange={(e) => onChange({ maxWalletPct: Number(e.target.value) || 0 })}
-            className="w-32 rounded-lg border border-gray-300 px-3 py-2 text-sm tabular-nums"
+            className={`${LF.inputSm} w-32 tabular-nums`}
           />
         </div>
         {values.launchMode === 'crowdfund' && (
-          <label className="flex items-center gap-2 text-sm text-gray-800">
+          <label className="flex items-center gap-2 text-sm text-white/85">
             <input
               type="checkbox"
               name="whitelist"
               checked={values.whitelist}
               onChange={(e) => onChange({ whitelist: e.target.checked })}
-              className="rounded border-gray-300"
+              className="rounded border-white/30 bg-white/10"
             />
             Enable whitelist option
           </label>
         )}
       </div>
 
-      <button
-        type="button"
-        className="rounded-lg border border-gray-900 px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50 mb-8"
-      >
+      <button type="button" className={`${LAUNCH_GLASS_BUTTON_SECONDARY} mb-8`}>
         Create contract (wallet sign)
       </button>
-      <p className="text-xs text-gray-500 mb-8">After deploy: show contract address · live on marketplace when self-funded, or fundraising page when raising.</p>
+      <p className={`${LF.muted} mb-8`}>
+        After deploy: show contract address · live on marketplace when self-funded, or fundraising
+        page when raising.
+      </p>
 
       <div className="flex items-center justify-between">
-        <button type="button" onClick={onPrev} className="text-gray-600 hover:text-gray-900 font-medium text-sm">
+        <button type="button" onClick={onPrev} className={LF.btnGhost}>
           ← Back
         </button>
-        <button type="button" onClick={onNext} className="rounded-lg bg-air-force-blue text-white font-semibold px-5 py-2.5 text-sm">
+        <button type="button" onClick={onNext} className={LAUNCH_GLASS_BUTTON_PRIMARY}>
           Continue
         </button>
       </div>
-    </>
+    </div>
   );
 }
 
 export function ReviewPublishStep({
   values,
   onPrev,
-}: LaunchStepProps & { onPrev: () => void }) {
+  ownerId,
+  productPrices,
+  onPricesChange,
+}: LaunchStepProps & {
+  onPrev: () => void;
+  ownerId: string;
+  productPrices: Record<string, string>;
+  onPricesChange: (prices: Record<string, string>) => void;
+}) {
   const [modalOpen, setModalOpen] = useState(false);
   const [published, setPublished] = useState(false);
+  const [publishing, setPublishing] = useState(false);
+  const [publishError, setPublishError] = useState<string | null>(null);
+  const [publishWarnings, setPublishWarnings] = useState<string[]>([]);
+  const [publishedBrandSlug, setPublishedBrandSlug] = useState<string | null>(null);
   const fundraising = values.launchMode === 'crowdfund';
+
+  const handlePublish = async () => {
+    setPublishing(true);
+    setPublishError(null);
+    setPublishWarnings([]);
+
+    const products = values.products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      priceUsd: Number(productPrices[product.id]),
+    }));
+
+    try {
+      const response = await fetch('/api/launch/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ownerId, values, products }),
+      });
+
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+        warnings?: string[];
+        brand?: { slug?: string };
+      } | null;
+
+      if (!response.ok) {
+        throw new Error(payload?.error ?? 'Publish failed.');
+      }
+
+      setPublishedBrandSlug(payload?.brand?.slug ?? null);
+      setPublishWarnings(payload?.warnings ?? []);
+      setModalOpen(false);
+      setPublished(true);
+    } catch (error) {
+      setPublishError(error instanceof Error ? error.message : 'Publish failed.');
+      setModalOpen(false);
+    } finally {
+      setPublishing(false);
+    }
+  };
 
   return (
     <>
-      <h2 className="text-xl font-bold text-gray-900 mb-2">Review and publish</h2>
-      <p className="text-gray-600 mb-6 text-sm">Checklist, mandatory final sale price for every product, optional sample order (does not block publish).</p>
+      <div className={LAUNCH_FORM_ROOT}>
+        <h2 className={LF.heading}>Review and publish</h2>
+        <p className={LF.lead}>
+          Checklist, mandatory final sale price for every product, optional sample order (does not
+          block publish).
+        </p>
 
-      <ul className="space-y-2 mb-6 text-sm">
-        <li className="flex items-center gap-2">
-          <input type="checkbox" defaultChecked className="rounded border-gray-300" id="c1" />
-          <label htmlFor="c1">Brand setup completed</label>
-        </li>
-        <li className="flex items-center gap-2">
-          <input type="checkbox" defaultChecked className="rounded border-gray-300" id="c2" />
-          <label htmlFor="c2">Products ready</label>
-        </li>
-        <li className="flex items-center gap-2">
-          <input type="checkbox" className="rounded border-gray-300" id="c3" />
-          <label htmlFor="c3">Pricing set for all products (required)</label>
-        </li>
-        <li className="flex items-center gap-2">
-          <input type="checkbox" className="rounded border-gray-300" id="c4" />
-          <label htmlFor="c4">Public vs private (whitelist) if applicable</label>
-        </li>
-      </ul>
+        <ul className="space-y-2 mb-6 text-sm">
+          <li className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              defaultChecked
+              className="rounded border-white/30 bg-white/10"
+              id="c1"
+            />
+            <label htmlFor="c1">Brand setup completed</label>
+          </li>
+          <li className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              defaultChecked
+              className="rounded border-white/30 bg-white/10"
+              id="c2"
+            />
+            <label htmlFor="c2">Products ready</label>
+          </li>
+          <li className="flex items-center gap-2">
+            <input type="checkbox" className="rounded border-white/30 bg-white/10" id="c3" />
+            <label htmlFor="c3">Pricing set for all products (required)</label>
+          </li>
+          <li className="flex items-center gap-2">
+            <input type="checkbox" className="rounded border-white/30 bg-white/10" id="c4" />
+            <label htmlFor="c4">Public vs private (whitelist) if applicable</label>
+          </li>
+        </ul>
 
-      <div className="rounded-xl border border-gray-200 overflow-hidden mb-6">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-xs uppercase text-gray-500 bg-gray-50 border-b border-gray-200">
-              <th className="px-4 py-2 font-medium">Product</th>
-              <th className="px-4 py-2 font-medium">Final sale price (required)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {values.products.map((product, index) => (
-              <tr
-                key={product.id}
-                className={index < values.products.length - 1 ? 'border-b border-gray-100' : undefined}
-              >
-                <td className="px-4 py-2">{product.name}</td>
-                <td className="px-4 py-2">
-                  <input
-                    type="number"
-                    placeholder="USD…"
-                    className="w-28 rounded border border-gray-300 px-2 py-1 text-sm tabular-nums"
-                    aria-label={`Final price ${product.name}`}
-                  />
-                </td>
+        <div className={`${LF.tableWrap} mb-6`}>
+          <table className="w-full text-sm">
+            <thead>
+              <tr className={LF.tableHead}>
+                <th className="px-4 py-2 font-medium">Product</th>
+                <th className="px-4 py-2 font-medium">Final sale price (required)</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <p className="text-xs text-gray-600 mb-6">
-        Optional: order sample from My products / Review — optional and does not block publishing.
-      </p>
-
-      {published ? (
-        <div className="rounded-xl border border-air-force-blue/30 bg-air-force-blue/5 p-6 mb-6">
-          <p className="font-semibold text-gray-900 mb-2">Published</p>
-          <p className="text-sm text-gray-700 mb-4">
-            {fundraising
-              ? 'Fundraising is active — send creators to the fundraising page.'
-              : 'Brand and products are live in the marketplace.'}
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href={fundraising ? '/marketplace/brand/lumen-atelier/fundraising' : '/marketplace'}
-              className="rounded-lg bg-air-force-blue px-4 py-2 text-sm font-semibold text-gray-900 no-underline hover:bg-air-force-blue/90"
-            >
-              {fundraising ? 'Open fundraising page' : 'View marketplace'}
-            </Link>
-          </div>
+            </thead>
+            <tbody>
+              {values.products.map((product, index) => (
+                <tr
+                  key={product.id}
+                  className={index < values.products.length - 1 ? LF.tableRowBorder : undefined}
+                >
+                  <td className="px-4 py-2">{product.name}</td>
+                  <td className="px-4 py-2">
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="USD…"
+                      value={productPrices[product.id] ?? ''}
+                      onChange={(event) =>
+                        onPricesChange({
+                          ...productPrices,
+                          [product.id]: event.target.value,
+                        })
+                      }
+                      className={`${LF.inputSm} w-28 tabular-nums py-1`}
+                      aria-label={`Final price ${product.name}`}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      ) : null}
 
-      <div className="flex items-center justify-between">
-        <button type="button" onClick={onPrev} className="text-gray-600 hover:text-gray-900 font-medium text-sm">
-          ← Back
-        </button>
-        {!published && (
-          <button
-            type="button"
-            onClick={() => setModalOpen(true)}
-            className="rounded-lg bg-air-force-blue text-white font-semibold px-6 py-2.5 text-sm"
-          >
-            Publish
+        <p className={`${LF.muted} mb-6`}>
+          Optional: order sample from My products / Review — optional and does not block publishing.
+        </p>
+
+        {publishError ? (
+          <p className="mb-4 text-sm text-red-300" role="alert">
+            {publishError}
+          </p>
+        ) : null}
+
+        {published ? (
+          <div className="rounded-xl border border-white/20 bg-white/10 p-6 mb-6">
+            <p className="font-semibold text-white mb-2">Published</p>
+            <p className="text-sm text-white/80 mb-4">
+              {fundraising
+                ? 'Fundraising is active — send creators to the fundraising page.'
+                : 'Brand and products are live in the marketplace and drops feed.'}
+            </p>
+            {publishWarnings.length ? (
+              <ul className="mb-4 space-y-1 text-xs text-amber-200/90">
+                {publishWarnings.map((warning) => (
+                  <li key={warning}>• {warning}</li>
+                ))}
+              </ul>
+            ) : null}
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href={
+                  fundraising
+                    ? '/marketplace/brand/lumen-atelier/fundraising'
+                    : '/marketplace'
+                }
+                className={`${LAUNCH_GLASS_BUTTON_PRIMARY} no-underline`}
+              >
+                {fundraising ? 'Open fundraising page' : 'View marketplace'}
+              </Link>
+              <Link
+                href="/drops"
+                className={`${LAUNCH_GLASS_BUTTON_SECONDARY} no-underline`}
+              >
+                View drops
+              </Link>
+              {publishedBrandSlug ? (
+                <Link
+                  href={`/marketplace/brand/${publishedBrandSlug}`}
+                  className={`${LAUNCH_GLASS_BUTTON_SECONDARY} no-underline`}
+                >
+                  View brand page
+                </Link>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
+
+        <div className="flex items-center justify-between">
+          <button type="button" onClick={onPrev} className={LF.btnGhost}>
+            ← Back
           </button>
-        )}
+          {!published && (
+            <button
+              type="button"
+              onClick={() => setModalOpen(true)}
+              disabled={publishing}
+              className={`${LAUNCH_GLASS_BUTTON_PRIMARY} px-6 disabled:cursor-not-allowed disabled:opacity-60`}
+            >
+              {publishing ? 'Publishing…' : 'Publish'}
+            </button>
+          )}
+        </div>
       </div>
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 overscroll-contain" role="alertdialog" aria-labelledby="pub-title" aria-describedby="pub-desc">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 overscroll-contain"
+          role="alertdialog"
+          aria-labelledby="pub-title"
+          aria-describedby="pub-desc"
+        >
           <div className="max-w-md w-full rounded-2xl bg-white border border-gray-200 p-6 shadow-xl">
             <h3 id="pub-title" className="text-lg font-bold text-gray-900 mb-2">
               Confirm publish
             </h3>
             <p id="pub-desc" className="text-sm text-gray-600 mb-6">
-              Publishing locks editing if fundraising. You can still adjust copy later for self-funded launches depending on policy — confirm to proceed.
+              Publishing locks editing if fundraising. You can still adjust copy later for
+              self-funded launches depending on policy — confirm to proceed.
             </p>
             <div className="flex justify-end gap-2">
-              <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 text-sm font-medium text-gray-700">
+              <button
+                type="button"
+                onClick={() => setModalOpen(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700"
+              >
                 Cancel
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  setModalOpen(false);
-                  setPublished(true);
-                }}
-                className="rounded-lg bg-air-force-blue text-white px-4 py-2 text-sm font-semibold"
+                onClick={() => void handlePublish()}
+                disabled={publishing}
+                className="rounded-lg bg-[#6e5dcb] text-white px-4 py-2 text-sm font-semibold transition-colors hover:bg-[#5e4db8] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Confirm publish
+                {publishing ? 'Publishing…' : 'Confirm publish'}
               </button>
             </div>
           </div>

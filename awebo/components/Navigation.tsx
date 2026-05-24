@@ -15,7 +15,7 @@ const LANDING_NAV_LINKS = [
   { label: 'MARKETPLACE', href: '/marketplace' },
   { label: 'DROPS', href: '/drops' },
   { label: 'ECOSYSTEM', href: '/ecosystem' },
-  { label: 'ABOUT', href: '/about' },
+  { label: 'ABOUT', href: '/hq/room-14' },
 ];
 
 type NavVariant = 'app' | 'landing';

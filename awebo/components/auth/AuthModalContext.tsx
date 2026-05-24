@@ -4,17 +4,13 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
-import { usePrivy } from '@privy-io/react-auth';
 import AweboLoginModal from '@/components/auth/AweboLoginModal';
 import PostLoginRedirect from '@/components/auth/PostLoginRedirect';
 import {
-  DEFAULT_POST_LOGIN_PATH,
-  clearPostLoginRedirect,
+  getDefaultPostLoginPath,
   setPostLoginRedirect,
 } from '@/lib/auth-redirect';
 
@@ -26,35 +22,11 @@ type AuthModalContextValue = {
 const AuthModalContext = createContext<AuthModalContextValue | null>(null);
 
 export function AuthModalProvider({ children }: { children: React.ReactNode }) {
-  const { ready, authenticated } = usePrivy();
   const [isOpen, setIsOpen] = useState(false);
-  const [redirectPath, setRedirectPath] = useState(DEFAULT_POST_LOGIN_PATH);
-  const autoOpenedRef = useRef(false);
-
-  useEffect(() => {
-    if (!authenticated) {
-      autoOpenedRef.current = false;
-    }
-  }, [authenticated]);
-
-  /** Show login by default once per signed-out visit when Privy is ready. */
-  useEffect(() => {
-    if (!ready) return;
-
-    if (authenticated) {
-      setIsOpen(false);
-      clearPostLoginRedirect();
-      return;
-    }
-
-    if (autoOpenedRef.current) return;
-
-    autoOpenedRef.current = true;
-    setIsOpen(true);
-  }, [authenticated, ready]);
+  const [redirectPath, setRedirectPath] = useState(getDefaultPostLoginPath);
 
   const openAuthModal = useCallback((options?: { redirectPath?: string }) => {
-    const nextPath = options?.redirectPath ?? DEFAULT_POST_LOGIN_PATH;
+    const nextPath = options?.redirectPath ?? getDefaultPostLoginPath();
     setRedirectPath(nextPath);
     setPostLoginRedirect(nextPath);
     setIsOpen(true);

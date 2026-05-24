@@ -2,6 +2,8 @@
 
 import { PrivyProvider as Privy } from '@privy-io/react-auth';
 import { AuthModalProvider } from '@/components/auth/AuthModalContext';
+import { ExperienceMapProvider } from '@/components/landing/ExperienceMapProvider';
+import LaunchPreloaderProvider from '@/components/landing/LaunchPreloaderProvider';
 import { isPrivyConfigured, privyAppId } from '@/lib/privy-env';
 
 /**
@@ -18,7 +20,11 @@ export default function PrivyProviderWrapper({
     if (typeof window !== 'undefined') {
       console.warn('NEXT_PUBLIC_PRIVY_APP_ID is not set. Privy login is disabled.');
     }
-    return <>{children}</>;
+    return (
+      <LaunchPreloaderProvider>
+        <ExperienceMapProvider>{children}</ExperienceMapProvider>
+      </LaunchPreloaderProvider>
+    );
   }
 
   return (
@@ -34,7 +40,11 @@ export default function PrivyProviderWrapper({
         },
       }}
     >
-      <AuthModalProvider>{children}</AuthModalProvider>
+      <AuthModalProvider>
+        <LaunchPreloaderProvider>
+          <ExperienceMapProvider>{children}</ExperienceMapProvider>
+        </LaunchPreloaderProvider>
+      </AuthModalProvider>
     </Privy>
   );
 }

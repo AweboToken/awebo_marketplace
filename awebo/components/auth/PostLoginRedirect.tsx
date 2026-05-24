@@ -8,10 +8,11 @@ import {
   clearPostLoginRedirect,
   consumePostLoginRedirect,
 } from '@/lib/auth-redirect';
+import { markLaunchPreloaderIfRoomToLaunch } from '@/lib/launch-preloader-nav';
 
 /**
- * After OAuth or a full-page return, completes redirect to the creator flow
- * when a post-login path was stored before sign-in.
+ * After OAuth or a full-page return, completes redirect when a post-login path
+ * was stored before sign-in (e.g. Launch Brand CTA → /launch).
  */
 export default function PostLoginRedirect() {
   const router = useRouter();
@@ -22,13 +23,6 @@ export default function PostLoginRedirect() {
 
   useEffect(() => {
     if (!ready) return;
-
-    if (pathname === LANDING_HOME_PATH) {
-      clearPostLoginRedirect();
-      handledRef.current = true;
-      wasAuthenticatedRef.current = authenticated;
-      return;
-    }
 
     const justLoggedIn = authenticated && !wasAuthenticatedRef.current;
     wasAuthenticatedRef.current = authenticated;
@@ -41,14 +35,29 @@ export default function PostLoginRedirect() {
     if (!justLoggedIn || handledRef.current) return;
 
     const pending = consumePostLoginRedirect();
-    if (!pending || pathname === pending || pending === LANDING_HOME_PATH) {
-      if (pending) handledRef.current = true;
+    if (!pending) return;
+
+    const currentPath = `${pathname}${window.location.search}`;
+    if (pending === currentPath) {
+      handledRef.current = true;
+      return;
+    }
+
+    if (pending === LANDING_HOME_PATH && pathname === LANDING_HOME_PATH) {
+      handledRef.current = true;
       return;
     }
 
     handledRef.current = true;
+    markLaunchPreloaderIfRoomToLaunch(pathname, pending);
     router.replace(pending);
   }, [authenticated, pathname, ready, router]);
+
+  useEffect(() => {
+    if (!ready || authenticated) return;
+    clearPostLoginRedirect();
+    handledRef.current = false;
+  }, [authenticated, ready]);
 
   return null;
 }

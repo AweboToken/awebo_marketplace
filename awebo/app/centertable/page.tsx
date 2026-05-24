@@ -1,10 +1,6 @@
-import CenterTableScene from '@/components/landing/CenterTableScene';
+import { redirect } from 'next/navigation';
 
-export const metadata = {
-  title: 'Center table — AWEBO',
-  robots: { index: false, follow: false },
-};
-
+/** Center table is an in-homepage overlay, not a standalone room. */
 export default function CenterTablePage() {
-  return <CenterTableScene />;
+  redirect('/');
 }

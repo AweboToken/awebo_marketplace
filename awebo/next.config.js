@@ -12,11 +12,17 @@ const nextConfig = {
       { protocol: 'https', hostname: 'ext.same-assets.com', pathname: '/**' },
     ],
   },
+  async redirects() {
+    return [
+      { source: '/about', destination: '/hq/room-14', permanent: true },
+    ];
+  },
   async rewrites() {
     return [
-      // Proxy /drops and /drops/* to EverShop (drops & merch storefront + admin)
-      { source: '/drops', destination: `${evershopUrl}/` },
-      { source: '/drops/:path*', destination: `${evershopUrl}/:path*` },
+      // EverShop admin + legacy product URLs (AWEBO owns `/drops` listing page)
+      { source: '/drops/admin', destination: `${evershopUrl}/admin` },
+      { source: '/drops/admin/:path*', destination: `${evershopUrl}/admin/:path*` },
+      { source: '/drops/product/:path*', destination: `${evershopUrl}/product/:path*` },
     ];
   },
 }

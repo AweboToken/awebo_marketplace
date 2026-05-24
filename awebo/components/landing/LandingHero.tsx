@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
@@ -22,7 +21,10 @@ import ExitVaultEasterEgg from '@/components/landing/ExitVaultEasterEgg';
 import SidestandOverlay, {
   preloadSidestandImage,
 } from '@/components/landing/SidestandOverlay';
-import { preloadCenterTableImage } from '@/components/landing/CenterTableScene';
+import CenterTableOverlay, {
+  preloadCenterTableImage,
+} from '@/components/landing/CenterTableOverlay';
+import { useExperienceMap } from '@/components/landing/ExperienceMapContext';
 
 /** Vault display focal point on orbit center frame (percent of hero). */
 const HERO_ECOSYSTEM_HOTSPOT = { left: 62, top: 42 };
@@ -41,11 +43,6 @@ const HERO_COPY_FADE_MS = 600;
 type VaultExitPhase = 'idle' | 'animating' | 'outdoors-ready';
 
 const HERO_LAST_FRAME_FALLBACK = '/awebo_last_frame.webp';
-const PRELOADER_BG = '/snowbg.jpg';
-const PRELOADER_LOGO = '/1c5c3f75ac6dfd4846b57a663b6cf0cf.png';
-
-const PRELOADER_MIN_MS = 1400;
-const PRELOADER_FADE_MS = 500;
 const CHROME_FADE_MS = 2000;
 /** Scroll (px) over which hero hotspots fade out. */
 const HOTSPOT_FADE_START_PX = 24;
@@ -64,23 +61,20 @@ export interface LandingHeroProps {
   slides?: Array<HeroSlide> | null;
 }
 
-type IntroPhase = 'preloader' | 'hero';
-
 export default function LandingHero({
   badge,
   headline,
   subtext,
 }: LandingHeroProps) {
-  const router = useRouter();
   const orbitScrubRef = useRef<HeroOrbitScrubHandle>(null);
   const vaultExitBusyRef = useRef(false);
 
-  const [introPhase, setIntroPhase] = useState<IntroPhase>('preloader');
-  const [preloaderMounted, setPreloaderMounted] = useState(true);
   const [chromeVisible, setChromeVisible] = useState(false);
   const [orbitFrames, setOrbitFrames] = useState<HTMLImageElement[]>([]);
   const [vaultExitPhase, setVaultExitPhase] = useState<VaultExitPhase>('idle');
   const [sidestandActive, setSidestandActive] = useState(false);
+  const [centerTableActive, setCenterTableActive] = useState(false);
+  const { mapOpen, setMapEscBlocked } = useExperienceMap();
   const [orbitFrame, setOrbitFrame] = useState(ORBIT_CENTER_FRAME);
   const [scrollHotspotOpacity, setScrollHotspotOpacity] = useState(1);
   const orbitReady = orbitFrames.length > 0;
@@ -91,32 +85,23 @@ export default function LandingHero({
     });
   }, []);
 
-  const leavePreloader = useCallback(() => {
-    setIntroPhase('hero');
-    revealChrome();
-    window.setTimeout(() => setPreloaderMounted(false), PRELOADER_FADE_MS);
-  }, [revealChrome]);
-
-  /** Preloader → preload orbit frames → hero orbit. */
+  /** Preload orbit frames and reveal hero (no preloader unless room ↔ launch). */
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     let cancelled = false;
 
     const start = async () => {
-      const [, frames] = await Promise.all([
-        new Promise<void>((resolve) => {
-          window.setTimeout(resolve, PRELOADER_MIN_MS);
-        }),
+      const frames = await Promise.all([
         preloadHeroOrbitFrames().catch(() => [] as HTMLImageElement[]),
         preloadSidestandImage().catch(() => undefined),
         preloadCenterTableImage().catch(() => undefined),
-      ]);
+      ]).then(([loadedFrames]) => loadedFrames);
 
       if (cancelled) return;
 
       if (frames.length > 0) setOrbitFrames(frames);
-      leavePreloader();
+      revealChrome();
     };
 
     void start();
@@ -124,46 +109,9 @@ export default function LandingHero({
     return () => {
       cancelled = true;
     };
-  }, [leavePreloader]);
-
-  /** Lock page scroll while preloader is mounted (including fade-out). */
-  useEffect(() => {
-    if (!preloaderMounted) return;
-
-    const scrollY = window.scrollY;
-    const { style } = document.body;
-    const prev = {
-      position: style.position,
-      top: style.top,
-      left: style.left,
-      right: style.right,
-      overflow: style.overflow,
-      width: style.width,
-    };
-
-    style.position = 'fixed';
-    style.top = `-${scrollY}px`;
-    style.left = '0';
-    style.right = '0';
-    style.width = '100%';
-    style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-
-    return () => {
-      style.position = prev.position;
-      style.top = prev.top;
-      style.left = prev.left;
-      style.right = prev.right;
-      style.width = prev.width;
-      style.overflow = prev.overflow;
-      document.documentElement.style.overflow = '';
-      window.scrollTo(0, scrollY);
-    };
-  }, [preloaderMounted]);
+  }, [revealChrome]);
 
   useEffect(() => {
-    if (preloaderMounted) return;
-
     const updateHotspotOpacity = () => {
       const scrollY = window.scrollY;
       const fadeRange = HOTSPOT_FADE_END_PX - HOTSPOT_FADE_START_PX;
@@ -174,24 +122,22 @@ export default function LandingHero({
     updateHotspotOpacity();
     window.addEventListener('scroll', updateHotspotOpacity, { passive: true });
     return () => window.removeEventListener('scroll', updateHotspotOpacity);
-  }, [preloaderMounted]);
+  }, []);
 
-  const showPreloader = preloaderMounted;
-  const preloaderVisible = introPhase === 'preloader';
-  const showOrbitLayer = introPhase === 'hero';
   const hotspotsVisible = scrollHotspotOpacity > 0.05;
-  const orbitScrubEnabled =
-    introPhase === 'hero' && chromeVisible && orbitReady;
+  const orbitScrubEnabled = chromeVisible && orbitReady;
+  const homepageOverlayActive = sidestandActive || centerTableActive;
   const orbitPointerScrubEnabled =
     orbitScrubEnabled &&
     vaultExitPhase === 'idle' &&
-    !sidestandActive &&
+    !homepageOverlayActive &&
+    !mapOpen &&
     hotspotsVisible;
   const showSidestandHotspot =
     chromeVisible &&
-    introPhase === 'hero' &&
     vaultExitPhase === 'idle' &&
-    !sidestandActive;
+    !homepageOverlayActive &&
+    !mapOpen;
   const showCenterTableHotspot =
     showSidestandHotspot && isOrbitCenterHotspotFrame(orbitFrame);
 
@@ -267,9 +213,14 @@ export default function LandingHero({
 
   const showHeroCopy =
     chromeVisible &&
-    introPhase === 'hero' &&
     vaultExitPhase === 'idle' &&
-    !sidestandActive;
+    !homepageOverlayActive &&
+    !mapOpen;
+
+  useEffect(() => {
+    setMapEscBlocked(homepageOverlayActive);
+    return () => setMapEscBlocked(false);
+  }, [homepageOverlayActive, setMapEscBlocked]);
 
   return (
     <section
@@ -278,65 +229,30 @@ export default function LandingHero({
       onPointerMove={handleHeroPointerMove}
       onPointerLeave={handleHeroPointerLeave}
     >
-      {showOrbitLayer ? (
-        <div className="absolute inset-0 z-10 bg-[#0a0a0a]">
-          {orbitReady ? (
-            <HeroOrbitScrub
-              ref={orbitScrubRef}
-              frames={orbitFrames}
-              scrubEnabled={orbitPointerScrubEnabled}
-              onFrameChange={setOrbitFrame}
-            />
-          ) : (
-            <Image
-              src={HERO_LAST_FRAME_FALLBACK}
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover object-center"
-            />
-          )}
-        </div>
-      ) : null}
-
-      {showPreloader ? (
-        <div
-          className={`absolute inset-0 z-50 flex min-h-[100dvh] items-center justify-center transition-opacity ease-out ${
-            preloaderVisible ? 'opacity-100' : 'opacity-0'
-          }`}
-          style={{ transitionDuration: `${PRELOADER_FADE_MS}ms` }}
-          aria-busy={preloaderVisible}
-          aria-label="Loading"
-        >
-          <div className="absolute inset-0 overflow-hidden bg-[#e8eef5]">
-            <Image
-              src={PRELOADER_BG}
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              className="scale-110 object-cover object-center blur-[48px] brightness-[1.02] saturate-[0.85]"
-            />
-            <div className="absolute inset-0 bg-white/25 backdrop-blur-sm" />
-          </div>
-          <div className="relative z-10 flex flex-col items-center justify-center px-6">
-            <Image
-              src={PRELOADER_LOGO}
-              alt="AWEBO"
-              width={320}
-              height={320}
-              priority
-              className="h-auto w-[min(280px,72vw)] max-w-[320px] object-contain drop-shadow-lg"
-            />
-          </div>
-        </div>
-      ) : null}
+      <div className="absolute inset-0 z-10 bg-[#0a0a0a]">
+        {orbitReady ? (
+          <HeroOrbitScrub
+            ref={orbitScrubRef}
+            frames={orbitFrames}
+            scrubEnabled={orbitPointerScrubEnabled}
+            onFrameChange={setOrbitFrame}
+          />
+        ) : (
+          <Image
+            src={HERO_LAST_FRAME_FALLBACK}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+        )}
+      </div>
 
       <Navigation
         variant="landing"
         landingTheme="overlay"
-        landingChromeVisible={chromeVisible && !sidestandActive}
+        landingChromeVisible={chromeVisible && !homepageOverlayActive && !mapOpen}
       />
 
       {showSidestandHotspot ? (
@@ -360,7 +276,7 @@ export default function LandingHero({
           <HeroHotspot
             label="View center table"
             bottomPx={HERO_CENTER_TABLE_HOTSPOT_BOTTOM_PX}
-            onActivate={() => router.push('/centertable')}
+            onActivate={() => setCenterTableActive(true)}
             className={`transition-opacity duration-300 ease-out motion-reduce:transition-none ${
               showCenterTableHotspot
                 ? 'opacity-100'
@@ -375,7 +291,12 @@ export default function LandingHero({
         onClose={() => setSidestandActive(false)}
       />
 
-      {vaultExitPhase === 'outdoors-ready' ? (
+      <CenterTableOverlay
+        active={centerTableActive}
+        onClose={() => setCenterTableActive(false)}
+      />
+
+      {vaultExitPhase === 'outdoors-ready' && !mapOpen ? (
         <div
           className={`transition-opacity duration-300 ease-out motion-reduce:transition-none ${
             hotspotsVisible ? '' : 'pointer-events-none'
@@ -383,8 +304,8 @@ export default function LandingHero({
           style={{ opacity: scrollHotspotOpacity }}
         >
           <HeroHotspot
-            href="/outdoors"
-            label="Exit vault to outdoors"
+            href="/hq/room-03"
+            label="Exit vault to meeting room"
             left={HERO_OUTDOORS_HOTSPOT.left}
             top={HERO_OUTDOORS_HOTSPOT.top}
           />
@@ -395,7 +316,8 @@ export default function LandingHero({
         active={
           orbitScrubEnabled &&
           vaultExitPhase === 'idle' &&
-          !sidestandActive &&
+          !homepageOverlayActive &&
+          !mapOpen &&
           hotspotsVisible
         }
         onExitClick={() => void handleVaultExitClick()}

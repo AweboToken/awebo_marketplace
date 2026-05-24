@@ -2,11 +2,15 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { isBottomRightQuadrant } from '@/lib/viewport-zones';
 import { CENTER_TABLE_IMAGE } from '@/lib/center-table';
 
 const CENTER_TABLE_FADE_MS = 600;
+
+type CenterTableOverlayProps = {
+  active: boolean;
+  onClose: () => void;
+};
 
 export function preloadCenterTableImage(): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -17,31 +21,44 @@ export function preloadCenterTableImage(): Promise<void> {
   });
 }
 
-export default function CenterTableScene() {
-  const router = useRouter();
+export default function CenterTableOverlay({
+  active,
+  onClose,
+}: CenterTableOverlayProps) {
+  const [mounted, setMounted] = useState(false);
   const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      requestAnimationFrame(() => setRevealed(true));
-    });
-    return () => cancelAnimationFrame(frame);
-  }, []);
+    if (active) {
+      setMounted(true);
+      const frame = requestAnimationFrame(() => {
+        requestAnimationFrame(() => setRevealed(true));
+      });
+      return () => cancelAnimationFrame(frame);
+    }
+
+    setRevealed(false);
+    const timer = window.setTimeout(() => setMounted(false), CENTER_TABLE_FADE_MS);
+    return () => window.clearTimeout(timer);
+  }, [active]);
 
   const handlePointerDown = useCallback(
     (e: PointerEvent) => {
-      if (!isBottomRightQuadrant(e.clientX, e.clientY)) return;
-      router.push('/');
+      if (!active || !isBottomRightQuadrant(e.clientX, e.clientY)) return;
+      onClose();
     },
-    [router]
+    [active, onClose]
   );
 
   useEffect(() => {
+    if (!active) return;
     window.addEventListener('pointerdown', handlePointerDown);
     return () => window.removeEventListener('pointerdown', handlePointerDown);
-  }, [handlePointerDown]);
+  }, [active, handlePointerDown]);
 
   useEffect(() => {
+    if (!mounted) return;
+
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
@@ -50,15 +67,19 @@ export default function CenterTableScene() {
       document.body.style.overflow = prev;
       document.documentElement.style.overflow = '';
     };
-  }, []);
+  }, [mounted]);
+
+  if (!mounted) return null;
 
   return (
-    <main
-      className="relative min-h-[100dvh] w-full overflow-hidden bg-[#0a0a0a] transition-opacity ease-in-out motion-reduce:transition-none"
+    <div
+      className="fixed inset-0 z-[80] bg-[#0a0a0a] transition-opacity ease-in-out motion-reduce:transition-none"
       style={{
         opacity: revealed ? 1 : 0,
         transitionDuration: `${CENTER_TABLE_FADE_MS}ms`,
       }}
+      role="dialog"
+      aria-modal="true"
       aria-label="Center table"
     >
       <Image
@@ -69,6 +90,6 @@ export default function CenterTableScene() {
         sizes="100vw"
         className="object-cover object-center"
       />
-    </main>
+    </div>
   );
 }

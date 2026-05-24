@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { updateSession } from '@/utils/supabase/middleware';
 
 const APP_SUBDOMAIN = 'app.awebo.wtf';
 const APP_PATH_PREFIX = '/app';
@@ -15,7 +16,13 @@ function isAppSubdomain(host: string): boolean {
   }
 }
 
-export function middleware(request: NextRequest) {
+function applyCookies(from: NextResponse, to: NextResponse) {
+  from.cookies.getAll().forEach(({ name, value }) => {
+    to.cookies.set(name, value);
+  });
+}
+
+export async function middleware(request: NextRequest) {
   const host = request.headers.get('host') ?? '';
   const pathname = request.nextUrl.pathname;
 
@@ -25,8 +32,11 @@ export function middleware(request: NextRequest) {
     const rewritePath = pathname === '/' ? APP_PATH_PREFIX : `${APP_PATH_PREFIX}${pathname}`;
     const url = request.nextUrl.clone();
     url.pathname = rewritePath;
-    return NextResponse.rewrite(url);
+    const supabaseResponse = await updateSession(request);
+    const rewriteResponse = NextResponse.rewrite(url);
+    applyCookies(supabaseResponse, rewriteResponse);
+    return rewriteResponse;
   }
 
-  return NextResponse.next();
+  return updateSession(request);
 }

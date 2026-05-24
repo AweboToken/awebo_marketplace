@@ -108,7 +108,7 @@ export default function FundraisingPage({ params }: Props) {
           <input type="checkbox" name="terms" className="mt-1 rounded border-gray-300" />
           <span>
             I agree to the{' '}
-            <Link href="/about" className="text-air-force-blue font-medium no-underline hover:underline">
+            <Link href="/hq/room-14" className="text-air-force-blue font-medium no-underline hover:underline">
               terms and conditions
             </Link>
             .

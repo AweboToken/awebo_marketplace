@@ -3,13 +3,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import { ChevronDown, LogOut } from 'lucide-react';
-import LaunchBrandLogin from '@/components/LaunchBrandLogin';
+import { useAuthModal } from '@/components/auth/AuthModalContext';
 
 /**
  * Studio header account menu when Privy is configured.
  */
 export default function UserMenuPrivy() {
   const { ready, authenticated, user, logout } = usePrivy();
+  const { openAuthModal } = useAuthModal();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -26,9 +27,13 @@ export default function UserMenuPrivy() {
   if (!ready) return null;
   if (!authenticated) {
     return (
-      <LaunchBrandLogin className="rounded-lg bg-air-force-blue px-4 py-2 text-sm font-semibold text-white hover:bg-air-force-blue/90 transition-colors">
+      <button
+        type="button"
+        onClick={() => openAuthModal()}
+        className="rounded-lg bg-air-force-blue px-4 py-2 text-sm font-semibold text-white hover:bg-air-force-blue/90 transition-colors"
+      >
         Log in
-      </LaunchBrandLogin>
+      </button>
     );
   }
   if (!user) return null;

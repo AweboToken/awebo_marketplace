@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { isPrivyConfigured } from '@/lib/privy-env';
-import { DEFAULT_POST_LOGIN_PATH } from '@/lib/auth-redirect';
+import { LAUNCH_BRAND_PATH } from '@/lib/auth-redirect';
+import { markLaunchPreloaderIfRoomToLaunch } from '@/lib/launch-preloader-nav';
 import LaunchBrandLoginPrivy from '@/components/LaunchBrandLoginPrivy';
 
 /**
@@ -11,7 +12,7 @@ import LaunchBrandLoginPrivy from '@/components/LaunchBrandLoginPrivy';
 export default function LaunchBrandLogin({
   children,
   className,
-  redirectPath = DEFAULT_POST_LOGIN_PATH,
+  redirectPath = LAUNCH_BRAND_PATH,
 }: {
   children: React.ReactNode;
   className?: string;
@@ -19,7 +20,11 @@ export default function LaunchBrandLogin({
 }) {
   if (!isPrivyConfigured) {
     return (
-      <Link href="/launch" className={className}>
+      <Link
+        href={redirectPath}
+        onClick={() => markLaunchPreloaderIfRoomToLaunch(undefined, redirectPath)}
+        className={className}
+      >
         {children}
       </Link>
     );

@@ -26,7 +26,7 @@ export function isOrbitCenterHotspotFrame(
 ): boolean {
   return getOrbitCenterHotspotFrames(center, count).includes(Math.round(frame));
 }
-/** Vault exit easter egg: left edge → outdoors transition. */
+/** Vault exit easter egg: left edge → meeting room door transition. */
 export const ORBIT_EXIT_START_FRAME = 99;
 export const ORBIT_EXIT_END_FRAME = 145;
 

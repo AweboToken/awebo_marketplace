@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Box, Heart, Star } from 'lucide-react';
@@ -10,11 +10,25 @@ import {
   type ExploreBrand,
 } from '@/lib/marketplace-data';
 
-function ExploreBrandCard({ brand }: { brand: ExploreBrand }) {
+type FeedBrand = ExploreBrand & { key: string; live?: boolean };
+
+function createFeedBatch(brands: ExploreBrand[], batchIndex: number): FeedBrand[] {
+  return brands.map((brand) => ({
+    ...brand,
+    key: `${brand.slug}-batch-${batchIndex}`,
+  }));
+}
+
+function ExploreBrandCard({ brand }: { brand: FeedBrand }) {
   return (
     <article
       className={`group relative flex flex-col rounded-2xl p-5 transition-shadow hover:shadow-md ${brand.cardTone}`}
     >
+      {brand.live ? (
+        <span className="absolute left-4 top-4 z-10 rounded-full bg-emerald-500/90 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+          Live
+        </span>
+      ) : null}
       <button
         type="button"
         aria-label={brand.favorited ? 'Remove from favorites' : 'Add to favorites'}
@@ -77,6 +91,72 @@ function ExploreBrandCard({ brand }: { brand: ExploreBrand }) {
 
 export default function MarketplaceExploreFeed() {
   const [activeFilter, setActiveFilter] = useState<string>('NEW');
+  const [seedBrands, setSeedBrands] = useState<ExploreBrand[]>(MOCK_EXPLORE_BRANDS);
+  const [brands, setBrands] = useState<FeedBrand[]>(() => createFeedBatch(MOCK_EXPLORE_BRANDS, 0));
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const load = async () => {
+      try {
+        const response = await fetch('/api/evershop/products', { cache: 'no-store' });
+        const payload = (await response.json()) as {
+          brands?: Array<ExploreBrand & { href?: string }>;
+        };
+
+        if (cancelled || !payload.brands?.length) return;
+
+        const liveBrands: ExploreBrand[] = payload.brands.map((brand) => ({
+          slug: brand.slug,
+          name: brand.name,
+          description: brand.description,
+          category: brand.category,
+          itemCount: brand.itemCount,
+          rating: brand.rating,
+          reviews: brand.reviews,
+          image: brand.image,
+          cardTone: brand.cardTone,
+          featured: brand.featured,
+          favorited: brand.favorited,
+        }));
+
+        const merged = [...liveBrands, ...MOCK_EXPLORE_BRANDS];
+        setSeedBrands(merged);
+        setBrands(
+          createFeedBatch(merged, 0).map((brand, index) =>
+            index < liveBrands.length ? { ...brand, live: true } : brand
+          )
+        );
+      } catch {
+        // Keep mock feed when catalog API is unavailable.
+      }
+    };
+
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const node = loadMoreRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting) return;
+        setBrands((previous) => {
+          const nextBatch = Math.floor(previous.length / seedBrands.length);
+          return [...previous, ...createFeedBatch(seedBrands, nextBatch)];
+        });
+      },
+      { rootMargin: '480px' }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [seedBrands]);
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 md:py-10">
@@ -101,10 +181,12 @@ export default function MarketplaceExploreFeed() {
       </div>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {MOCK_EXPLORE_BRANDS.map((brand) => (
-          <ExploreBrandCard key={brand.slug} brand={brand} />
+        {brands.map((brand) => (
+          <ExploreBrandCard key={brand.key} brand={brand} />
         ))}
       </div>
+
+      <div ref={loadMoreRef} className="h-px w-full" aria-hidden />
     </div>
   );
 }

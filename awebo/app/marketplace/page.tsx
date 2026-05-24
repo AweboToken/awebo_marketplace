@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function MarketplaceHomePage() {
   return (
-    <main className="min-h-full bg-[#f1f5f5]">
+    <main className="min-h-full">
       <MarketplaceExploreFeed />
     </main>
   );

@@ -13,9 +13,10 @@ import type { OAuthProviderID } from '@privy-io/api-types';
 import { ChevronLeft, ChevronRight, Mail, Wallet } from 'lucide-react';
 import OtpCodeInput from '@/components/auth/OtpCodeInput';
 import {
-  DEFAULT_POST_LOGIN_PATH,
+  getDefaultPostLoginPath,
   setPostLoginRedirect,
 } from '@/lib/auth-redirect';
+import { navigateWithRoomLaunchTransition } from '@/lib/launch-preloader-nav';
 import {
   AppleIcon,
   GitHubIcon,
@@ -63,7 +64,7 @@ function SocialButton({
 export default function AweboLoginModal({
   isOpen,
   onClose,
-  redirectPath = DEFAULT_POST_LOGIN_PATH,
+  redirectPath = getDefaultPostLoginPath(),
 }: AweboLoginModalProps) {
   const router = useRouter();
   const { ready, authenticated } = usePrivy();
@@ -78,7 +79,14 @@ export default function AweboLoginModal({
   const handleAuthComplete = useCallback(() => {
     setPostLoginRedirect(redirectPath);
     onClose();
-    router.replace(redirectPath);
+
+    const currentPath = `${window.location.pathname}${window.location.search}`;
+    if (redirectPath !== currentPath) {
+      navigateWithRoomLaunchTransition(router, redirectPath, {
+        replace: true,
+        from: currentPath,
+      });
+    }
   }, [onClose, redirectPath, router]);
 
   const { initOAuth, loading: oauthLoading } = useLoginWithOAuth({

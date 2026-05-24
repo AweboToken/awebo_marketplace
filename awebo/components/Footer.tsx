@@ -12,7 +12,7 @@ const LANDING_LINKS = [
   { title: 'Marketplace', href: '/marketplace' },
   { title: 'Drops', href: '/drops' },
   { title: 'Ecosystem', href: '/ecosystem' },
-  { title: 'About', href: '/about' },
+  { title: 'About', href: '/hq/room-14' },
   { title: 'Content (Studio)', href: '/studio' },
   { title: 'Privacy', href: '/privacy' },
   { title: 'Terms', href: '/terms' },

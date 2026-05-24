@@ -34,6 +34,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# local persisted data
+/data/launch-drafts.json
+/data/awebo-catalog.json
+
 # IDE and agent folders
 .agent/
 .agents/

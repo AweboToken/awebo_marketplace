@@ -3,7 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { usePrivy } from '@privy-io/react-auth';
 import { useAuthModal } from '@/components/auth/AuthModalContext';
-import { DEFAULT_POST_LOGIN_PATH } from '@/lib/auth-redirect';
+import { LAUNCH_BRAND_PATH } from '@/lib/auth-redirect';
+import { navigateWithRoomLaunchTransition } from '@/lib/launch-preloader-nav';
 
 /**
  * Opens the custom AWEBO login modal when Privy is configured.
@@ -11,7 +12,7 @@ import { DEFAULT_POST_LOGIN_PATH } from '@/lib/auth-redirect';
 export default function LaunchBrandLoginPrivy({
   children,
   className,
-  redirectPath = DEFAULT_POST_LOGIN_PATH,
+  redirectPath = LAUNCH_BRAND_PATH,
 }: {
   children: React.ReactNode;
   className?: string;
@@ -24,7 +25,7 @@ export default function LaunchBrandLoginPrivy({
   const handleClick = () => {
     if (!ready) return;
     if (authenticated) {
-      router.replace(redirectPath);
+      navigateWithRoomLaunchTransition(router, redirectPath, { replace: true });
       return;
     }
     openAuthModal({ redirectPath });

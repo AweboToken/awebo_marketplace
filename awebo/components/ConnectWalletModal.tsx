@@ -2,6 +2,8 @@
 
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { LAUNCH_BRAND_PATH } from '@/lib/auth-redirect';
+import { navigateWithRoomLaunchTransition } from '@/lib/launch-preloader-nav';
 
 const STORAGE_KEY = 'awebo-wallet-connected';
 
@@ -36,7 +38,7 @@ export default function ConnectWalletModal({
     if (onConnected) {
       onConnected();
     } else {
-      router.push('/launch');
+      navigateWithRoomLaunchTransition(router, LAUNCH_BRAND_PATH);
     }
   }, [onClose, onConnected, router]);
 
