@@ -60,6 +60,7 @@ Reference for backend team aligning DB columns with frontend types.
 | TS field | DB column | Notes |
 |----------|-----------|-------|
 | `id` | `brands.id` (uuid) or `slug` | TS uses slug as id today |
+| `ownerId` | `brands.owner_id` | Privy user ID — required for My Drops |
 | `slug` | `brands.slug` | unique |
 | `name` | `brands.name` | |
 | `story` | `brands.story` | |

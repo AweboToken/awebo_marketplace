@@ -4,8 +4,10 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useState } from 'react';
 import Navigation from '@/components/Navigation';
+import RequirePrivyAuth from '@/components/auth/RequirePrivyAuth';
 import ScrollingRoomBackground from '@/components/landing/ScrollingRoomBackground';
 import { useLaunchDraftAutosave } from '@/hooks/useLaunchDraftAutosave';
+import { LAUNCH_BRAND_PATH } from '@/lib/auth-redirect';
 import {
   launchWizardBackgroundForStep,
   LAUNCH_WIZARD_PANEL_MAX_H,
@@ -118,6 +120,11 @@ export default function LaunchWizard() {
       />
       <Navigation variant="landing" landingTheme="overlay" />
 
+      <RequirePrivyAuth
+        redirectPath={LAUNCH_BRAND_PATH}
+        title="Sign in to launch your brand"
+        description="Launch Brand is for creators building on AWEBO. Sign in with your account to save drafts, publish drops, and manage your catalog."
+      >
       <div className="relative z-10 flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 pt-20 md:pt-24">
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(200px,240px)_minmax(0,1fr)_minmax(280px,340px)] gap-6 lg:gap-8 xl:gap-10 lg:items-start">
           {/* Left — step navigation */}
@@ -261,6 +268,7 @@ export default function LaunchWizard() {
           </div>
         </div>
       </div>
+      </RequirePrivyAuth>
 
       <footer className="relative z-10 mt-auto shrink-0 border-t border-white/15 bg-black/25 py-4">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-white/70">

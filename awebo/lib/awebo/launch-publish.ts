@@ -15,6 +15,7 @@ export type LaunchProductInput = {
 };
 
 export type PublishLaunchInput = {
+  ownerId?: string;
   values: LaunchWizardValues;
   products: LaunchProductInput[];
 };
@@ -36,7 +37,7 @@ function buildUrlKey(brandSlug: string, productId: string): string {
 export async function publishLaunchBrand(
   input: PublishLaunchInput
 ): Promise<PublishLaunchResult> {
-  const { values, products } = input;
+  const { values, products, ownerId } = input;
   const brandSlug = slugifyBrandName(values.brandName || values.symbol || 'brand');
   const warnings: string[] = [];
   const publishedProducts: PublishedProduct[] = [];
@@ -89,6 +90,7 @@ export async function publishLaunchBrand(
   const brand: PublishedBrand = {
     id: brandSlug,
     slug: brandSlug,
+    ownerId: ownerId?.trim() || undefined,
     name: values.brandName || 'Untitled brand',
     story: values.story,
     logoUrl: values.logoUrl,

@@ -147,6 +147,41 @@ If no draft: `{ "draft": null }`
 
 ---
 
+## `GET /api/drops/my`
+
+**Query:** `ownerId` (Privy user ID, 8–128 chars)
+
+**Response 200:**
+
+```json
+{
+  "ownerId": "did:privy:abc123",
+  "stats": {
+    "brandCount": 1,
+    "productCount": 2,
+    "latestPublishedAt": "2026-05-24T12:00:00.000Z",
+    "selfFundedCount": 1,
+    "crowdfundCount": 0
+  },
+  "brands": [
+    {
+      "slug": "lumen-atelier",
+      "name": "Lumen Atelier",
+      "story": "...",
+      "logoUrl": null,
+      "launchMode": "self",
+      "publishedAt": "2026-05-24T12:00:00.000Z",
+      "productCount": 2,
+      "products": [ /* LiveCatalogProduct[] */ ]
+    }
+  ]
+}
+```
+
+**V2:** Verify Privy JWT server-side; do not trust query param alone.
+
+---
+
 ## `GET /api/evershop/products`
 
 **Response 200:**

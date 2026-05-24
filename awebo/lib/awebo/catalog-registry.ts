@@ -21,6 +21,7 @@ export type PublishedCollection = {
 export type PublishedBrand = {
   id: string;
   slug: string;
+  ownerId?: string;
   name: string;
   story: string;
   logoUrl: string | null;
@@ -82,6 +83,13 @@ export async function savePublishedBrand(brand: PublishedBrand): Promise<Publish
 export async function listPublishedBrands(): Promise<PublishedBrand[]> {
   const catalog = await readCatalog();
   return catalog.brands;
+}
+
+export async function listPublishedBrandsByOwner(
+  ownerId: string
+): Promise<PublishedBrand[]> {
+  const catalog = await readCatalog();
+  return catalog.brands.filter((brand) => brand.ownerId === ownerId);
 }
 
 export async function getPublishedBrandBySlug(

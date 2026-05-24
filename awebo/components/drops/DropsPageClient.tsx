@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import ScrollingRoomBackground from '@/components/landing/ScrollingRoomBackground';
 import Navigation from '@/components/Navigation';
+import PrivyAuthButton from '@/components/auth/PrivyAuthButton';
 import {
   LiveProductCard,
   type LiveCatalogProduct,
@@ -72,17 +73,25 @@ export default function DropsPageClient() {
       <Navigation variant="landing" landingTheme="overlay" />
 
       <main className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-16 pt-20 sm:px-6 md:pt-24 lg:px-8">
-        <div className="mb-8 max-w-2xl">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/70">
-            Print Lab
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white drop-shadow-md sm:text-4xl">
-            Drops
-          </h1>
-          <p className="mt-3 text-sm leading-relaxed text-white/80 sm:text-base">
-            Physical products and token-backed collections published by creators through
-            Launch Brand. Inventory and checkout are managed in EverShop.
-          </p>
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/70">
+              Print Lab
+            </p>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white drop-shadow-md sm:text-4xl">
+              Drops
+            </h1>
+            <p className="mt-3 text-sm leading-relaxed text-white/80 sm:text-base">
+              Physical products and token-backed collections published by creators through
+              Launch Brand.
+            </p>
+          </div>
+          <PrivyAuthButton
+            redirectPath="/drops/my"
+            className="inline-flex shrink-0 items-center justify-center rounded-lg border border-white/25 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/15"
+          >
+            My Drops
+          </PrivyAuthButton>
         </div>
 
         {loading ? (

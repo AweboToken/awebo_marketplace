@@ -39,6 +39,7 @@ export async function POST(request: Request) {
 
   try {
     const result = await publishLaunchBrand({
+      ownerId: body.ownerId,
       values: body.values,
       products: body.products,
     });

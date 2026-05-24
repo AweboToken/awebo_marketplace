@@ -16,11 +16,13 @@ Handoff package for the backend team. These migrations replace the current **fil
 
 ```
 Creator (Privy)
-  └── Brand (Launch wizard → publish)
+  └── Brand (Launch wizard → publish, owner_id required)
         └── Collection (Genesis collection)
               ├── Token (on-chain — future)
               └── Products → EverShop SKUs (evershop_uuid, evershop_url_key)
 ```
+
+**Creators manage drops at `/drops/my` (AWEBO dashboard), not EverShop admin.**
 
 **Do not duplicate EverShop inventory in Supabase.** AWEBO stores brand metadata and EverShop foreign keys; EverShop owns stock, pricing sync, checkout, and fulfillment.
 
@@ -36,6 +38,7 @@ Run in this sequence:
 | 4 | [004-fundraising.md](./004-fundraising.md) | Crowdfund campaigns + contributions |
 | 5 | [005-orders-and-referrals.md](./005-orders-and-referrals.md) | Order sync + referral codes (future) |
 | 6 | [006-rls-policies.md](./006-rls-policies.md) | Row Level Security |
+| 7 | [007-multi-tenant-creators.md](./007-multi-tenant-creators.md) | Multi-creator model (read first for architecture) |
 
 Also read:
 
