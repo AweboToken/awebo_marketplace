@@ -21,9 +21,11 @@ export default function PrivyProviderWrapper({
       console.warn('NEXT_PUBLIC_PRIVY_APP_ID is not set. Privy login is disabled.');
     }
     return (
-      <LaunchPreloaderProvider>
-        <ExperienceMapProvider>{children}</ExperienceMapProvider>
-      </LaunchPreloaderProvider>
+      <AuthModalProvider enabled={false}>
+        <LaunchPreloaderProvider>
+          <ExperienceMapProvider>{children}</ExperienceMapProvider>
+        </LaunchPreloaderProvider>
+      </AuthModalProvider>
     );
   }
 

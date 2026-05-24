@@ -19,9 +19,14 @@ type AuthModalContextValue = {
   closeAuthModal: () => void;
 };
 
+const noopAuthModal: AuthModalContextValue = {
+  openAuthModal: () => {},
+  closeAuthModal: () => {},
+};
+
 const AuthModalContext = createContext<AuthModalContextValue | null>(null);
 
-export function AuthModalProvider({ children }: { children: React.ReactNode }) {
+function AuthModalProviderActive({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [redirectPath, setRedirectPath] = useState(getDefaultPostLoginPath);
 
@@ -52,6 +57,24 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
       />
     </AuthModalContext.Provider>
   );
+}
+
+export function AuthModalProvider({
+  children,
+  enabled = true,
+}: {
+  children: React.ReactNode;
+  enabled?: boolean;
+}) {
+  if (!enabled) {
+    return (
+      <AuthModalContext.Provider value={noopAuthModal}>
+        {children}
+      </AuthModalContext.Provider>
+    );
+  }
+
+  return <AuthModalProviderActive>{children}</AuthModalProviderActive>;
 }
 
 export function useAuthModal() {
