@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import type { LaunchWizardValues } from '@/lib/launch-wizard-types';
-import { isSupabaseAdminConfigured } from '@/utils/supabase/admin';
+import { resolveAweboStorageBackend } from '@/utils/supabase/admin';
 import {
   getLaunchDraftFromSupabase,
   markLaunchDraftPublishedInSupabase,
@@ -59,7 +59,7 @@ export function sanitizeLaunchValuesForStorage(
 export async function getLaunchDraft(
   ownerId: string
 ): Promise<LaunchDraftRecord | null> {
-  if (isSupabaseAdminConfigured()) {
+  if (resolveAweboStorageBackend() === 'supabase') {
     return getLaunchDraftFromSupabase(ownerId);
   }
 
@@ -75,7 +75,7 @@ export async function upsertLaunchDraft(
     status?: LaunchDraftRecord['status'];
   }
 ): Promise<LaunchDraftRecord> {
-  if (isSupabaseAdminConfigured()) {
+  if (resolveAweboStorageBackend() === 'supabase') {
     return upsertLaunchDraftToSupabase(draft);
   }
 
@@ -96,7 +96,7 @@ export async function upsertLaunchDraft(
 }
 
 export async function markLaunchDraftPublished(ownerId: string): Promise<void> {
-  if (isSupabaseAdminConfigured()) {
+  if (resolveAweboStorageBackend() === 'supabase') {
     return markLaunchDraftPublishedInSupabase(ownerId);
   }
 

@@ -90,7 +90,9 @@ export const LF = {
   tableHead:
     'border-b border-white/15 bg-white/5 text-left text-xs uppercase text-white/60',
   tableRowBorder: 'border-b border-white/10',
-  chip: 'rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white/85',
+  chip: 'rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white/85 transition-colors hover:bg-white/15 hover:text-white',
+  chipActive:
+    'rounded-full border border-air-force-blue/50 bg-air-force-blue/25 px-3 py-1 text-xs font-semibold text-white shadow-[0_0_0_1px_rgba(108,143,174,0.35)]',
   statusDraft: 'rounded-full bg-amber-500/20 px-2 py-0.5 text-xs font-medium text-amber-200',
   statusPricing: 'rounded-full bg-sky-500/20 px-2 py-0.5 text-xs font-medium text-sky-200',
   statusReady: 'rounded-full bg-emerald-500/20 px-2 py-0.5 text-xs font-medium text-emerald-200',

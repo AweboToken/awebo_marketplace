@@ -8,6 +8,12 @@ import {
   LAUNCH_GLASS_BUTTON_SECONDARY,
   LF,
 } from '@/lib/launch-wizard-ui';
+import {
+  getCategoryBySlug,
+  getProductsForCategory,
+  MARKETPLACE_CATEGORIES,
+  TOPIC_RAILS,
+} from '@/lib/marketplace-data';
 import type {
   LaunchWizardValues,
   LaunchWizardValuesPatch,
@@ -175,22 +181,29 @@ export function BrandSetupStep({
 
 export function CatalogProductsStep({
   values,
-  onChange: _onChange,
+  onChange,
   onNext,
   onPrev,
 }: LaunchStepProps & { onNext: () => void; onPrev: () => void }) {
   const [editorOpen, setEditorOpen] = useState(false);
+  const selectedCategory = values.categorySlug
+    ? getCategoryBySlug(values.categorySlug)
+    : undefined;
+  const categoryProducts = values.categorySlug
+    ? getProductsForCategory(values.categorySlug)
+    : [];
 
   return (
     <>
       <div className={LAUNCH_FORM_ROOT}>
         <h2 className={LF.heading}>Catalog and products</h2>
         <p className={`${LF.lead} text-pretty`}>
-          Mega categories, listing, filters, PDP with base cost, then product editor overlay.
+          Pick a marketplace category, browse base products, then open the editor to customize
+          placements and variants.
         </p>
 
         <div className={`${LF.panel} mb-6`}>
-          <p className={LF.panelTitle}>Catalog home (mock)</p>
+          <p className={LF.panelTitle}>Category</p>
           <label htmlFor="cat-search" className="sr-only">
             Search catalog
           </label>
@@ -198,19 +211,81 @@ export function CatalogProductsStep({
             id="cat-search"
             type="search"
             placeholder="Search bases…"
-            className={`${LF.inputSm} mb-3 max-w-md`}
+            className={`${LF.inputSm} mb-4 max-w-md`}
           />
-          <div className="flex flex-wrap gap-2">
-            {['Men', 'Women', 'Kids', 'Home', 'Misc'].map((c) => (
-              <span key={c} className={LF.chip}>
-                {c}
-              </span>
-            ))}
+          <div className="flex flex-wrap gap-2" aria-label="Marketplace categories">
+            {MARKETPLACE_CATEGORIES.map((category) => {
+              const isSelected = values.categorySlug === category.slug;
+              return (
+                <button
+                  key={category.slug}
+                  type="button"
+                  aria-pressed={isSelected}
+                  onClick={() => onChange({ categorySlug: category.slug })}
+                  className={isSelected ? LF.chipActive : LF.chip}
+                >
+                  {category.shortLabel ?? category.label}
+                </button>
+              );
+            })}
           </div>
           <p className={`${LF.muted} mt-3`}>
-            Topics: Bestsellers, New arrivals, Seasonal (rotating 6–8).
+            Topics: {TOPIC_RAILS.map((topic) => topic.title).join(' · ')}.
           </p>
         </div>
+
+        {selectedCategory ? (
+          <div className={`${LF.panel} mb-6`}>
+            <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className={LF.panelTitle}>Category preview</p>
+                <h3 className="text-lg font-semibold text-white">{selectedCategory.label}</h3>
+                <p className={`${LF.muted} mt-1`}>
+                  {categoryProducts.length}{' '}
+                  {categoryProducts.length === 1 ? 'base product' : 'base products'} in this
+                  category.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => onChange({ categorySlug: null })}
+                className={LF.btnGhost}
+              >
+                Clear selection
+              </button>
+            </div>
+
+            {categoryProducts.length === 0 ? (
+              <p className="rounded-xl border border-dashed border-white/20 bg-white/5 p-6 text-center text-sm text-white/70">
+                No base products in this category yet. Pick another category or start designing
+                from your draft list below.
+              </p>
+            ) : (
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {categoryProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className="overflow-hidden rounded-xl border border-white/15 bg-white/5"
+                  >
+                    <div
+                      className={`aspect-[4/5] bg-gradient-to-br ${product.imageTone}`}
+                      aria-hidden
+                    />
+                    <div className="space-y-1 p-3">
+                      <p className="text-sm font-semibold text-white line-clamp-2">{product.name}</p>
+                      <p className="text-xs text-white/60">{product.brandName}</p>
+                      <p className="text-sm font-medium tabular-nums text-white/90">
+                        ${product.priceUsd.toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <p className={`${LF.muted} mb-6`}>Select a category above to preview base products.</p>
+        )}
 
         <div className="flex flex-wrap gap-3 mb-6">
           <button
@@ -220,12 +295,6 @@ export function CatalogProductsStep({
           >
             Start designing (overlay)
           </button>
-          <Link
-            href="/marketplace/category/ropa-zapatos"
-            className={`${LAUNCH_GLASS_BUTTON_SECONDARY} no-underline`}
-          >
-            Open marketplace category (reference)
-          </Link>
         </div>
 
         <div className={LF.tableWrap}>

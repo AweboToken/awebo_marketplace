@@ -2,7 +2,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import type { LaunchWizardValues } from '@/lib/launch-wizard-types';
 import type { PublishedBrand, PublishedProduct } from '@/lib/awebo/catalog-types';
-import { isSupabaseAdminConfigured } from '@/utils/supabase/admin';
+import { resolveAweboStorageBackend } from '@/utils/supabase/admin';
 import {
   getPublishedBrandBySlugFromSupabase,
   listPublishedBrandsByOwnerFromSupabase,
@@ -59,7 +59,7 @@ export async function savePublishedBrand(
   brand: PublishedBrand,
   values?: LaunchWizardValues
 ): Promise<PublishedBrand> {
-  if (isSupabaseAdminConfigured()) {
+  if (resolveAweboStorageBackend() === 'supabase') {
     if (!values) {
       throw new Error('Launch wizard values are required when saving to Supabase.');
     }
@@ -74,7 +74,7 @@ export async function savePublishedBrand(
 }
 
 export async function listPublishedBrands(): Promise<PublishedBrand[]> {
-  if (isSupabaseAdminConfigured()) {
+  if (resolveAweboStorageBackend() === 'supabase') {
     return listPublishedBrandsFromSupabase();
   }
 
@@ -85,7 +85,7 @@ export async function listPublishedBrands(): Promise<PublishedBrand[]> {
 export async function listPublishedBrandsByOwner(
   ownerId: string
 ): Promise<PublishedBrand[]> {
-  if (isSupabaseAdminConfigured()) {
+  if (resolveAweboStorageBackend() === 'supabase') {
     return listPublishedBrandsByOwnerFromSupabase(ownerId);
   }
 
@@ -96,7 +96,7 @@ export async function listPublishedBrandsByOwner(
 export async function getPublishedBrandBySlug(
   slug: string
 ): Promise<PublishedBrand | undefined> {
-  if (isSupabaseAdminConfigured()) {
+  if (resolveAweboStorageBackend() === 'supabase') {
     return getPublishedBrandBySlugFromSupabase(slug);
   }
 

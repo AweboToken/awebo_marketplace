@@ -7,6 +7,21 @@ export function isSupabaseAdminConfigured(): boolean {
   );
 }
 
+/** Use Supabase on server when configured; never fall back to JSON on Vercel. */
+export function resolveAweboStorageBackend(): 'supabase' | 'file' {
+  if (isSupabaseAdminConfigured()) {
+    return 'supabase';
+  }
+
+  if (process.env.VERCEL) {
+    throw new Error(
+      'Supabase admin is not configured. Add SUPABASE_SERVICE_ROLE_KEY to your deployment environment (Vercel → Settings → Environment Variables).'
+    );
+  }
+
+  return 'file';
+}
+
 export function createAdminClient(): SupabaseClient {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();

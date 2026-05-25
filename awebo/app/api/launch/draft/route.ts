@@ -24,8 +24,17 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Invalid owner id.' }, { status: 400 });
   }
 
-  const draft = await getLaunchDraft(ownerId);
-  return NextResponse.json({ draft });
+  try {
+    const draft = await getLaunchDraft(ownerId);
+    return NextResponse.json({ draft });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error: error instanceof Error ? error.message : 'Failed to load launch draft.',
+      },
+      { status: 500 }
+    );
+  }
 }
 
 export async function PUT(request: Request) {

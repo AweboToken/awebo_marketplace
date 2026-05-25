@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { Instagram, Twitter } from 'lucide-react';
 import type { LaunchWizardValues } from '@/lib/launch-wizard-types';
+import { getCategoryBySlug } from '@/lib/marketplace-data';
 import { LAUNCH_GLASS_PANEL } from '@/lib/launch-wizard-ui';
 import { STEPS } from './launch-steps';
 
@@ -111,6 +112,12 @@ export default function BrandLaunchPreview({
 
         {stepIndex >= 1 && (
           <div className="space-y-2">
+            {values.categorySlug ? (
+              <PreviewRow
+                label="Category"
+                value={getCategoryBySlug(values.categorySlug)?.label ?? values.categorySlug}
+              />
+            ) : null}
             <p className="text-xs text-white/55">Products</p>
             <ul className="space-y-1.5">
               {values.products.map((p) => (

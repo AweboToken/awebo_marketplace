@@ -20,6 +20,8 @@ export type LaunchWizardValues = {
   ownerPct: number;
   maxWalletPct: number;
   whitelist: boolean;
+  /** Marketplace mega-category selected in step 2 (catalog bases). */
+  categorySlug: string | null;
   products: LaunchWizardProduct[];
 };
 
@@ -37,6 +39,7 @@ export const DEFAULT_LAUNCH_WIZARD_VALUES: LaunchWizardValues = {
   ownerPct: 80,
   maxWalletPct: 5,
   whitelist: false,
+  categorySlug: null,
   products: [
     { id: 'hoodie', name: 'Oversized hoodie', status: 'Draft' },
     { id: 'tee', name: 'Boxy tee', status: 'Pricing' },
