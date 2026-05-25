@@ -53,12 +53,21 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: 'Invalid step index.' }, { status: 400 });
   }
 
-  const draft = await upsertLaunchDraft({
-    ownerId,
-    stepIndex: body.stepIndex,
-    values: body.values,
-    productPrices: body.productPrices ?? {},
-  });
+  try {
+    const draft = await upsertLaunchDraft({
+      ownerId,
+      stepIndex: body.stepIndex,
+      values: body.values,
+      productPrices: body.productPrices ?? {},
+    });
 
-  return NextResponse.json({ draft } satisfies { draft: LaunchDraftRecord });
+    return NextResponse.json({ draft } satisfies { draft: LaunchDraftRecord });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error: error instanceof Error ? error.message : 'Failed to save launch draft.',
+      },
+      { status: 500 }
+    );
+  }
 }

@@ -7,6 +7,7 @@ import {
 } from '@/lib/awebo/catalog-registry';
 import { createEvershopProduct } from '@/lib/evershop/admin-client';
 import { isEvershopAdminConfigured } from '@/lib/evershop/config';
+import { isSupabaseAdminConfigured } from '@/utils/supabase/admin';
 
 export type LaunchProductInput = {
   id: string;
@@ -38,6 +39,12 @@ export async function publishLaunchBrand(
   input: PublishLaunchInput
 ): Promise<PublishLaunchResult> {
   const { values, products, ownerId } = input;
+  const normalizedOwnerId = ownerId?.trim();
+
+  if (isSupabaseAdminConfigured() && (!normalizedOwnerId || normalizedOwnerId.length < 8)) {
+    throw new Error('A signed-in creator account is required to publish.');
+  }
+
   const brandSlug = slugifyBrandName(values.brandName || values.symbol || 'brand');
   const warnings: string[] = [];
   const publishedProducts: PublishedProduct[] = [];
@@ -90,7 +97,7 @@ export async function publishLaunchBrand(
   const brand: PublishedBrand = {
     id: brandSlug,
     slug: brandSlug,
-    ownerId: ownerId?.trim() || undefined,
+    ownerId: normalizedOwnerId || undefined,
     name: values.brandName || 'Untitled brand',
     story: values.story,
     logoUrl: values.logoUrl,
@@ -109,7 +116,7 @@ export async function publishLaunchBrand(
     ],
   };
 
-  await savePublishedBrand(brand);
+  await savePublishedBrand(brand, values);
 
   return {
     brand,

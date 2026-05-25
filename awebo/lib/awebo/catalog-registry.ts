@@ -1,37 +1,20 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import type { LaunchWizardValues } from '@/lib/launch-wizard-types';
+import type { PublishedBrand, PublishedProduct } from '@/lib/awebo/catalog-types';
+import { isSupabaseAdminConfigured } from '@/utils/supabase/admin';
+import {
+  getPublishedBrandBySlugFromSupabase,
+  listPublishedBrandsByOwnerFromSupabase,
+  listPublishedBrandsFromSupabase,
+  savePublishedBrandToSupabase,
+} from '@/lib/awebo/supabase-catalog';
 
-export type PublishedProduct = {
-  id: string;
-  name: string;
-  priceUsd: number;
-  evershopUuid?: string;
-  evershopUrlKey?: string;
-  sku: string;
-};
-
-export type PublishedCollection = {
-  id: string;
-  name: string;
-  tokenSymbol: string;
-  products: PublishedProduct[];
-};
-
-export type PublishedBrand = {
-  id: string;
-  slug: string;
-  ownerId?: string;
-  name: string;
-  story: string;
-  logoUrl: string | null;
-  bannerUrl: string | null;
-  launchMode: LaunchWizardValues['launchMode'];
-  chain: string;
-  supply: string;
-  publishedAt: string;
-  collections: PublishedCollection[];
-};
+export type {
+  PublishedBrand,
+  PublishedCollection,
+  PublishedProduct,
+} from '@/lib/awebo/catalog-types';
 
 type CatalogFile = {
   brands: PublishedBrand[];
@@ -72,7 +55,17 @@ export function slugifyBrandName(name: string): string {
     .slice(0, 64);
 }
 
-export async function savePublishedBrand(brand: PublishedBrand): Promise<PublishedBrand> {
+export async function savePublishedBrand(
+  brand: PublishedBrand,
+  values?: LaunchWizardValues
+): Promise<PublishedBrand> {
+  if (isSupabaseAdminConfigured()) {
+    if (!values) {
+      throw new Error('Launch wizard values are required when saving to Supabase.');
+    }
+    return savePublishedBrandToSupabase(brand, values);
+  }
+
   const catalog = await readCatalog();
   const withoutExisting = catalog.brands.filter((entry) => entry.slug !== brand.slug);
   catalog.brands = [brand, ...withoutExisting];
@@ -81,6 +74,10 @@ export async function savePublishedBrand(brand: PublishedBrand): Promise<Publish
 }
 
 export async function listPublishedBrands(): Promise<PublishedBrand[]> {
+  if (isSupabaseAdminConfigured()) {
+    return listPublishedBrandsFromSupabase();
+  }
+
   const catalog = await readCatalog();
   return catalog.brands;
 }
@@ -88,6 +85,10 @@ export async function listPublishedBrands(): Promise<PublishedBrand[]> {
 export async function listPublishedBrandsByOwner(
   ownerId: string
 ): Promise<PublishedBrand[]> {
+  if (isSupabaseAdminConfigured()) {
+    return listPublishedBrandsByOwnerFromSupabase(ownerId);
+  }
+
   const catalog = await readCatalog();
   return catalog.brands.filter((brand) => brand.ownerId === ownerId);
 }
@@ -95,6 +96,10 @@ export async function listPublishedBrandsByOwner(
 export async function getPublishedBrandBySlug(
   slug: string
 ): Promise<PublishedBrand | undefined> {
+  if (isSupabaseAdminConfigured()) {
+    return getPublishedBrandBySlugFromSupabase(slug);
+  }
+
   const catalog = await readCatalog();
   return catalog.brands.find((brand) => brand.slug === slug);
 }

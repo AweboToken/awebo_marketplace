@@ -1,6 +1,12 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import type { LaunchWizardValues } from '@/lib/launch-wizard-types';
+import { isSupabaseAdminConfigured } from '@/utils/supabase/admin';
+import {
+  getLaunchDraftFromSupabase,
+  markLaunchDraftPublishedInSupabase,
+  upsertLaunchDraftToSupabase,
+} from '@/lib/awebo/supabase-launch-drafts';
 
 export type LaunchDraftRecord = {
   ownerId: string;
@@ -53,6 +59,10 @@ export function sanitizeLaunchValuesForStorage(
 export async function getLaunchDraft(
   ownerId: string
 ): Promise<LaunchDraftRecord | null> {
+  if (isSupabaseAdminConfigured()) {
+    return getLaunchDraftFromSupabase(ownerId);
+  }
+
   const file = await readDraftsFile();
   return (
     file.drafts.find((draft) => draft.ownerId === ownerId && draft.status === 'draft') ??
@@ -65,6 +75,10 @@ export async function upsertLaunchDraft(
     status?: LaunchDraftRecord['status'];
   }
 ): Promise<LaunchDraftRecord> {
+  if (isSupabaseAdminConfigured()) {
+    return upsertLaunchDraftToSupabase(draft);
+  }
+
   const file = await readDraftsFile();
   const next: LaunchDraftRecord = {
     ownerId: draft.ownerId,
@@ -82,6 +96,10 @@ export async function upsertLaunchDraft(
 }
 
 export async function markLaunchDraftPublished(ownerId: string): Promise<void> {
+  if (isSupabaseAdminConfigured()) {
+    return markLaunchDraftPublishedInSupabase(ownerId);
+  }
+
   const file = await readDraftsFile();
   file.drafts = file.drafts.map((entry) =>
     entry.ownerId === ownerId ? { ...entry, status: 'published' as const } : entry

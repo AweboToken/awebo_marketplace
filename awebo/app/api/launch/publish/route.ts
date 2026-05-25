@@ -26,6 +26,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'At least one priced product is required.' }, { status: 400 });
   }
 
+  const ownerId = body.ownerId?.trim() ?? '';
+  if (ownerId && (ownerId.length < 8 || ownerId.length > 128)) {
+    return NextResponse.json({ error: 'Invalid owner id.' }, { status: 400 });
+  }
+
   const invalidPrice = body.products.find(
     (product) => !Number.isFinite(product.priceUsd) || product.priceUsd <= 0
   );
@@ -39,13 +44,12 @@ export async function POST(request: Request) {
 
   try {
     const result = await publishLaunchBrand({
-      ownerId: body.ownerId,
+      ownerId,
       values: body.values,
       products: body.products,
     });
 
-    const ownerId = body.ownerId?.trim();
-    if (ownerId && ownerId.length >= 8) {
+    if (ownerId) {
       await markLaunchDraftPublished(ownerId);
     }
 
