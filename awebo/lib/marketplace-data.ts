@@ -1,4 +1,4 @@
-/** Mock catalog data aligned with marketplace user-flow PDF (ES copy + structure). */
+/** Base catalog for Launch Brand product selection (category browse). */
 
 export type MarketplaceCategory = {
   slug: string;
@@ -27,129 +27,7 @@ export const TOPIC_RAILS = [
   { id: 'trending', title: 'Trending now' },
 ] as const;
 
-export const MARKETPLACE_FILTERS = [
-  'NEW',
-  'Memes',
-  'Live',
-  'Market Cap',
-  'Last Sale',
-  'Trendy',
-] as const;
-
-export type MarketplaceFilter = (typeof MARKETPLACE_FILTERS)[number];
-
-export type ExploreBrand = {
-  slug: string;
-  name: string;
-  description: string;
-  category: string;
-  itemCount: number;
-  rating: number;
-  reviews: number;
-  image: string;
-  cardTone: string;
-  featured?: boolean;
-  favorited?: boolean;
-};
-
-export const MOCK_EXPLORE_BRANDS: ExploreBrand[] = [
-  {
-    slug: 'viking-pepe',
-    name: 'Viking Pepe',
-    description: 'Humor nórdico para leyendas del meme.',
-    category: 'Memes',
-    itemCount: 24,
-    rating: 4.0,
-    reviews: 128,
-    image: 'https://ext.same-assets.com/1892170632/415736903.png',
-    cardTone: 'bg-[#f3e8ef]',
-    featured: true,
-    favorited: true,
-  },
-  {
-    slug: 'pingus',
-    name: 'Pingus',
-    description: 'Comunidad azul con bivra meme y pop.',
-    category: 'Memes',
-    itemCount: 24,
-    rating: 4.8,
-    reviews: 96,
-    image: 'https://ext.same-assets.com/1892170632/436887372.png',
-    cardTone: 'bg-[#e3edf8]',
-    favorited: true,
-  },
-  {
-    slug: 'broken-heart-society',
-    name: 'Broken Heart Society',
-    description: 'Humor nórdico para leyendas del meme.',
-    category: 'Memes',
-    itemCount: 24,
-    rating: 4.0,
-    reviews: 128,
-    image: 'https://ext.same-assets.com/1892170632/1506333983.png',
-    cardTone: 'bg-[#e2f0ea]',
-  },
-  {
-    slug: 'palta-club',
-    name: 'Palta Club',
-    description: 'Comunidad azul con bivra meme y pop.',
-    category: 'Memes',
-    itemCount: 24,
-    rating: 4.8,
-    reviews: 96,
-    image: 'https://ext.same-assets.com/1892170632/3584261708.png',
-    cardTone: 'bg-[#f0ece3]',
-    favorited: true,
-  },
-  {
-    slug: 'pixel-life',
-    name: 'Pixel Life',
-    description: 'Comunidad azul con bivra meme y pop.',
-    category: 'Memes',
-    itemCount: 24,
-    rating: 4.8,
-    reviews: 96,
-    image: 'https://ext.same-assets.com/1892170632/3667010705.png',
-    cardTone: 'bg-[#e8edf8]',
-  },
-  {
-    slug: 'viking-pepe-2',
-    name: 'Viking Pepe',
-    description: 'Humor nórdico para leyendas del meme.',
-    category: 'Memes',
-    itemCount: 24,
-    rating: 4.0,
-    reviews: 128,
-    image: 'https://ext.same-assets.com/1892170632/415736903.png',
-    cardTone: 'bg-[#f3e8ef]',
-    featured: true,
-  },
-  {
-    slug: 'pingus-2',
-    name: 'Pingus',
-    description: 'Comunidad azul con bivra meme y pop.',
-    category: 'Memes',
-    itemCount: 24,
-    rating: 4.8,
-    reviews: 96,
-    image: 'https://ext.same-assets.com/1892170632/436887372.png',
-    cardTone: 'bg-[#e3edf8]',
-  },
-  {
-    slug: 'palta-club-2',
-    name: 'Palta Club',
-    description: 'Comunidad azul con bivra meme y pop.',
-    category: 'Memes',
-    itemCount: 24,
-    rating: 4.8,
-    reviews: 96,
-    image: 'https://ext.same-assets.com/1892170632/3584261708.png',
-    cardTone: 'bg-[#f0ece3]',
-    favorited: true,
-  },
-];
-
-export type MockProduct = {
+export type LaunchCatalogProduct = {
   id: string;
   name: string;
   brandSlug: string;
@@ -161,7 +39,10 @@ export type MockProduct = {
   isTrending?: boolean;
 };
 
-export const MOCK_PRODUCTS: MockProduct[] = [
+/** @deprecated Use LaunchCatalogProduct */
+export type MockProduct = LaunchCatalogProduct;
+
+export const LAUNCH_CATALOG_PRODUCTS: LaunchCatalogProduct[] = [
   {
     id: 'p-1',
     name: 'Organic heavyweight tee',
@@ -222,66 +103,10 @@ export const MOCK_PRODUCTS: MockProduct[] = [
   },
 ];
 
-export type MockBrand = {
-  slug: string;
-  name: string;
-  tagline: string;
-  fundraising: boolean;
-  raisedPct: number;
-  bannerTone: string;
-};
-
-export const MOCK_BRANDS: MockBrand[] = [
-  {
-    slug: 'studio-norte',
-    name: 'Studio Norte',
-    tagline: 'Slow goods from the Pacific edge.',
-    fundraising: false,
-    raisedPct: 0,
-    bannerTone: 'from-air-force-blue to-steel-blue',
-  },
-  {
-    slug: 'lumen-atelier',
-    name: 'Lumen Atelier',
-    tagline: 'Tailored silhouettes, luminous palettes.',
-    fundraising: true,
-    raisedPct: 62,
-    bannerTone: 'from-powder-petal to-silver',
-  },
-  {
-    slug: 'objeto',
-    name: 'Objeto',
-    tagline: 'Objects for daily ritual.',
-    fundraising: false,
-    raisedPct: 0,
-    bannerTone: 'from-stone-400 to-stone-700',
-  },
-  {
-    slug: 'mar-factory',
-    name: 'Mar Factory',
-    tagline: 'Playful forms, serious craft.',
-    fundraising: false,
-    raisedPct: 0,
-    bannerTone: 'from-sky-400 to-indigo-600',
-  },
-];
-
 export function getCategoryBySlug(slug: string): MarketplaceCategory | undefined {
   return MARKETPLACE_CATEGORIES.find((c) => c.slug === slug);
 }
 
-export function getProductsForCategory(slug: string): MockProduct[] {
-  return MOCK_PRODUCTS.filter((p) => p.categorySlug === slug);
-}
-
-export function getProductById(id: string): MockProduct | undefined {
-  return MOCK_PRODUCTS.find((p) => p.id === id);
-}
-
-export function getBrandBySlug(slug: string): MockBrand | undefined {
-  return MOCK_BRANDS.find((b) => b.slug === slug);
-}
-
-export function getProductsForBrand(brandSlug: string): MockProduct[] {
-  return MOCK_PRODUCTS.filter((p) => p.brandSlug === brandSlug);
+export function getProductsForCategory(slug: string): LaunchCatalogProduct[] {
+  return LAUNCH_CATALOG_PRODUCTS.filter((p) => p.categorySlug === slug);
 }

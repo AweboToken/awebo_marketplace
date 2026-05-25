@@ -1,6 +1,7 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getProductById, getBrandBySlug } from '@/lib/marketplace-data';
+import { resolveProductPageView } from '@/lib/marketplace-product-page';
 
 type Props = { params: { id: string } };
 
@@ -8,168 +9,173 @@ function formatUsd(n: number) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
 }
 
-export function generateMetadata({ params }: Props) {
-  const p = getProductById(params.id);
+export async function generateMetadata({ params }: Props) {
+  const product = await resolveProductPageView(params.id);
+  if (!product) {
+    return { title: 'Product — Marketplace', description: 'Product on AWEBO.' };
+  }
+
   return {
-    title: p ? `${p.name} — Marketplace` : 'Product — Marketplace',
-    description: p ? `${p.name} by ${p.brandName}` : 'Product on AWEBO.',
+    title: `${product.name} — Marketplace`,
+    description: `${product.name} by ${product.brandName}`,
   };
 }
 
-export default function ProductDetailPage({ params }: Props) {
-  const product = getProductById(params.id);
+export default async function ProductDetailPage({ params }: Props) {
+  const product = await resolveProductPageView(params.id);
   if (!product) notFound();
-  const brand = getBrandBySlug(product.brandSlug);
 
   return (
-    <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 md:py-10">
-      <nav className="text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
-        <ol className="flex flex-wrap items-center gap-2">
-          <li>
-            <Link href="/marketplace" className="text-air-force-blue font-medium no-underline hover:underline">
-              Home
-            </Link>
-          </li>
-          <li aria-hidden className="text-gray-400">
-            /
-          </li>
-          <li>
-            <Link
-              href={`/marketplace/category/${product.categorySlug}`}
-              className="text-air-force-blue font-medium no-underline hover:underline capitalize"
-            >
-              {product.categorySlug.replace(/-/g, ' ')}
-            </Link>
-          </li>
-          <li aria-hidden className="text-gray-400">
-            /
-          </li>
-          <li className="text-gray-900 font-medium truncate max-w-[12rem] sm:max-w-xs">{product.name}</li>
-        </ol>
-      </nav>
-
-      <div className="grid lg:grid-cols-2 gap-10 lg:gap-14">
+    <main className="mx-auto w-full max-w-7xl px-4 py-8 text-white sm:px-6 lg:px-8 md:py-10">
+      <ProductBreadcrumb brandSlug={product.brandSlug} brandName={product.brandName} productName={product.name} />
+      <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
         <div className="space-y-3">
           <div
-            className={`aspect-square max-h-[32rem] mx-auto lg:mx-0 rounded-2xl bg-gradient-to-br ${product.imageTone} border border-silver/60`}
+            className={`relative mx-auto aspect-square max-h-[32rem] overflow-hidden rounded-2xl border border-white/15 bg-gradient-to-br ${product.imageTone} lg:mx-0`}
             role="img"
-            aria-label={`${product.name} preview placeholder`}
-          />
-          <p className="text-xs text-gray-500 text-center lg:text-left">Image gallery with zoom replaces this placeholder.</p>
+            aria-label={`${product.name} preview`}
+          >
+            {product.bannerUrl ? (
+              <Image
+                src={product.bannerUrl}
+                alt=""
+                fill
+                unoptimized
+                className="object-cover opacity-40"
+              />
+            ) : null}
+            {product.imageUrl ? (
+              <div className="absolute inset-0 flex items-center justify-center p-10">
+                <div className="relative h-48 w-48 overflow-hidden rounded-3xl border border-white/20 bg-black/30 shadow-2xl sm:h-56 sm:w-56">
+                  <Image
+                    src={product.imageUrl}
+                    alt=""
+                    fill
+                    unoptimized
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-white/70">
+                {product.name.slice(0, 1)}
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="min-w-0">
-          <h1 className="text-3xl font-bold text-gray-900 text-balance">{product.name}</h1>
-          <p className="mt-2 text-2xl font-semibold text-gray-900 tabular-nums">{formatUsd(product.priceUsd)}</p>
-          <p className="mt-4 text-sm text-gray-600">
-            <span className="text-gray-500">Brand:</span>{' '}
-            <Link href={`/marketplace/brand/${product.brandSlug}`} className="text-air-force-blue font-medium no-underline hover:underline">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/55">
+            {product.collectionName ?? 'Creator drop'}
+          </p>
+          <h1 className="mt-2 text-3xl font-bold text-white text-balance">{product.name}</h1>
+          <p className="mt-2 text-2xl font-semibold tabular-nums text-white">
+            {formatUsd(product.priceUsd)}
+          </p>
+          {product.tokenSymbol ? (
+            <p className="mt-2 text-sm text-white/70">Collection token: ${product.tokenSymbol}</p>
+          ) : null}
+          <p className="mt-4 text-sm text-white/75">
+            <span className="text-white/55">Brand:</span>{' '}
+            <Link
+              href={`/marketplace/brand/${product.brandSlug}`}
+              className="font-medium text-white no-underline hover:underline"
+            >
               {product.brandName}
             </Link>
           </p>
 
-          <div className="mt-8 space-y-4">
-            <div>
-              <label htmlFor="variant-color" className="block text-xs font-semibold uppercase text-gray-500 mb-2">
-                Color
-              </label>
-              <select
-                id="variant-color"
-                name="color"
-                className="w-full max-w-xs rounded-lg border border-silver bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-air-force-blue"
-                defaultValue="default"
-              >
-                <option value="default">Default</option>
-                <option value="alt">Alternate</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="variant-size" className="block text-xs font-semibold uppercase text-gray-500 mb-2">
-                Size
-              </label>
-              <select
-                id="variant-size"
-                name="size"
-                className="w-full max-w-xs rounded-lg border border-silver bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-air-force-blue"
-                defaultValue="m"
-              >
-                <option value="xs">XS</option>
-                <option value="s">S</option>
-                <option value="m">M</option>
-                <option value="l">L</option>
-                <option value="xl">XL</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="qty" className="block text-xs font-semibold uppercase text-gray-500 mb-2">
-                Quantity
-              </label>
-              <input
-                id="qty"
-                name="quantity"
-                type="number"
-                min={1}
-                defaultValue={1}
-                className="w-24 rounded-lg border border-silver bg-white px-3 py-2.5 text-sm tabular-nums focus:outline-none focus:ring-2 focus:ring-air-force-blue"
-              />
-            </div>
-          </div>
+          {product.story ? (
+            <p className="mt-6 text-sm leading-relaxed text-white/70 line-clamp-4">{product.story}</p>
+          ) : null}
 
-          <p className="mt-6 text-sm text-gray-600">
-            Shipping estimate and returns snippet appear here. Verified purchase required for verified review badge.
+          <p className="mt-6 rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white/75">
+            Checkout is in preview mode on AWEBO. EverShop fulfillment will connect when commerce is
+            deployed.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href={`/marketplace/cart?add=${product.id}`}
-              className="inline-flex items-center justify-center rounded-lg bg-air-force-blue px-6 py-3 text-sm font-semibold text-gray-900 no-underline hover:bg-air-force-blue/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-air-force-blue focus-visible:ring-offset-2"
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-lg bg-air-force-blue px-6 py-3 text-sm font-semibold text-gray-900"
             >
-              Add to cart
-            </Link>
-            <Link
-              href={`/marketplace/checkout?sku=${product.id}`}
-              className="inline-flex items-center justify-center rounded-lg border border-gray-900 px-6 py-3 text-sm font-semibold text-gray-900 no-underline hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-air-force-blue focus-visible:ring-offset-2"
-            >
-              Buy now
-            </Link>
+              Add to cart (preview)
+            </button>
             <Link
               href={`/marketplace/brand/${product.brandSlug}`}
-              className="inline-flex items-center justify-center rounded-lg border border-silver px-6 py-3 text-sm font-semibold text-gray-800 no-underline hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-air-force-blue focus-visible:ring-offset-2"
+              className="inline-flex items-center justify-center rounded-lg border border-white/25 px-6 py-3 text-sm font-semibold text-white no-underline hover:bg-white/10"
             >
               View brand
             </Link>
           </div>
 
-          <p className="mt-4 text-xs text-gray-500">
-            Contact brand opens a login modal when not authenticated (rule from spec).
-          </p>
+          {product.brandFundraising ? (
+            <p className="mt-6 text-sm text-white/75">
+              This brand is fundraising —{' '}
+              <Link
+                href={`/marketplace/brand/${product.brandSlug}/fundraising`}
+                className="font-medium text-white no-underline hover:underline"
+              >
+                view the campaign
+              </Link>
+              .
+            </p>
+          ) : null}
 
-          <section className="mt-12 border-t border-silver pt-10" aria-labelledby="details-heading">
-            <h2 id="details-heading" className="text-lg font-bold text-gray-900 mb-4">
+          <section className="mt-12 border-t border-white/15 pt-10" aria-labelledby="details-heading">
+            <h2 id="details-heading" className="mb-4 text-lg font-bold text-white">
               Product details
             </h2>
-            <div className="prose prose-sm max-w-none text-gray-600 space-y-4">
-              <p>Description, size guide, material and care, and full shipping and returns copy belong in this section.</p>
-              {brand?.fundraising && (
-                <p>
-                  This brand is fundraising —{' '}
-                  <Link href={`/marketplace/brand/${brand.slug}/fundraising`} className="text-air-force-blue font-medium no-underline hover:underline">
-                    view the campaign
-                  </Link>
-                  .
-                </p>
-              )}
-            </div>
-          </section>
-
-          <section className="mt-10" aria-labelledby="reviews-heading">
-            <h2 id="reviews-heading" className="text-lg font-bold text-gray-900 mb-2">
-              Reviews
-            </h2>
-            <p className="text-sm text-gray-600">Average rating and list UI. Writing a review requires login; verified purchase unlocks the badge.</p>
+            <dl className="space-y-2 text-sm text-white/70">
+              <div className="flex gap-2">
+                <dt className="text-white/50">SKU</dt>
+                <dd>{product.sku ?? product.id}</dd>
+              </div>
+              <div className="flex gap-2">
+                <dt className="text-white/50">Listing</dt>
+                <dd>{product.published ? 'Published creator catalog' : 'Demo catalog'}</dd>
+              </div>
+            </dl>
           </section>
         </div>
       </div>
     </main>
+  );
+}
+
+function ProductBreadcrumb({
+  brandSlug,
+  brandName,
+  productName,
+}: {
+  brandSlug: string;
+  brandName: string;
+  productName: string;
+}) {
+  return (
+    <nav className="mb-6 text-sm text-white/70" aria-label="Breadcrumb">
+      <ol className="flex flex-wrap items-center gap-2">
+        <li>
+          <Link href="/marketplace" className="font-medium text-white no-underline hover:underline">
+            Home
+          </Link>
+        </li>
+        <li aria-hidden className="text-white/40">
+          /
+        </li>
+        <li>
+          <Link
+            href={`/marketplace/brand/${brandSlug}`}
+            className="font-medium text-white no-underline hover:underline"
+          >
+            {brandName}
+          </Link>
+        </li>
+        <li aria-hidden className="text-white/40">
+          /
+        </li>
+        <li className="max-w-[12rem] truncate font-medium text-white sm:max-w-xs">{productName}</li>
+      </ol>
+    </nav>
   );
 }

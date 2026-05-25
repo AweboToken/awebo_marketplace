@@ -1,99 +1,135 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ProductCard from '@/components/marketplace/ProductCard';
-import { getBrandBySlug, getProductsForBrand } from '@/lib/marketplace-data';
+import { resolveBrandPageView } from '@/lib/marketplace-brand-page';
 
 type Props = { params: { slug: string } };
 
-export function generateMetadata({ params }: Props) {
-  const b = getBrandBySlug(params.slug);
+export async function generateMetadata({ params }: Props) {
+  const brand = await resolveBrandPageView(params.slug);
   return {
-    title: b ? `Support ${b.name} — Fundraising` : 'Fundraising — Marketplace',
-    description: b ? `Back ${b.name} on AWEBO.` : 'Fundraising campaign.',
+    title: brand ? `Support ${brand.name} — Fundraising` : 'Fundraising — Marketplace',
+    description: brand ? `Back ${brand.name} on AWEBO.` : 'Fundraising campaign.',
   };
 }
 
-export default function FundraisingPage({ params }: Props) {
-  const brand = getBrandBySlug(params.slug);
+export default async function FundraisingPage({ params }: Props) {
+  const brand = await resolveBrandPageView(params.slug);
   if (!brand || !brand.fundraising) notFound();
-  const products = getProductsForBrand(brand.slug);
 
   return (
-    <main className="max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-      <Link href={`/marketplace/brand/${brand.slug}`} className="text-sm font-medium text-air-force-blue no-underline hover:underline mb-8 inline-block">
+    <main className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8 md:py-12">
+      <Link
+        href={`/marketplace/brand/${brand.slug}`}
+        className="mb-8 inline-block text-sm font-medium text-air-force-blue no-underline hover:underline"
+      >
         ← Back to brand
       </Link>
 
-      <header className="flex items-center gap-4 mb-8">
-        <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-air-force-blue to-steel-blue border border-white shadow shrink-0" aria-hidden />
+      <header className="mb-8 flex items-center gap-4">
+        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-white shadow">
+          {brand.logoUrl ? (
+            <Image src={brand.logoUrl} alt="" fill unoptimized className="object-cover" />
+          ) : (
+            <div className="h-full w-full bg-gradient-to-br from-air-force-blue to-steel-blue" aria-hidden />
+          )}
+        </div>
         <div>
           <p className="text-xs font-semibold uppercase text-gray-500">Fundraising</p>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-balance">Support {brand.name}</h1>
+          <h1 className="text-2xl font-bold text-gray-900 text-balance md:text-3xl">
+            Support {brand.name}
+          </h1>
         </div>
       </header>
 
-      <section className="rounded-2xl border border-silver bg-white p-6 mb-10" aria-labelledby="progress-heading">
-        <h2 id="progress-heading" className="text-sm font-semibold uppercase text-gray-500 mb-4">
+      <section className="mb-10 rounded-2xl border border-silver bg-white p-6" aria-labelledby="progress-heading">
+        <h2 id="progress-heading" className="mb-4 text-sm font-semibold uppercase text-gray-500">
           Progress
         </h2>
-        <div className="h-3 rounded-full bg-gray-100 overflow-hidden" role="progressbar" aria-valuenow={brand.raisedPct} aria-valuemin={0} aria-valuemax={100} aria-label="Funding progress">
-          <div className="h-full bg-air-force-blue rounded-full" style={{ width: `${brand.raisedPct}%` }} />
+        <div
+          className="h-3 overflow-hidden rounded-full bg-gray-100"
+          role="progressbar"
+          aria-valuenow={brand.raisedPct}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label="Funding progress"
+        >
+          <div
+            className="h-full rounded-full bg-air-force-blue"
+            style={{ width: `${brand.raisedPct}%` }}
+          />
         </div>
         <p className="mt-3 text-sm text-gray-700 tabular-nums">
           {brand.raisedPct}% of goal · raised vs goal and shares sold vs supply appear here.
         </p>
-        <p className="mt-4 text-sm text-gray-600">Plain-language explanation of mechanics, whitelist if any, and holder earnings.</p>
+        <p className="mt-4 text-sm text-gray-600">
+          Plain-language explanation of mechanics, whitelist if any, and holder earnings.
+        </p>
       </section>
 
       <section className="mb-10" aria-labelledby="supporters-heading">
-        <h2 id="supporters-heading" className="text-lg font-bold text-gray-900 mb-3">
+        <h2 id="supporters-heading" className="mb-3 text-lg font-bold text-gray-900">
           Supporters
         </h2>
-        <p className="text-sm text-gray-600 mb-4">Masked wallet list with amount or shares and optional timestamps.</p>
-        <ul className="rounded-xl border border-silver divide-y divide-gray-100 bg-white text-sm">
-          <li className="px-4 py-3 flex justify-between gap-4">
-            <span className="text-gray-500 font-mono text-xs">0x7a…c4f2</span>
-            <span className="text-gray-900 tabular-nums">$120</span>
+        <p className="mb-4 text-sm text-gray-600">
+          Masked wallet list with amount or shares and optional timestamps.
+        </p>
+        <ul className="divide-y divide-gray-100 rounded-xl border border-silver bg-white text-sm">
+          <li className="flex justify-between gap-4 px-4 py-3">
+            <span className="font-mono text-xs text-gray-500">0x7a…c4f2</span>
+            <span className="tabular-nums text-gray-900">$120</span>
           </li>
-          <li className="px-4 py-3 flex justify-between gap-4">
-            <span className="text-gray-500 font-mono text-xs">0x91…01ab</span>
-            <span className="text-gray-900 tabular-nums">$45</span>
+          <li className="flex justify-between gap-4 px-4 py-3">
+            <span className="font-mono text-xs text-gray-500">0x91…01ab</span>
+            <span className="tabular-nums text-gray-900">$45</span>
           </li>
         </ul>
       </section>
 
       <section className="mb-10" aria-labelledby="funded-products-heading">
-        <h2 id="funded-products-heading" className="text-lg font-bold text-gray-900 mb-4">
+        <h2 id="funded-products-heading" className="mb-4 text-lg font-bold text-gray-900">
           Products being funded
         </h2>
         <div className="grid grid-cols-2 gap-3">
-          {products.map((p) => (
+          {brand.products.map((product) => (
             <ProductCard
-              key={p.id}
-              id={p.id}
-              name={p.name}
-              brandSlug={p.brandSlug}
-              brandName={p.brandName}
-              priceUsd={p.priceUsd}
-              imageTone={p.imageTone}
+              key={product.id}
+              id={product.id}
+              name={product.name}
+              brandSlug={product.brandSlug}
+              brandName={product.brandName}
+              priceUsd={product.priceUsd}
+              imageTone={product.imageTone}
+              imageUrl={product.imageUrl}
+              href={product.href}
             />
           ))}
         </div>
       </section>
 
-      <section className="rounded-2xl border border-silver bg-powder-petal/30 p-6" aria-labelledby="support-module-heading">
-        <h2 id="support-module-heading" className="text-lg font-bold text-gray-900 mb-4">
+      <section
+        className="rounded-2xl border border-silver bg-powder-petal/30 p-6"
+        aria-labelledby="support-module-heading"
+      >
+        <h2 id="support-module-heading" className="mb-4 text-lg font-bold text-gray-900">
           Buy shares / Support
         </h2>
-        <div className="flex gap-2 mb-4" role="tablist" aria-label="Payment mode">
-          <button type="button" className="rounded-lg bg-air-force-blue text-gray-900 px-4 py-2 text-sm font-semibold">
+        <div className="mb-4 flex gap-2" role="tablist" aria-label="Payment mode">
+          <button
+            type="button"
+            className="rounded-lg bg-air-force-blue px-4 py-2 text-sm font-semibold text-gray-900"
+          >
             Web2
           </button>
-          <button type="button" className="rounded-lg border border-silver bg-white px-4 py-2 text-sm font-semibold text-gray-800">
+          <button
+            type="button"
+            className="rounded-lg border border-silver bg-white px-4 py-2 text-sm font-semibold text-gray-800"
+          >
             Web3
           </button>
         </div>
-        <label htmlFor="support-amount" className="block text-xs font-semibold uppercase text-gray-500 mb-2">
+        <label htmlFor="support-amount" className="mb-2 block text-xs font-semibold uppercase text-gray-500">
           Amount
         </label>
         <input
@@ -102,13 +138,13 @@ export default function FundraisingPage({ params }: Props) {
           type="number"
           min={1}
           placeholder="e.g. 50…"
-          className="w-full rounded-lg border border-silver bg-white px-3 py-2.5 text-sm mb-4"
+          className="mb-4 w-full rounded-lg border border-silver bg-white px-3 py-2.5 text-sm"
         />
-        <label className="flex items-start gap-2 text-sm text-gray-700 mb-4">
+        <label className="mb-4 flex items-start gap-2 text-sm text-gray-700">
           <input type="checkbox" name="terms" className="mt-1 rounded border-gray-300" />
           <span>
             I agree to the{' '}
-            <Link href="/hq/room-14" className="text-air-force-blue font-medium no-underline hover:underline">
+            <Link href="/hq/room-14" className="font-medium text-air-force-blue no-underline hover:underline">
               terms and conditions
             </Link>
             .

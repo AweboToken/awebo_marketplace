@@ -15,6 +15,7 @@ const nextConfig = {
   async redirects() {
     return [
       { source: '/about', destination: '/hq/room-14', permanent: true },
+      { source: '/awebo-marketplace', destination: '/marketplace', permanent: true },
     ];
   },
   async rewrites() {

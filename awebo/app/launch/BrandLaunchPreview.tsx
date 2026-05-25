@@ -112,26 +112,38 @@ export default function BrandLaunchPreview({
 
         {stepIndex >= 1 && (
           <div className="space-y-2">
+            {values.collectionName.trim() ? (
+              <PreviewRow label="Collection" value={values.collectionName.trim()} />
+            ) : null}
             {values.categorySlug ? (
               <PreviewRow
                 label="Category"
                 value={getCategoryBySlug(values.categorySlug)?.label ?? values.categorySlug}
               />
             ) : null}
-            <p className="text-xs text-white/55">Products</p>
-            <ul className="space-y-1.5">
-              {values.products.map((p) => (
-                <li
-                  key={p.id}
-                  className="flex items-center justify-between gap-2 text-xs"
-                >
-                  <span className="text-white/90 truncate">{p.name}</span>
-                  <span className="shrink-0 rounded-full bg-white/10 border border-white/15 px-2 py-0.5 font-medium text-white/75">
-                    {p.status}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            {values.collectionDescription.trim() ? (
+              <p className="text-xs text-white/65 line-clamp-3">{values.collectionDescription.trim()}</p>
+            ) : null}
+            <p className="text-xs text-white/55">
+              Products ({values.products.length})
+            </p>
+            {values.products.length === 0 ? (
+              <p className="text-xs text-white/50">Select base products in step 2.</p>
+            ) : (
+              <ul className="space-y-1.5">
+                {values.products.map((p) => (
+                  <li
+                    key={p.id}
+                    className="flex items-center justify-between gap-2 text-xs"
+                  >
+                    <span className="text-white/90 truncate">{p.name}</span>
+                    <span className="shrink-0 rounded-full bg-white/10 border border-white/15 px-2 py-0.5 font-medium text-white/75">
+                      {p.status}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
 

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import {
   DEFAULT_LAUNCH_WIZARD_VALUES,
+  normalizeLaunchWizardValues,
   type LaunchWizardValues,
 } from '@/lib/launch-wizard-types';
 import {
@@ -55,7 +56,7 @@ export function useLaunchDraftAutosave({
       if (draft) {
         onHydrateRef.current({
           stepIndex: draft.stepIndex,
-          values: { ...DEFAULT_LAUNCH_WIZARD_VALUES, ...draft.values },
+          values: normalizeLaunchWizardValues(draft.values),
           productPrices: draft.productPrices ?? {},
         });
       }

@@ -2,7 +2,7 @@ import MarketplaceExploreFeed from '@/components/marketplace/MarketplaceExploreF
 
 export const metadata = {
   title: 'Marketplace — AWEBO',
-  description: 'Discover brands, products, and drops on AWEBO.',
+  description: 'Track collection token performance and discover brands on AWEBO.',
 };
 
 export default function MarketplaceHomePage() {

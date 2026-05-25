@@ -104,40 +104,6 @@ export async function getPublishedBrandBySlug(
   return catalog.brands.find((brand) => brand.slug === slug);
 }
 
-export function publishedBrandToExploreCard(
-  brand: PublishedBrand,
-  index: number
-) {
-  const productCount = brand.collections.reduce(
-    (total, collection) => total + collection.products.length,
-    0
-  );
-
-  return {
-    slug: brand.slug,
-    name: brand.name,
-    description: brand.story || 'Creator brand on AWEBO.',
-    category: brand.launchMode === 'crowdfund' ? 'Live' : 'NEW',
-    itemCount: productCount,
-    rating: 4.8,
-    reviews: 12,
-    image:
-      brand.logoUrl ??
-      'https://ext.same-assets.com/1892170632/415736903.png',
-    cardTone: CARD_TONES[index % CARD_TONES.length],
-    featured: index === 0,
-    favorited: false,
-    href: `/marketplace/brand/${brand.slug}`,
-  };
-}
-
-export function publishedProductHref(product: PublishedProduct): string {
-  if (product.evershopUrlKey) {
-    return `/drops/product/${product.evershopUrlKey}`;
-  }
-  return `/marketplace/product/${product.id}`;
-}
-
 export function cardToneForIndex(index: number): string {
   return CARD_TONES[index % CARD_TONES.length];
 }

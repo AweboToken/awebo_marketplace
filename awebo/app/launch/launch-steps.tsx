@@ -13,7 +13,13 @@ import {
   getProductsForCategory,
   MARKETPLACE_CATEGORIES,
   TOPIC_RAILS,
+  type LaunchCatalogProduct,
 } from '@/lib/marketplace-data';
+import {
+  isProductInCollection,
+  removeProductFromCollection,
+  toggleProductInCollection,
+} from '@/lib/launch-catalog-selection';
 import type {
   LaunchWizardValues,
   LaunchWizardValuesPatch,
@@ -186,6 +192,7 @@ export function CatalogProductsStep({
   onPrev,
 }: LaunchStepProps & { onNext: () => void; onPrev: () => void }) {
   const [editorOpen, setEditorOpen] = useState(false);
+  const [stepError, setStepError] = useState<string | null>(null);
   const selectedCategory = values.categorySlug
     ? getCategoryBySlug(values.categorySlug)
     : undefined;
@@ -193,14 +200,70 @@ export function CatalogProductsStep({
     ? getProductsForCategory(values.categorySlug)
     : [];
 
+  const toggleCatalogProduct = (catalogProduct: LaunchCatalogProduct) => {
+    onChange({
+      products: toggleProductInCollection(values.products, catalogProduct),
+    });
+    setStepError(null);
+  };
+
+  const handleContinue = () => {
+    if (!values.collectionName.trim()) {
+      setStepError('Add a collection name before continuing.');
+      return;
+    }
+    if (values.products.length === 0) {
+      setStepError('Select at least one base product for your collection.');
+      return;
+    }
+    setStepError(null);
+    onNext();
+  };
+
   return (
     <>
       <div className={LAUNCH_FORM_ROOT}>
         <h2 className={LF.heading}>Catalog and products</h2>
         <p className={`${LF.lead} text-pretty`}>
-          Pick a marketplace category, browse base products, then open the editor to customize
-          placements and variants.
+          Name your collection, pick a category, add base products, then customize designs before
+          publish.
         </p>
+
+        <div className={`${LF.panel} mb-6 space-y-4`}>
+          <div>
+            <p className={LF.panelTitle}>Collection</p>
+            <p className={`${LF.muted} mb-3`}>
+              Each brand can have multiple collections. This launch creates one collection under{' '}
+              {values.brandName.trim() || 'your brand'}.
+            </p>
+          </div>
+          <div>
+            <label htmlFor="collection-name" className={LF.label}>
+              Collection name
+            </label>
+            <input
+              id="collection-name"
+              type="text"
+              placeholder="e.g. Genesis drop, Summer 2026…"
+              value={values.collectionName}
+              onChange={(event) => onChange({ collectionName: event.target.value })}
+              className={LF.input}
+            />
+          </div>
+          <div>
+            <label htmlFor="collection-description" className={LF.label}>
+              Collection description
+            </label>
+            <textarea
+              id="collection-description"
+              placeholder="What makes this drop special?"
+              value={values.collectionDescription}
+              onChange={(event) => onChange({ collectionDescription: event.target.value })}
+              rows={3}
+              className={LF.textarea}
+            />
+          </div>
+        </div>
 
         <div className={`${LF.panel} mb-6`}>
           <p className={LF.panelTitle}>Category</p>
@@ -238,60 +301,68 @@ export function CatalogProductsStep({
           <div className={`${LF.panel} mb-6`}>
             <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
               <div>
-                <p className={LF.panelTitle}>Category preview</p>
+                <p className={LF.panelTitle}>Select base products</p>
                 <h3 className="text-lg font-semibold text-white">{selectedCategory.label}</h3>
                 <p className={`${LF.muted} mt-1`}>
-                  {categoryProducts.length}{' '}
-                  {categoryProducts.length === 1 ? 'base product' : 'base products'} in this
-                  category.
+                  Click a product to add or remove it from{' '}
+                  {values.collectionName.trim() || 'your collection'}.
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => onChange({ categorySlug: null })}
-                className={LF.btnGhost}
-              >
-                Clear selection
-              </button>
             </div>
 
             {categoryProducts.length === 0 ? (
               <p className="rounded-xl border border-dashed border-white/20 bg-white/5 p-6 text-center text-sm text-white/70">
-                No base products in this category yet. Pick another category or start designing
-                from your draft list below.
+                No base products in this category yet. Pick another category.
               </p>
             ) : (
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {categoryProducts.map((product) => (
-                  <div
-                    key={product.id}
-                    className="overflow-hidden rounded-xl border border-white/15 bg-white/5"
-                  >
-                    <div
-                      className={`aspect-[4/5] bg-gradient-to-br ${product.imageTone}`}
-                      aria-hidden
-                    />
-                    <div className="space-y-1 p-3">
-                      <p className="text-sm font-semibold text-white line-clamp-2">{product.name}</p>
-                      <p className="text-xs text-white/60">{product.brandName}</p>
-                      <p className="text-sm font-medium tabular-nums text-white/90">
-                        ${product.priceUsd.toFixed(2)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                {categoryProducts.map((product) => {
+                  const selected = isProductInCollection(values.products, product.id);
+                  return (
+                    <button
+                      key={product.id}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => toggleCatalogProduct(product)}
+                      className={`overflow-hidden rounded-xl border text-left transition-colors ${
+                        selected
+                          ? 'border-air-force-blue/60 bg-air-force-blue/15 ring-1 ring-air-force-blue/40'
+                          : 'border-white/15 bg-white/5 hover:border-white/30 hover:bg-white/10'
+                      }`}
+                    >
+                      <div
+                        className={`aspect-[4/5] bg-gradient-to-br ${product.imageTone} relative`}
+                        aria-hidden
+                      >
+                        {selected ? (
+                          <span className="absolute right-2 top-2 rounded-full bg-air-force-blue px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                            Added
+                          </span>
+                        ) : null}
+                      </div>
+                      <div className="space-y-1 p-3">
+                        <p className="text-sm font-semibold text-white line-clamp-2">{product.name}</p>
+                        <p className="text-xs text-white/60">{product.brandName}</p>
+                        <p className="text-sm font-medium tabular-nums text-white/90">
+                          ${product.priceUsd.toFixed(2)}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
         ) : (
-          <p className={`${LF.muted} mb-6`}>Select a category above to preview base products.</p>
+          <p className={`${LF.muted} mb-6`}>Select a category above to browse base products.</p>
         )}
 
         <div className="flex flex-wrap gap-3 mb-6">
           <button
             type="button"
             onClick={() => setEditorOpen(true)}
-            className={LAUNCH_GLASS_BUTTON_PRIMARY}
+            disabled={values.products.length === 0}
+            className={`${LAUNCH_GLASS_BUTTON_PRIMARY} disabled:cursor-not-allowed disabled:opacity-50`}
           >
             Start designing (overlay)
           </button>
@@ -299,47 +370,93 @@ export function CatalogProductsStep({
 
         <div className={LF.tableWrap}>
           <div className="border-b border-white/15 bg-white/5 px-4 py-3">
-            <p className="text-sm font-semibold text-white">My products / collections</p>
-            <p className={LF.muted}>Statuses: Draft · Pricing · Ready</p>
+            <p className="text-sm font-semibold text-white">
+              My products
+              {values.collectionName.trim() ? ` · ${values.collectionName.trim()}` : ''}
+            </p>
+            <p className={LF.muted}>
+              {values.products.length}{' '}
+              {values.products.length === 1 ? 'product' : 'products'} in this collection · Draft ·
+              Pricing · Ready
+            </p>
+            {values.collectionDescription.trim() ? (
+              <p className="mt-2 text-xs text-white/70 line-clamp-2">
+                {values.collectionDescription.trim()}
+              </p>
+            ) : null}
           </div>
-          <table className="w-full text-sm">
-            <thead>
-              <tr className={LF.tableHead}>
-                <th className="px-4 py-2 font-medium">Product</th>
-                <th className="px-4 py-2 font-medium">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {values.products.map((product, index) => (
-                <tr
-                  key={product.id}
-                  className={index < values.products.length - 1 ? LF.tableRowBorder : undefined}
-                >
-                  <td className="px-4 py-3">{product.name}</td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={
-                        product.status === 'Draft'
-                          ? LF.statusDraft
-                          : product.status === 'Pricing'
-                            ? LF.statusPricing
-                            : LF.statusReady
-                      }
-                    >
-                      {product.status}
-                    </span>
-                  </td>
+          {values.products.length === 0 ? (
+            <div className="px-4 py-8 text-center text-sm text-white/65">
+              No products selected yet. Choose bases from a category above.
+            </div>
+          ) : (
+            <table className="w-full text-sm">
+              <thead>
+                <tr className={LF.tableHead}>
+                  <th className="px-4 py-2 font-medium">Product</th>
+                  <th className="px-4 py-2 font-medium">Category</th>
+                  <th className="px-4 py-2 font-medium">Status</th>
+                  <th className="px-4 py-2 font-medium">
+                    <span className="sr-only">Remove</span>
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {values.products.map((product, index) => (
+                  <tr
+                    key={product.id}
+                    className={index < values.products.length - 1 ? LF.tableRowBorder : undefined}
+                  >
+                    <td className="px-4 py-3">{product.name}</td>
+                    <td className="px-4 py-3 text-white/70">
+                      {getCategoryBySlug(product.categorySlug)?.shortLabel ??
+                        getCategoryBySlug(product.categorySlug)?.label ??
+                        product.categorySlug}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={
+                          product.status === 'Draft'
+                            ? LF.statusDraft
+                            : product.status === 'Pricing'
+                              ? LF.statusPricing
+                              : LF.statusReady
+                        }
+                      >
+                        {product.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onChange({
+                            products: removeProductFromCollection(values.products, product.id),
+                          })
+                        }
+                        className={LF.btnGhost}
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
+
+        {stepError ? (
+          <p className="mt-4 text-sm text-red-300" role="alert">
+            {stepError}
+          </p>
+        ) : null}
 
         <div className="flex items-center justify-between mt-8">
           <button type="button" onClick={onPrev} className={LF.btnGhost}>
             ← Back
           </button>
-          <button type="button" onClick={onNext} className={LAUNCH_GLASS_BUTTON_PRIMARY}>
+          <button type="button" onClick={handleContinue} className={LAUNCH_GLASS_BUTTON_PRIMARY}>
             Continue
           </button>
         </div>
@@ -622,11 +739,14 @@ export function ReviewPublishStep({
           <li className="flex items-center gap-2">
             <input
               type="checkbox"
-              defaultChecked
+              defaultChecked={Boolean(values.collectionName.trim() && values.products.length)}
               className="rounded border-white/30 bg-white/10"
               id="c2"
             />
-            <label htmlFor="c2">Products ready</label>
+            <label htmlFor="c2">
+              Collection &quot;{values.collectionName.trim() || 'Untitled'}&quot; with{' '}
+              {values.products.length} product{values.products.length === 1 ? '' : 's'}
+            </label>
           </li>
           <li className="flex items-center gap-2">
             <input type="checkbox" className="rounded border-white/30 bg-white/10" id="c3" />

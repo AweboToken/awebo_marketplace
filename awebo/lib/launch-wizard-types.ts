@@ -1,8 +1,12 @@
 export type LaunchMode = 'self' | 'crowdfund';
 
 export type LaunchWizardProduct = {
+  /** Catalog base id (e.g. mock product id from marketplace data). */
   id: string;
   name: string;
+  baseProductId: string;
+  categorySlug: string;
+  imageTone?: string;
   status: 'Draft' | 'Pricing' | 'Ready';
 };
 
@@ -20,8 +24,12 @@ export type LaunchWizardValues = {
   ownerPct: number;
   maxWalletPct: number;
   whitelist: boolean;
-  /** Marketplace mega-category selected in step 2 (catalog bases). */
+  /** Marketplace mega-category currently browsed in step 2. */
   categorySlug: string | null;
+  /** Collection being built for this brand launch. */
+  collectionName: string;
+  collectionDescription: string;
+  /** Products the creator selected for this collection. */
   products: LaunchWizardProduct[];
 };
 
@@ -40,10 +48,27 @@ export const DEFAULT_LAUNCH_WIZARD_VALUES: LaunchWizardValues = {
   maxWalletPct: 5,
   whitelist: false,
   categorySlug: null,
-  products: [
-    { id: 'hoodie', name: 'Oversized hoodie', status: 'Draft' },
-    { id: 'tee', name: 'Boxy tee', status: 'Pricing' },
-  ],
+  collectionName: '',
+  collectionDescription: '',
+  products: [],
 };
 
 export type LaunchWizardValuesPatch = Partial<LaunchWizardValues>;
+
+/** Merge saved drafts with current defaults (handles older draft shapes). */
+export function normalizeLaunchWizardValues(
+  values: Partial<LaunchWizardValues>
+): LaunchWizardValues {
+  return {
+    ...DEFAULT_LAUNCH_WIZARD_VALUES,
+    ...values,
+    collectionName: values.collectionName ?? '',
+    collectionDescription: values.collectionDescription ?? '',
+    categorySlug: values.categorySlug ?? null,
+    products: (values.products ?? []).map((product) => ({
+      ...product,
+      baseProductId: product.baseProductId ?? product.id,
+      categorySlug: product.categorySlug ?? values.categorySlug ?? '',
+    })),
+  };
+}

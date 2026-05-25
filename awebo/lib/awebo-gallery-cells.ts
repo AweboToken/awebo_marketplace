@@ -1,5 +1,3 @@
-import { EVERSHOP_SAMPLE_PRODUCT_HREF } from '@/lib/evershop-sample-product';
-
 export type AweboGalleryCell = {
   id: string;
   label: string;
@@ -31,7 +29,7 @@ function cell(
     title,
     price: PRODUCT_PRICE,
     image: PRODUCT_IMAGE,
-    productHref: EVERSHOP_SAMPLE_PRODUCT_HREF,
+    productHref: '/marketplace',
     x,
     y,
     w,

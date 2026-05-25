@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getProductById } from '@/lib/marketplace-data';
+import { resolveProductPageView } from '@/lib/marketplace-product-page';
 
 type SearchParams = { add?: string };
 
@@ -12,34 +12,37 @@ export const metadata = {
   description: 'Review your AWEBO marketplace cart.',
 };
 
-export default function CartPage({ searchParams }: { searchParams: SearchParams }) {
+export default async function CartPage({ searchParams }: { searchParams: SearchParams }) {
   const addedId = searchParams.add;
-  const line = addedId ? getProductById(addedId) : null;
-  const lines = line ? [{ ...line, qty: 1 }] : [];
+  const product = addedId ? await resolveProductPageView(addedId) : undefined;
+  const lines = product ? [{ ...product, qty: 1 }] : [];
 
   return (
-    <main className="max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 md:py-10">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">Cart</h1>
-      <p className="text-sm text-gray-600 mb-8">Cart memory is time-limited (TBD). Connect persistence and auth next.</p>
+    <main className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 lg:px-8 md:py-10">
+      <h1 className="mb-2 text-3xl font-bold text-gray-900">Cart</h1>
+      <p className="mb-8 text-sm text-gray-600">Preview cart — checkout is not live yet.</p>
 
       {lines.length === 0 ? (
         <div className="rounded-xl border border-dashed border-silver bg-white p-10 text-center">
-          <p className="text-gray-700 mb-4">Your cart is empty.</p>
-          <Link href="/marketplace" className="text-air-force-blue font-semibold no-underline hover:underline">
+          <p className="mb-4 text-gray-700">Your cart is empty.</p>
+          <Link href="/marketplace" className="font-semibold text-air-force-blue no-underline hover:underline">
             Continue shopping
           </Link>
         </div>
       ) : (
-        <div className="grid md:grid-cols-3 gap-8">
-          <ul className="md:col-span-2 space-y-4" aria-label="Cart line items">
+        <div className="grid gap-8 md:grid-cols-3">
+          <ul className="space-y-4 md:col-span-2" aria-label="Cart line items">
             {lines.map((item) => (
               <li key={item.id} className="flex gap-4 rounded-xl border border-silver bg-white p-4">
                 <div className={`h-24 w-20 shrink-0 rounded-lg bg-gradient-to-br ${item.imageTone}`} aria-hidden />
-                <div className="flex-1 min-w-0">
-                  <Link href={`/marketplace/product/${item.id}`} className="font-semibold text-gray-900 no-underline hover:text-air-force-blue line-clamp-2">
+                <div className="min-w-0 flex-1">
+                  <Link
+                    href={`/marketplace/product/${item.id}`}
+                    className="line-clamp-2 font-semibold text-gray-900 no-underline hover:text-air-force-blue"
+                  >
                     {item.name}
                   </Link>
-                  <p className="text-xs text-gray-500 mt-1">{item.brandName} · Default / M</p>
+                  <p className="mt-1 text-xs text-gray-500">{item.brandName} · Default / M</p>
                   <div className="mt-3 flex items-center gap-3">
                     <label htmlFor={`qty-${item.id}`} className="sr-only">
                       Quantity for {item.name}
@@ -58,29 +61,32 @@ export default function CartPage({ searchParams }: { searchParams: SearchParams 
             ))}
           </ul>
 
-          <aside className="rounded-xl border border-silver bg-white p-6 h-fit sticky top-24">
-            <h2 className="text-sm font-semibold uppercase text-gray-500 mb-4">Order summary</h2>
+          <aside className="sticky top-24 h-fit rounded-xl border border-silver bg-white p-6">
+            <h2 className="mb-4 text-sm font-semibold uppercase text-gray-500">Order summary</h2>
             <dl className="space-y-2 text-sm">
               <div className="flex justify-between gap-4">
                 <dt className="text-gray-600">Subtotal</dt>
-                <dd className="font-medium tabular-nums">{line ? formatUsd(line.priceUsd) : '—'}</dd>
+                <dd className="font-medium tabular-nums">{product ? formatUsd(product.priceUsd) : '—'}</dd>
               </div>
               <div className="flex justify-between gap-4">
                 <dt className="text-gray-600">Shipping estimate</dt>
                 <dd className="font-medium">TBD</dd>
               </div>
-              <div className="flex justify-between gap-4 pt-2 border-t border-gray-100">
+              <div className="flex justify-between gap-4 border-t border-gray-100 pt-2">
                 <dt className="font-semibold text-gray-900">Total</dt>
-                <dd className="font-semibold tabular-nums">{line ? formatUsd(line.priceUsd) : '—'}</dd>
+                <dd className="font-semibold tabular-nums">{product ? formatUsd(product.priceUsd) : '—'}</dd>
               </div>
             </dl>
             <Link
-              href={line ? `/marketplace/checkout?sku=${line.id}` : '/marketplace/checkout'}
-              className="mt-6 block w-full text-center rounded-lg bg-air-force-blue py-3 text-sm font-semibold text-gray-900 no-underline hover:bg-air-force-blue/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-air-force-blue"
+              href={product ? `/marketplace/checkout?sku=${product.id}` : '/marketplace/checkout'}
+              className="mt-6 block w-full rounded-lg bg-air-force-blue py-3 text-center text-sm font-semibold text-gray-900 no-underline hover:bg-air-force-blue/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-air-force-blue"
             >
               Checkout
             </Link>
-            <Link href="/marketplace" className="mt-3 block text-center text-sm font-medium text-air-force-blue no-underline hover:underline">
+            <Link
+              href="/marketplace"
+              className="mt-3 block text-center text-sm font-medium text-air-force-blue no-underline hover:underline"
+            >
               Continue shopping
             </Link>
           </aside>

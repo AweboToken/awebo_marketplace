@@ -6,7 +6,7 @@ import {
   type PublishedProduct,
 } from '@/lib/awebo/catalog-registry';
 import { createEvershopProduct } from '@/lib/evershop/admin-client';
-import { isEvershopAdminConfigured } from '@/lib/evershop/config';
+import { isEvershopSyncEnabled } from '@/lib/awebo/commerce-config';
 import { isSupabaseAdminConfigured } from '@/utils/supabase/admin';
 
 export type LaunchProductInput = {
@@ -46,13 +46,15 @@ export async function publishLaunchBrand(
   }
 
   const brandSlug = slugifyBrandName(values.brandName || values.symbol || 'brand');
+  const collectionSlug = slugifyBrandName(values.collectionName || 'genesis');
+  const collectionName = values.collectionName.trim() || 'Genesis collection';
   const warnings: string[] = [];
   const publishedProducts: PublishedProduct[] = [];
-  const evershopConfigured = isEvershopAdminConfigured();
+  const evershopConfigured = isEvershopSyncEnabled();
 
   if (!evershopConfigured) {
     warnings.push(
-      'EverShop admin credentials missing — saved locally only. Set EVERSHOP_ADMIN_EMAIL and EVERSHOP_ADMIN_PASSWORD.'
+      'EverShop sync is disabled — products use AWEBO preview pages. Set AWEBO_EVERSHOP_CHECKOUT=true and EverShop admin credentials when ready.'
     );
   }
 
@@ -108,8 +110,8 @@ export async function publishLaunchBrand(
     publishedAt: new Date().toISOString(),
     collections: [
       {
-        id: `${brandSlug}-genesis`,
-        name: 'Genesis collection',
+        id: `${brandSlug}-${collectionSlug}`,
+        name: collectionName,
         tokenSymbol: values.symbol || brandSlug.toUpperCase(),
         products: publishedProducts,
       },

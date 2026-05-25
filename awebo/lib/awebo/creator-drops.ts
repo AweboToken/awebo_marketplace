@@ -1,9 +1,7 @@
-import {
-  cardToneForIndex,
-  listPublishedBrandsByOwner,
-  publishedProductHref,
-  type PublishedBrand,
-} from '@/lib/awebo/catalog-registry';
+import { cardToneForIndex } from '@/lib/awebo/catalog-registry';
+import { listPublishedBrandsByOwnerSafe } from '@/lib/awebo/catalog-read';
+import type { PublishedBrand } from '@/lib/awebo/catalog-types';
+import { publishedProductHref } from '@/lib/awebo/catalog-product-links';
 import type { LiveCatalogProduct } from '@/components/marketplace/LiveProductCard';
 
 export type CreatorDropsStats = {
@@ -41,7 +39,7 @@ function brandToProducts(brand: PublishedBrand): LiveCatalogProduct[] {
       tokenSymbol: collection.tokenSymbol,
       name: product.name,
       priceUsd: product.priceUsd,
-      href: publishedProductHref(product),
+      href: publishedProductHref(product, brand.slug),
       image: brand.logoUrl,
       cardTone: cardToneForIndex(index),
       source: 'awebo' as const,
@@ -52,7 +50,7 @@ function brandToProducts(brand: PublishedBrand): LiveCatalogProduct[] {
 export async function getCreatorDropsByOwnerId(
   ownerId: string
 ): Promise<CreatorDropsPayload> {
-  const brands = await listPublishedBrandsByOwner(ownerId);
+  const brands = await listPublishedBrandsByOwnerSafe(ownerId);
   const mappedBrands: CreatorDropsBrand[] = brands.map((brand) => {
     const products = brandToProducts(brand);
     return {
@@ -70,9 +68,10 @@ export async function getCreatorDropsByOwnerId(
   const allProducts = mappedBrands.flatMap((brand) => brand.products);
   const latestPublishedAt =
     brands.length > 0
-      ? brands.reduce((latest, brand) =>
-          brand.publishedAt > latest ? brand.publishedAt : latest
-        , brands[0].publishedAt)
+      ? brands.reduce(
+          (latest, brand) => (brand.publishedAt > latest ? brand.publishedAt : latest),
+          brands[0].publishedAt
+        )
       : null;
 
   return {
