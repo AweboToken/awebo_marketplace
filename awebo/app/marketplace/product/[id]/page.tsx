@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { resolveProductPageView } from '@/lib/marketplace-product-page';
 
+export const dynamic = 'force-dynamic';
+
 type Props = { params: { id: string } };
 
 function formatUsd(n: number) {

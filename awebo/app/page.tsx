@@ -1,6 +1,8 @@
 import { LandingAboveFold, LandingDropsSections } from '@/components/landing';
 import Footer from '@/components/Footer';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'AWEBO — Launch and trade tokens on L1X',
   description:

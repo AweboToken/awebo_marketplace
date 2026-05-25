@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { LaunchWizardValues } from '@/lib/launch-wizard-types';
+import { isSupabaseAdminConfigured } from '@/utils/supabase/admin';
 import { markLaunchDraftPublished } from '@/lib/awebo/launch-draft-store';
 import { publishLaunchBrand } from '@/lib/awebo/launch-publish';
 
@@ -29,6 +30,13 @@ export async function POST(request: Request) {
   const ownerId = body.ownerId?.trim() ?? '';
   if (ownerId && (ownerId.length < 8 || ownerId.length > 128)) {
     return NextResponse.json({ error: 'Invalid owner id.' }, { status: 400 });
+  }
+
+  if (isSupabaseAdminConfigured() && !ownerId) {
+    return NextResponse.json(
+      { error: 'Sign in is required to publish a brand.' },
+      { status: 401 }
+    );
   }
 
   const invalidPrice = body.products.find(

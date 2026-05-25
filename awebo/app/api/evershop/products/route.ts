@@ -7,6 +7,12 @@ import { publishedBrandToCollectionCards } from '@/lib/marketplace-collection-ca
 import { listEvershopProducts } from '@/lib/evershop/storefront-client';
 import { resolveProductImageUrl } from '@/lib/launch-catalog-images';
 
+export const dynamic = 'force-dynamic';
+
+const NO_STORE_HEADERS = {
+  'Cache-Control': 'no-store, max-age=0',
+};
+
 export async function GET() {
   const publishedBrands = await listPublishedBrandsSafe();
   const collectionCards = publishedBrands.flatMap((brand) =>
@@ -67,8 +73,12 @@ export async function GET() {
     }
   }
 
-  return NextResponse.json({
-    collections: collectionCards,
-    products: [...publishedProducts, ...evershopProducts],
-  });
+  return NextResponse.json(
+    {
+      collections: collectionCards,
+      products: [...publishedProducts, ...evershopProducts],
+      meta: { brandCount: publishedBrands.length },
+    },
+    { headers: NO_STORE_HEADERS }
+  );
 }

@@ -9,7 +9,7 @@ function logCatalogReadError(action: string, error: unknown) {
   console.error(`[awebo/catalog] ${action} failed:`, error);
 }
 
-/** Read published brands without taking down pages when Supabase is misconfigured. */
+/** Read all public published brands (every creator) for marketplace/drops. */
 export async function listPublishedBrandsSafe(): Promise<PublishedBrand[]> {
   try {
     return await listPublishedBrands();
@@ -19,6 +19,7 @@ export async function listPublishedBrandsSafe(): Promise<PublishedBrand[]> {
   }
 }
 
+/** Read one creator's published brands for My Drops only. */
 export async function listPublishedBrandsByOwnerSafe(
   ownerId: string
 ): Promise<PublishedBrand[]> {

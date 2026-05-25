@@ -4,6 +4,8 @@ import EcosystemGallery from '@/components/ecosystem/EcosystemGallery';
 import EcosystemReturnHome from '@/components/ecosystem/EcosystemReturnHome';
 import { listEcosystemCreatorBrands } from '@/lib/ecosystem-creator-brands';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Ecosystem — AWEBO',
   description: 'Explore the AWEBO ecosystem gallery and creators building on the platform.',

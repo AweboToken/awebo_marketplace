@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation';
 import ProductCard from '@/components/marketplace/ProductCard';
 import { resolveBrandPageView } from '@/lib/marketplace-brand-page';
 
+export const dynamic = 'force-dynamic';
+
 type Props = {
   params: { slug: string };
   searchParams: Record<string, string | string[] | undefined>;

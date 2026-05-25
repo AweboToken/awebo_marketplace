@@ -1,5 +1,6 @@
 import type { LaunchWizardValues } from '@/lib/launch-wizard-types';
 import { createAdminClient } from '@/utils/supabase/admin';
+import { PUBLIC_BRAND_STATUSES } from '@/lib/awebo/catalog-visibility';
 import type {
   PublishedBrand,
   PublishedCollection,
@@ -231,21 +232,28 @@ export async function savePublishedBrandToSupabase(
   return saved;
 }
 
-export async function listPublishedBrandsFromSupabase(): Promise<PublishedBrand[]> {
+/** Global public feed — never filter by owner_id. */
+export async function listPublicPublishedBrandsFromSupabase(): Promise<PublishedBrand[]> {
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from('brands')
     .select(BRAND_SELECT)
-    .in('status', ['published', 'fundraising', 'live'])
-    .order('published_at', { ascending: false });
+    .in('status', [...PUBLIC_BRAND_STATUSES])
+    .order('published_at', { ascending: false, nullsFirst: false });
 
   if (error) {
-    throw new Error(`Failed to list brands: ${supabaseErrorMessage(error)}`);
+    throw new Error(`Failed to list public brands: ${supabaseErrorMessage(error)}`);
   }
 
   return (data as BrandRow[]).map(mapBrandRow);
 }
 
+/** @deprecated Use listPublicPublishedBrandsFromSupabase */
+export async function listPublishedBrandsFromSupabase(): Promise<PublishedBrand[]> {
+  return listPublicPublishedBrandsFromSupabase();
+}
+
+/** Creator dashboard — owner only, published catalog entries only. */
 export async function listPublishedBrandsByOwnerFromSupabase(
   ownerId: string
 ): Promise<PublishedBrand[]> {
@@ -254,7 +262,8 @@ export async function listPublishedBrandsByOwnerFromSupabase(
     .from('brands')
     .select(BRAND_SELECT)
     .eq('owner_id', ownerId)
-    .order('published_at', { ascending: false });
+    .in('status', [...PUBLIC_BRAND_STATUSES])
+    .order('published_at', { ascending: false, nullsFirst: false });
 
   if (error) {
     throw new Error(`Failed to list creator brands: ${supabaseErrorMessage(error)}`);
@@ -263,6 +272,27 @@ export async function listPublishedBrandsByOwnerFromSupabase(
   return (data as BrandRow[]).map(mapBrandRow);
 }
 
+/** Public brand page — must be a published catalog entry. */
+export async function getPublicBrandBySlugFromSupabase(
+  slug: string
+): Promise<PublishedBrand | undefined> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from('brands')
+    .select(BRAND_SELECT)
+    .eq('slug', slug)
+    .in('status', [...PUBLIC_BRAND_STATUSES])
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Failed to load public brand: ${supabaseErrorMessage(error)}`);
+  }
+
+  if (!data) return undefined;
+  return mapBrandRow(data as BrandRow);
+}
+
+/** Internal reload after publish — includes non-public rows. */
 export async function getPublishedBrandBySlugFromSupabase(
   slug: string
 ): Promise<PublishedBrand | undefined> {

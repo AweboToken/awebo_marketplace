@@ -4,9 +4,9 @@ import type { LaunchWizardValues } from '@/lib/launch-wizard-types';
 import type { PublishedBrand, PublishedProduct } from '@/lib/awebo/catalog-types';
 import { resolveAweboStorageBackend } from '@/utils/supabase/admin';
 import {
-  getPublishedBrandBySlugFromSupabase,
+  getPublicBrandBySlugFromSupabase,
+  listPublicPublishedBrandsFromSupabase,
   listPublishedBrandsByOwnerFromSupabase,
-  listPublishedBrandsFromSupabase,
   savePublishedBrandToSupabase,
 } from '@/lib/awebo/supabase-catalog';
 
@@ -73,15 +73,17 @@ export async function savePublishedBrand(
   return brand;
 }
 
+/** All publicly visible brands from every creator (marketplace, drops, ecosystem). */
 export async function listPublishedBrands(): Promise<PublishedBrand[]> {
   if (resolveAweboStorageBackend() === 'supabase') {
-    return listPublishedBrandsFromSupabase();
+    return listPublicPublishedBrandsFromSupabase();
   }
 
   const catalog = await readCatalog();
   return catalog.brands;
 }
 
+/** One creator's published brands only (My Drops). */
 export async function listPublishedBrandsByOwner(
   ownerId: string
 ): Promise<PublishedBrand[]> {
@@ -93,11 +95,12 @@ export async function listPublishedBrandsByOwner(
   return catalog.brands.filter((brand) => brand.ownerId === ownerId);
 }
 
+/** Public brand storefront — any creator's published brand by slug. */
 export async function getPublishedBrandBySlug(
   slug: string
 ): Promise<PublishedBrand | undefined> {
   if (resolveAweboStorageBackend() === 'supabase') {
-    return getPublishedBrandBySlugFromSupabase(slug);
+    return getPublicBrandBySlugFromSupabase(slug);
   }
 
   const catalog = await readCatalog();
