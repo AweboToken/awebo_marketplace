@@ -1,4 +1,5 @@
 import { getPublishedCatalogProduct } from '@/lib/awebo/catalog-product-links';
+import { resolveProductImageUrl } from '@/lib/launch-catalog-images';
 
 export type ProductPageView = {
   id: string;
@@ -23,6 +24,11 @@ function catalogToView(
 ): ProductPageView {
   const { brand, product, collectionName, tokenSymbol, compositeId } = catalog;
 
+  const productImageUrl =
+    resolveProductImageUrl(product.imageUrl, product.id) ??
+    brand.logoUrl ??
+    brand.bannerUrl;
+
   return {
     id: compositeId,
     name: product.name,
@@ -31,7 +37,7 @@ function catalogToView(
     brandName: brand.name,
     collectionName,
     tokenSymbol,
-    imageUrl: brand.logoUrl ?? brand.bannerUrl,
+    imageUrl: productImageUrl,
     logoUrl: brand.logoUrl,
     bannerUrl: brand.bannerUrl,
     imageTone: 'from-violet-800/80 to-air-force-blue/60',

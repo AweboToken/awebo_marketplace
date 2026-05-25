@@ -146,6 +146,7 @@ export default function CategoryPage({ params }: Props) {
                   brandName={p.brandName}
                   priceUsd={p.priceUsd}
                   imageTone={p.imageTone}
+                  imageUrl={p.imageUrl}
                 />
               ))}
             </div>

@@ -91,4 +91,4 @@ The launch wizard uses **Privy** for creator login. Supabase Auth is wired for s
 
 - Legacy schema in `docs/IMPLEMENTATION_PLAN.md` (`merch_items`, `launchpad_tokens`, etc.)
 - EverShop internal tables (products, orders, customers)
-- Sanity CMS (`topCreator` schema) — marketing content only
+- Marketing CMS (removed — landing uses in-app defaults)

@@ -7,12 +7,14 @@ import {
 } from '@/lib/awebo/catalog-registry';
 import { createEvershopProduct } from '@/lib/evershop/admin-client';
 import { isEvershopSyncEnabled } from '@/lib/awebo/commerce-config';
+import { resolveProductImageUrl } from '@/lib/launch-catalog-images';
 import { isSupabaseAdminConfigured } from '@/utils/supabase/admin';
 
 export type LaunchProductInput = {
   id: string;
   name: string;
   priceUsd: number;
+  imageUrl?: string | null;
 };
 
 export type PublishLaunchInput = {
@@ -61,6 +63,7 @@ export async function publishLaunchBrand(
   for (const product of products) {
     const sku = buildSku(brandSlug, product.id);
     const urlKey = buildUrlKey(brandSlug, product.id);
+    const imageUrl = resolveProductImageUrl(product.imageUrl, product.id);
     let evershopUuid: string | undefined;
     let evershopUrlKey: string | undefined;
 
@@ -74,6 +77,7 @@ export async function publishLaunchBrand(
           qty: 100,
           short_description: values.story.slice(0, 240) || undefined,
           status: 1,
+          images: imageUrl ? [imageUrl] : undefined,
         });
         evershopUuid = created.uuid;
         evershopUrlKey = created.url_key ?? urlKey;
@@ -90,6 +94,7 @@ export async function publishLaunchBrand(
       id: product.id,
       name: product.name,
       priceUsd: product.priceUsd,
+      imageUrl,
       evershopUuid,
       evershopUrlKey,
       sku,

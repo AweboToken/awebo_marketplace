@@ -1,5 +1,7 @@
 /** Base catalog for Launch Brand product selection (category browse). */
 
+import { getLaunchCatalogImageUrl } from '@/lib/launch-catalog-images';
+
 export type MarketplaceCategory = {
   slug: string;
   label: string;
@@ -34,6 +36,7 @@ export type LaunchCatalogProduct = {
   brandName: string;
   priceUsd: number;
   categorySlug: string;
+  imageUrl: string;
   imageTone: string;
   isNew?: boolean;
   isTrending?: boolean;
@@ -50,6 +53,7 @@ export const LAUNCH_CATALOG_PRODUCTS: LaunchCatalogProduct[] = [
     brandName: 'Studio Norte',
     priceUsd: 48,
     categorySlug: 'hombre',
+    imageUrl: getLaunchCatalogImageUrl('p-1')!,
     imageTone: 'from-slate-700 to-slate-900',
     isTrending: true,
   },
@@ -60,6 +64,7 @@ export const LAUNCH_CATALOG_PRODUCTS: LaunchCatalogProduct[] = [
     brandName: 'Lumen Atelier',
     priceUsd: 220,
     categorySlug: 'mujer',
+    imageUrl: getLaunchCatalogImageUrl('p-2')!,
     imageTone: 'from-stone-500 to-stone-800',
     isNew: true,
   },
@@ -70,6 +75,7 @@ export const LAUNCH_CATALOG_PRODUCTS: LaunchCatalogProduct[] = [
     brandName: 'Objeto',
     priceUsd: 64,
     categorySlug: 'hogar',
+    imageUrl: getLaunchCatalogImageUrl('p-3')!,
     imageTone: 'from-amber-600 to-amber-900',
   },
   {
@@ -79,6 +85,7 @@ export const LAUNCH_CATALOG_PRODUCTS: LaunchCatalogProduct[] = [
     brandName: 'Mar Factory',
     priceUsd: 36,
     categorySlug: 'ninos',
+    imageUrl: getLaunchCatalogImageUrl('p-4')!,
     imageTone: 'from-sky-500 to-indigo-700',
     isNew: true,
   },
@@ -89,6 +96,7 @@ export const LAUNCH_CATALOG_PRODUCTS: LaunchCatalogProduct[] = [
     brandName: 'Studio Norte',
     priceUsd: 198,
     categorySlug: 'bolsos',
+    imageUrl: getLaunchCatalogImageUrl('p-5')!,
     imageTone: 'from-neutral-600 to-neutral-900',
     isTrending: true,
   },
@@ -99,6 +107,7 @@ export const LAUNCH_CATALOG_PRODUCTS: LaunchCatalogProduct[] = [
     brandName: 'Lumen Atelier',
     priceUsd: 142,
     categorySlug: 'ropa-zapatos',
+    imageUrl: getLaunchCatalogImageUrl('p-6')!,
     imageTone: 'from-zinc-500 to-zinc-800',
   },
 ];

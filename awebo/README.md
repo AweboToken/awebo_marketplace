@@ -20,7 +20,9 @@ This application implements 8 key designs from Figma:
 - **Next.js 14** - React framework with App Router
 - **TypeScript** - Type-safe development
 - **Tailwind CSS** - Utility-first styling
-- **React** - UI library
+- **Supabase** - Brands, catalog, launch drafts
+- **Privy** - Creator authentication
+- **EverShop** (optional) - Commerce backend on a VPS — see [docs/EVERSHOP_INTEGRATION.md](./docs/EVERSHOP_INTEGRATION.md)
 
 ## Getting Started
 

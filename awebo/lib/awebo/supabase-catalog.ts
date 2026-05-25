@@ -5,6 +5,7 @@ import type {
   PublishedCollection,
   PublishedProduct,
 } from '@/lib/awebo/catalog-types';
+import { resolveProductImageUrl } from '@/lib/launch-catalog-images';
 
 type BrandRow = {
   id: string;
@@ -26,6 +27,7 @@ type BrandRow = {
       id: string;
       name: string;
       price_usd: number;
+      image_url: string | null;
       sku: string;
       evershop_uuid: string | null;
       evershop_url_key: string | null;
@@ -44,6 +46,7 @@ function mapBrandRow(row: BrandRow): PublishedBrand {
           id: product.id,
           name: product.name,
           priceUsd: Number(product.price_usd),
+          imageUrl: resolveProductImageUrl(product.image_url, product.id),
           sku: product.sku,
           evershopUuid: product.evershop_uuid ?? undefined,
           evershopUrlKey: product.evershop_url_key ?? undefined,
@@ -88,6 +91,7 @@ const BRAND_SELECT = `
       id,
       name,
       price_usd,
+      image_url,
       sku,
       evershop_uuid,
       evershop_url_key
@@ -188,6 +192,7 @@ export async function savePublishedBrandToSupabase(
     id: product.id,
     name: product.name,
     price_usd: product.priceUsd,
+    image_url: product.imageUrl ?? null,
     sku: product.sku,
     status: 'Ready' as const,
     evershop_uuid: product.evershopUuid ?? null,

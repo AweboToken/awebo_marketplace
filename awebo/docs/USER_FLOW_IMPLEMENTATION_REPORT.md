@@ -71,7 +71,7 @@
 - Real authentication (favorites, contact brand, checkout rules still copy/UI only).
 - Cart persistence, inventory, payments, wallet signing, contracts.
 - Search, infinite scroll, and filter state backed by APIs or URL sync beyond placeholders.
-- Sanity or DB models for marketplace entities.
+- Supabase models for marketplace entities (see backend-migrations).
 
 ---
 

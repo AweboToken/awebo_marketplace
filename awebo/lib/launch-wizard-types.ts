@@ -1,3 +1,5 @@
+import { resolveProductImageUrl } from '@/lib/launch-catalog-images';
+
 export type LaunchMode = 'self' | 'crowdfund';
 
 export type LaunchWizardProduct = {
@@ -6,6 +8,7 @@ export type LaunchWizardProduct = {
   name: string;
   baseProductId: string;
   categorySlug: string;
+  imageUrl?: string;
   imageTone?: string;
   status: 'Draft' | 'Pricing' | 'Ready';
 };
@@ -65,10 +68,15 @@ export function normalizeLaunchWizardValues(
     collectionName: values.collectionName ?? '',
     collectionDescription: values.collectionDescription ?? '',
     categorySlug: values.categorySlug ?? null,
-    products: (values.products ?? []).map((product) => ({
-      ...product,
-      baseProductId: product.baseProductId ?? product.id,
-      categorySlug: product.categorySlug ?? values.categorySlug ?? '',
-    })),
+    products: (values.products ?? []).map((product) => {
+      const baseProductId = product.baseProductId ?? product.id;
+      return {
+        ...product,
+        baseProductId,
+        categorySlug: product.categorySlug ?? values.categorySlug ?? '',
+        imageUrl:
+          resolveProductImageUrl(product.imageUrl, baseProductId) ?? undefined,
+      };
+    }),
   };
 }

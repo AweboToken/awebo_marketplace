@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { resolveProductPageView } from '@/lib/marketplace-product-page';
 
@@ -34,7 +35,19 @@ export default async function CartPage({ searchParams }: { searchParams: SearchP
           <ul className="space-y-4 md:col-span-2" aria-label="Cart line items">
             {lines.map((item) => (
               <li key={item.id} className="flex gap-4 rounded-xl border border-silver bg-white p-4">
-                <div className={`h-24 w-20 shrink-0 rounded-lg bg-gradient-to-br ${item.imageTone}`} aria-hidden />
+                <div
+                  className={`relative h-24 w-20 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br ${item.imageTone}`}
+                >
+                  {item.imageUrl ? (
+                    <Image
+                      src={item.imageUrl}
+                      alt=""
+                      fill
+                      unoptimized
+                      className="object-cover"
+                    />
+                  ) : null}
+                </div>
                 <div className="min-w-0 flex-1">
                   <Link
                     href={`/marketplace/product/${item.id}`}

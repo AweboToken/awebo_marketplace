@@ -5,6 +5,7 @@ import { publishedProductHref } from '@/lib/awebo/catalog-product-links';
 import { isEvershopCheckoutEnabled } from '@/lib/awebo/commerce-config';
 import { publishedBrandToCollectionCards } from '@/lib/marketplace-collection-cards';
 import { listEvershopProducts } from '@/lib/evershop/storefront-client';
+import { resolveProductImageUrl } from '@/lib/launch-catalog-images';
 
 export async function GET() {
   const publishedBrands = await listPublishedBrandsSafe();
@@ -24,7 +25,7 @@ export async function GET() {
         name: product.name,
         priceUsd: product.priceUsd,
         href: publishedProductHref(product, brand.slug),
-        image: brand.logoUrl,
+        image: resolveProductImageUrl(product.imageUrl, product.id) ?? brand.logoUrl,
         cardTone: cardToneForIndex(index),
         source: 'awebo' as const,
       }))

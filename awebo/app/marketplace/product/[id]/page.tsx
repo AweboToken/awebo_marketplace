@@ -35,27 +35,15 @@ export default async function ProductDetailPage({ params }: Props) {
             role="img"
             aria-label={`${product.name} preview`}
           >
-            {product.bannerUrl ? (
+            {product.imageUrl ? (
               <Image
-                src={product.bannerUrl}
-                alt=""
+                src={product.imageUrl}
+                alt={product.name}
                 fill
                 unoptimized
-                className="object-cover opacity-40"
+                className="object-cover"
+                priority
               />
-            ) : null}
-            {product.imageUrl ? (
-              <div className="absolute inset-0 flex items-center justify-center p-10">
-                <div className="relative h-48 w-48 overflow-hidden rounded-3xl border border-white/20 bg-black/30 shadow-2xl sm:h-56 sm:w-56">
-                  <Image
-                    src={product.imageUrl}
-                    alt=""
-                    fill
-                    unoptimized
-                    className="object-cover"
-                  />
-                </div>
-              </div>
             ) : (
               <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-white/70">
                 {product.name.slice(0, 1)}
@@ -75,37 +63,31 @@ export default async function ProductDetailPage({ params }: Props) {
           {product.tokenSymbol ? (
             <p className="mt-2 text-sm text-white/70">Collection token: ${product.tokenSymbol}</p>
           ) : null}
-          <p className="mt-4 text-sm text-white/75">
-            <span className="text-white/55">Brand:</span>{' '}
+          <div className="mt-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/55">Brand</p>
             <Link
               href={`/marketplace/brand/${product.brandSlug}`}
-              className="font-medium text-white no-underline hover:underline"
+              className="mt-2 inline-flex items-center justify-center rounded-lg border border-white/25 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white no-underline transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-air-force-blue"
             >
               {product.brandName}
             </Link>
-          </p>
+          </div>
 
           {product.story ? (
             <p className="mt-6 text-sm leading-relaxed text-white/70 line-clamp-4">{product.story}</p>
           ) : null}
 
           <p className="mt-6 rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white/75">
-            Checkout is in preview mode on AWEBO. EverShop fulfillment will connect when commerce is
-            deployed.
+            Cart and checkout work in preview on AWEBO. Live EverShop fulfillment connects when
+            commerce is deployed.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-lg bg-air-force-blue px-6 py-3 text-sm font-semibold text-gray-900"
-            >
-              Add to cart (preview)
-            </button>
             <Link
-              href={`/marketplace/brand/${product.brandSlug}`}
-              className="inline-flex items-center justify-center rounded-lg border border-white/25 px-6 py-3 text-sm font-semibold text-white no-underline hover:bg-white/10"
+              href={`/marketplace/cart?add=${encodeURIComponent(product.id)}`}
+              className="inline-flex items-center justify-center rounded-lg bg-air-force-blue px-6 py-3 text-sm font-semibold text-gray-900 no-underline hover:bg-air-force-blue/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-air-force-blue"
             >
-              View brand
+              Add to cart
             </Link>
           </div>
 

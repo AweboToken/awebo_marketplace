@@ -7,6 +7,7 @@ export function mockProductToLaunchProduct(catalogProduct: LaunchCatalogProduct)
     name: catalogProduct.name,
     baseProductId: catalogProduct.id,
     categorySlug: catalogProduct.categorySlug,
+    imageUrl: catalogProduct.imageUrl,
     imageTone: catalogProduct.imageTone,
     status: 'Draft',
   };

@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
 
 function normalizeParams(searchParams: { [key: string]: string | string[] | undefined }) {
   return Object.entries(searchParams).filter(([, v]) => v !== undefined && v !== '');
@@ -52,7 +51,6 @@ export function DiscoveryListingPageLayout({
           ← Back to marketplace
         </Link>
       </main>
-      <Footer variant="landing" />
     </div>
   );
 }

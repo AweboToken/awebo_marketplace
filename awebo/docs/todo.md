@@ -113,8 +113,8 @@ The goal is to deliver a **polished, trust‑building, conversion‑oriented int
 - **Merch / phygital:** Phygital section on landing; merch step in Launch Wizard; shirt-parallax-card and merch-related UI.
 - **Wallet & network (UI only):** ConnectWalletModal, UserMenu, PrivyProviderWrapper (Privy).
 - **User profile (frontend):** App profile page with tabs (Balances, Gains, Coins, Referrals, Settings) and DashboardCard.
-- **Launch creator (UI only):** Launch creation stepper (LaunchWizard + launch-steps: Profile → Brand → Token → Merch → Review); LaunchWizardModal; Sanity-backed studio route `studio/[[...tool]]`.
-- **Content & CMS:** Sanity config, schemas (homePage, project, phygitalItem, topCreator, etc.), queries, and docs (sanity-setup, referral-and-shipping).
+- **Launch creator (UI only):** Launch creation stepper (LaunchWizard + launch-steps: Profile → Brand → Token → Merch → Review); LaunchWizardModal.
+- **Content:** Landing and app home use built-in defaults (no external CMS).
 - **System polish:** Reusable UI (animated-pattern-cloud, procedural-ground-background, hero-preview-walls); responsive structure in place.
 
 ---

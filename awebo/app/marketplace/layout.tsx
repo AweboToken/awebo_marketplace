@@ -1,5 +1,5 @@
 import Navigation from '@/components/Navigation';
-import MarketplaceFooter from '@/components/marketplace/MarketplaceFooter';
+import MarketplaceLayoutFooter from '@/components/marketplace/MarketplaceLayoutFooter';
 import MarketplaceRoomBackground from '@/components/marketplace/MarketplaceRoomBackground';
 import FloatingSupportStub from '@/components/marketplace/FloatingSupportStub';
 
@@ -18,7 +18,7 @@ export default function MarketplaceLayout({ children }: { children: React.ReactN
         {children}
       </div>
       <div className="relative z-10">
-        <MarketplaceFooter />
+        <MarketplaceLayoutFooter />
       </div>
       <FloatingSupportStub />
     </div>

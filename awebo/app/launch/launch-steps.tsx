@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState, type ChangeEvent } from 'react';
 import {
@@ -334,6 +335,13 @@ export function CatalogProductsStep({
                         className={`aspect-[4/5] bg-gradient-to-br ${product.imageTone} relative`}
                         aria-hidden
                       >
+                        <Image
+                          src={product.imageUrl}
+                          alt=""
+                          fill
+                          unoptimized
+                          className="object-cover"
+                        />
                         {selected ? (
                           <span className="absolute right-2 top-2 rounded-full bg-air-force-blue px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
                             Added
@@ -686,6 +694,7 @@ export function ReviewPublishStep({
       id: product.id,
       name: product.name,
       priceUsd: Number(productPrices[product.id]),
+      imageUrl: product.imageUrl,
     }));
 
     try {

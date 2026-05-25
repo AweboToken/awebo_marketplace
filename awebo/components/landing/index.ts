@@ -1,4 +1,5 @@
 export { default as LandingAboveFold } from './LandingAboveFold';
+export { default as LandingDropsSections } from './LandingDropsSections';
 export { default as LandingFloorSection } from './LandingFloorSection';
 export { default as LandingSnowSection } from './LandingSnowSection';
 export { default as LandingHero } from './LandingHero';

@@ -37,6 +37,7 @@ type PublishedProduct = {
   id: string;
   name: string;
   priceUsd: number;
+  imageUrl?: string | null;
   sku: string;
   evershopUuid?: string;
   evershopUrlKey?: string;
@@ -105,6 +106,7 @@ create table brand_products (
   sku text not null,
   status text not null default 'Ready'
     check (status in ('Draft', 'Pricing', 'Ready')),
+  image_url text,
   evershop_uuid text,
   evershop_url_key text,
   created_at timestamptz not null default now(),

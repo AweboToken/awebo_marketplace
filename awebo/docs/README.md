@@ -28,7 +28,6 @@ Start here for platform architecture and backend handoff.
 | [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) | Sprint implementation plan |
 | [merch-backend-considerations.md](./merch-backend-considerations.md) | Merch backend notes |
 | [referral-and-shipping.md](./referral-and-shipping.md) | Referrals + shipping |
-| [sanity-setup.md](./sanity-setup.md) | Sanity CMS |
 
 ## Quick reference: routes
 

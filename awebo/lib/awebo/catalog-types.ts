@@ -4,6 +4,7 @@ export type PublishedProduct = {
   id: string;
   name: string;
   priceUsd: number;
+  imageUrl?: string | null;
   evershopUuid?: string;
   evershopUrlKey?: string;
   sku: string;

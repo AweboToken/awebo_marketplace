@@ -1,4 +1,5 @@
 import { cardToneForIndex } from '@/lib/awebo/catalog-registry';
+import { resolveProductImageUrl } from '@/lib/launch-catalog-images';
 import { publishedProductHref } from '@/lib/awebo/catalog-product-links';
 import { getPublishedBrandBySlugSafe } from '@/lib/awebo/catalog-read';
 import type { PublishedBrand } from '@/lib/awebo/catalog-types';
@@ -51,7 +52,8 @@ function publishedBrandToPageView(brand: PublishedBrand): BrandPageView {
         brandName: brand.name,
         priceUsd: product.priceUsd,
         imageTone: cardToneForIndex(productIndex),
-        imageUrl: brand.logoUrl,
+        imageUrl:
+          resolveProductImageUrl(product.imageUrl, product.id) ?? brand.logoUrl,
         href: publishedProductHref(product, brand.slug),
         collectionName: collection.name,
         tokenSymbol: collection.tokenSymbol,

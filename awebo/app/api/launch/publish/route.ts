@@ -6,7 +6,7 @@ import { publishLaunchBrand } from '@/lib/awebo/launch-publish';
 type PublishBody = {
   ownerId?: string;
   values?: LaunchWizardValues;
-  products?: Array<{ id: string; name: string; priceUsd: number }>;
+  products?: Array<{ id: string; name: string; priceUsd: number; imageUrl?: string | null }>;
 };
 
 export async function POST(request: Request) {
