@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import { ChevronDown, LogOut } from 'lucide-react';
+import { clearPostLoginRedirect } from '@/lib/auth-redirect';
 import { useAuthModal } from '@/components/auth/AuthModalContext';
 
 /**
@@ -76,6 +77,7 @@ export default function UserMenuPrivy() {
           <button
             type="button"
             onClick={() => {
+              clearPostLoginRedirect();
               logout();
               setOpen(false);
             }}

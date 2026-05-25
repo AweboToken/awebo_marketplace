@@ -19,18 +19,22 @@ export default function PostLoginRedirect() {
   const pathname = usePathname();
   const { ready, authenticated } = usePrivy();
   const handledRef = useRef(false);
-  const wasAuthenticatedRef = useRef(authenticated);
+  const wasAuthenticatedRef = useRef(false);
 
   useEffect(() => {
     if (!ready) return;
 
     const justLoggedIn = authenticated && !wasAuthenticatedRef.current;
+    const justLoggedOut = !authenticated && wasAuthenticatedRef.current;
     wasAuthenticatedRef.current = authenticated;
 
-    if (!authenticated) {
+    if (justLoggedOut) {
+      clearPostLoginRedirect();
       handledRef.current = false;
       return;
     }
+
+    if (!authenticated) return;
 
     if (!justLoggedIn || handledRef.current) return;
 
@@ -52,12 +56,6 @@ export default function PostLoginRedirect() {
     markLaunchPreloaderIfRoomToLaunch(pathname, pending);
     router.replace(pending);
   }, [authenticated, pathname, ready, router]);
-
-  useEffect(() => {
-    if (!ready || authenticated) return;
-    clearPostLoginRedirect();
-    handledRef.current = false;
-  }, [authenticated, ready]);
 
   return null;
 }
