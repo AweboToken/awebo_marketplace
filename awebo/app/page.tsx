@@ -1,4 +1,7 @@
-import { LandingAboveFold, LandingDropsSections } from '@/components/landing';
+import { LandingAboveFold } from '@/components/landing';
+import ExploreSection from '@/components/landing/ExploreSection';
+import CrowdfundingSection from '@/components/landing/CrowdfundingSection';
+import LandingCtaBanner from '@/components/landing/LandingCtaBanner';
 import Footer from '@/components/Footer';
 
 export const dynamic = 'force-dynamic';
@@ -13,7 +16,9 @@ export default function LandingPage() {
   return (
     <>
       <LandingAboveFold />
-      <LandingDropsSections />
+      <ExploreSection />
+      <CrowdfundingSection />
+      <LandingCtaBanner />
       <Footer variant="landing" />
     </>
   );

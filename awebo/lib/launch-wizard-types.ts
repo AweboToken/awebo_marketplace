@@ -34,6 +34,8 @@ export type LaunchWizardValues = {
   collectionDescription: string;
   /** Products the creator selected for this collection. */
   products: LaunchWizardProduct[];
+  /** Smart contract address after signature deployment. */
+  contractAddress: string | null;
 };
 
 export const DEFAULT_LAUNCH_WIZARD_VALUES: LaunchWizardValues = {
@@ -54,6 +56,7 @@ export const DEFAULT_LAUNCH_WIZARD_VALUES: LaunchWizardValues = {
   collectionName: '',
   collectionDescription: '',
   products: [],
+  contractAddress: null,
 };
 
 export type LaunchWizardValuesPatch = Partial<LaunchWizardValues>;

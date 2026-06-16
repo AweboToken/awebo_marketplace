@@ -20,6 +20,7 @@ export type MarketplaceCollectionCard = {
   holders: number;
   live: boolean;
   href: string;
+  ownerId: string;
 };
 
 function hashString(input: string): number {
@@ -67,6 +68,7 @@ export function publishedBrandToCollectionCards(
       ...metrics,
       live: options?.live ?? true,
       href: `/marketplace/brand/${brand.slug}`,
+      ownerId: brand.ownerId ?? '',
     };
   });
 }

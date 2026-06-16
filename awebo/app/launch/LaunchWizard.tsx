@@ -238,7 +238,13 @@ export default function LaunchWizard() {
                   <CatalogProductsStep {...stepProps} onNext={goNext} onPrev={goPrev} />
                 )}
                 {stepIndex === 2 && (
-                  <BrandContractStep {...stepProps} onNext={goNext} onPrev={goPrev} />
+                  <BrandContractStep
+                    {...stepProps}
+                    onNext={goNext}
+                    onPrev={goPrev}
+                    productPrices={productPrices}
+                    onPricesChange={setProductPrices}
+                  />
                 )}
                 {stepIndex === 3 && (
                   <ReviewPublishStep
@@ -246,7 +252,6 @@ export default function LaunchWizard() {
                     onPrev={goPrev}
                     ownerId={ownerId}
                     productPrices={productPrices}
-                    onPricesChange={setProductPrices}
                   />
                 )}
               </motion.div>
@@ -255,21 +260,25 @@ export default function LaunchWizard() {
 
           {/* Right — live preview */}
           <aside
-            className={`order-3 hidden lg:block lg:sticky lg:top-28 lg:self-start ${panelClassName}`}
+            className="order-3 hidden lg:block lg:sticky lg:top-28 lg:self-start space-y-6"
           >
-            <BrandLaunchPreview values={values} stepIndex={stepIndex} embedded />
+            <div className={panelClassName}>
+              <BrandLaunchPreview values={values} stepIndex={stepIndex} embedded />
+            </div>
+            <CreatorBioCard values={values} />
           </aside>
         </div>
-
+ 
         {/* Mobile preview below form */}
-        <div className="mt-6 lg:hidden">
+        <div className="mt-6 lg:hidden space-y-6">
           <div className={panelClassName}>
             <BrandLaunchPreview values={values} stepIndex={stepIndex} embedded />
           </div>
+          <CreatorBioCard values={values} />
         </div>
       </div>
       </RequirePrivyAuth>
-
+ 
       <footer className="relative z-10 mt-auto shrink-0 border-t border-white/15 bg-black/25 py-4">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-white/70">
           <span>AWEBO BRAND STUDIO V.1.0</span>
@@ -283,6 +292,103 @@ export default function LaunchWizard() {
           </div>
         </div>
       </footer>
+    </div>
+  );
+}
+
+function CreatorBioCard({ values }: { values: LaunchWizardValues }) {
+  const { Twitter, Instagram, Globe } = require('lucide-react');
+
+  return (
+    <div className="overflow-hidden rounded-2xl border border-white/15 bg-black/40 text-left shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-md">
+      {/* Banner */}
+      <div className="relative h-20 bg-gradient-to-r from-violet-900/40 to-indigo-900/40">
+        {values.bannerUrl ? (
+          <img
+            src={values.bannerUrl}
+            alt=""
+            className="h-full w-full object-cover opacity-90"
+          />
+        ) : null}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+      </div>
+
+      <div className="relative px-4 pb-4 pt-0">
+        {/* Logo and Name header */}
+        <div className="-mt-6 mb-3 flex items-end gap-3">
+          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border-2 border-black/40 bg-black/60 shadow-lg">
+            {values.logoUrl ? (
+              <img
+                src={values.logoUrl}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-xs font-bold text-violet-200">
+                {values.symbol ? values.symbol.slice(0, 2) : 'CR'}
+              </div>
+            )}
+          </div>
+          <div className="min-w-0 pb-0.5">
+            <p className="truncate text-sm font-semibold text-white">
+              {values.brandName || 'Untitled Brand'}
+            </p>
+            {values.symbol && (
+              <p className="truncate text-[10px] font-bold text-indigo-300 uppercase tracking-wider">
+                ${values.symbol}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Narrative Description */}
+        <div className="mt-2 text-xs leading-relaxed text-white/70">
+          <p className="font-semibold text-white/95 text-[11px] uppercase tracking-wider mb-1">Narrative & Story</p>
+          <p className="line-clamp-4 italic whitespace-pre-line text-pretty">
+            {values.story.trim() || 'Tell your brand story and narrate your vision in Step 1 to update this creator profile card.'}
+          </p>
+        </div>
+
+        {/* Divider */}
+        <div className="my-3 border-t border-white/10" />
+
+        {/* Social Links */}
+        <div className="flex flex-wrap gap-2">
+          {values.twitter ? (
+            <a
+              href={values.twitter}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-[10px] font-semibold text-white hover:bg-white/10 no-underline transition-colors"
+            >
+              <Twitter className="h-3.5 w-3.5" />
+              Twitter
+            </a>
+          ) : (
+            <span className="flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/0 px-2.5 py-1 text-[10px] font-semibold text-white/30 cursor-not-allowed">
+              <Twitter className="h-3.5 w-3.5 opacity-40" />
+              Twitter
+            </span>
+          )}
+
+          {values.instagram ? (
+            <a
+              href={values.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-[10px] font-semibold text-white hover:bg-white/10 no-underline transition-colors"
+            >
+              <Instagram className="h-3.5 w-3.5" />
+              Instagram
+            </a>
+          ) : (
+            <span className="flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/0 px-2.5 py-1 text-[10px] font-semibold text-white/30 cursor-not-allowed">
+              <Instagram className="h-3.5 w-3.5 opacity-40" />
+              Instagram
+            </span>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

@@ -38,7 +38,7 @@ export default function PrivyProviderWrapper({
           accentColor: '#6C8FAE',
         },
         embeddedWallets: {
-          ethereum: { createOnLogin: 'off' },
+          ethereum: { createOnLogin: 'users-without-wallets' },
         },
       }}
     >
